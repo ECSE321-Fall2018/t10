@@ -5,6 +5,11 @@
 ### Description
 
 ### Technologies
+Build System:               Maven
+Backend Server framework:   Java Spring
+Persistence:                MySQL JPA or JDBC (will have to decide on this)
+Unit Tests:                 JUnit
+Hosting:                    Tomcat8
 
 #### Developers 
 * Meiqi Tang
