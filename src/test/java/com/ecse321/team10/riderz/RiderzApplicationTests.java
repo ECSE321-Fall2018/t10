@@ -1,4 +1,4 @@
-package com.ecse321.team10.riderz.riderz;
+package com.ecse321.team10.riderz;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
