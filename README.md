@@ -17,4 +17,7 @@
 ## Backlog
 
 
+## Worflow
+
+Work on feature branches, merge into dev when done, then merge to master using pull requests
 
