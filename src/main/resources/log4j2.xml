@@ -1,24 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration>
-  <Appenders>
-
-    <!-- Console Appender -->
+<configuration status="WARN">
+  <appenders>
     <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout
-        pattern="%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n" />
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </Console>
 
-    <!-- File Appender -->
-    <File name="File" fileName="c:/logs/riderz.log">
-      <PatternLayout
-        pattern="%d{yyyy-MMM-dd HH:mm:ss a} [%t] %-5level %logger{36} - %msg%n" />
-    </File>
+    <File name="MyFile" fileName="/logs/app.log">
+        <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </File>             
+  </appenders>
 
-  </Appenders>
-  <Loggers>
-    <Root level="trace">
-      <AppenderRef ref="Console" />
-      <AppenderRef ref="File" />
-    </Root>
-  </Loggers>
-</Configuration>
+  <loggers>     
+    <root level="debug">
+      <appender-ref ref="Console" level="info"/>
+      <appender-ref ref="MyFile" level="error"/>
+    </root>    
+  </loggers>
+</configuration>

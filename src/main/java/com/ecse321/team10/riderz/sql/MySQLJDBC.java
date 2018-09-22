@@ -6,6 +6,6 @@ import org.apache.logging.log4j.Logger;
 public class MySQLJDBC {
 	private static final Logger logger = LogManager.getLogger(MySQLJDBC.class);
 	public static void main(String[] args) {
-		logger.info("Log this here");
+		logger.error("Log this here");
 	}
 }
