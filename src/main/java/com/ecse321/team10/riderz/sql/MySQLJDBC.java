@@ -1,5 +1,11 @@
 package com.ecse321.team10.riderz.sql;
 
-public class MySQLJDBC {
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+public class MySQLJDBC {
+	private static final Logger logger = LogManager.getLogger(MySQLJDBC.class);
+	public static void main(String[] args) {
+		logger.info("Log this here");
+	}
 }
