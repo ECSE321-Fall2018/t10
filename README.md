@@ -20,7 +20,18 @@ Hosting:                    Tomcat8
 * Tyrone Wong
 
 ## Backlog
-
+* Backlog <br/>
+	* Create backend using Spring (critical) <br/>
+		* Vehicle make, year, number of seats <br/>
+		* Accounts <br/>
+		* Starting point and Destination point (address) <br/>
+		* Range of dates <br/>
+		* Price (offer) <br/>
+	* Create database using MySQL and hibernate (critical) <br/>
+	* Create authentication process (low) <br/>
+		* Posting add user page <br/>
+		* Posting login page <br/>
+	* Create unit tests (high) <br/>
 
 ## Worflow
 
