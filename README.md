@@ -21,3 +21,4 @@
 
 Work on feature branches, merge into dev when done, then merge to master using pull requests
 
+***Please don't commit the node-modules folder eventually, this will mess up the insights graph...
