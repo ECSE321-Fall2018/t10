@@ -20,18 +20,18 @@ Hosting:                    Tomcat8
 * Tyrone Wong
 
 ## Backlog
-• Backlog
-		○ Create backend using Spring (critical)
-			§ Vehicle make, year, number of seats
-			§ Accounts
-			§ Starting point and Destination point (address)
-			§ Range of dates
-			§ Price (offer)
-		○ Create database using MySQL and hibernate (critical)
-		○ Create authentication process (low)
-			§ Posting add user page
-			§ Posting login page
-	  ○ Create unit tests (high)
+• Backlog <br/>
+	○ Create backend using Spring (critical) <br/>
+		§ Vehicle make, year, number of seats <br/>
+		§ Accounts <br/>
+		§ Starting point and Destination point (address) <br/>
+		§ Range of dates <br/>
+		§ Price (offer) <br/>
+	○ Create database using MySQL and hibernate (critical) <br/>
+	○ Create authentication process (low) <br/>
+		§ Posting add user page <br/>
+		§ Posting login page <br/>
+	○ Create unit tests (high) <br/>
 
 ## Worflow
 
