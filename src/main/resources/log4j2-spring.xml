@@ -5,10 +5,10 @@
             <PatternLayout
                 pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable" />
         </Console>
- 
+
         <RollingFile name="RollingFile"
-            fileName="./logs/spring-boot-logger-log4j2.log"
-            filePattern="./logs/$${date:yyyy-MM}/spring-boot-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            fileName="./logs/Riderz.log"
+            filePattern="./logs/$${date:yyyy-MM}/Riderz-%d{-dd-MMMM-yyyy}-%i.log.gz">
             <PatternLayout>
                 <pattern>%d %p %C{1.} [%t] %m%n</pattern>
             </PatternLayout>
@@ -17,8 +17,8 @@
                     10 MegaBytes -->
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy
-                    size="10 MB" />
-                <TimeBasedTriggeringPolicy />
+                    size="1 MB" />
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
             </Policies>
         </RollingFile>
     </Appenders>
