@@ -27,15 +27,43 @@ public class MySQLJDBC {
 	        logger.info("Connection to the database has been established.");
 	        Statement stmt = c.createStatement();
 	        
-	        String sqlCars = 	"CREATE TABLE IF NOT EXISTS cars " 		+
-	        					" (carId 		INT PRIMARY KEY		NOT NULL," 	+
-	        					"  seats 		INT 				NOT NULL," 	+
-	        					"  model 		VARCHAR(50) 		NOT NULL," 	+
-	        					"  year 		INT 				NOT NULL," 	+
-	        					"  gasRate 		INT 				NOT NULL," 	+
-	        					"  carClass 	VARCHAR(50) 		NOT NULL";
+	        String sqlCars = 		"CREATE TABLE IF NOT EXISTS cars " 				+
+		        					" (carId 		INT PRIMARY KEY		NOT NULL," 	+
+		        					"  seats 		INT 				NOT NULL," 	+
+		        					"  model 		VARCHAR(50) 		NOT NULL," 	+
+		        					"  year 		INT 				NOT NULL," 	+
+		        					"  gasRate 		double 				NOT NULL," 	+
+		        					"  carClass 	VARCHAR(50) 		NOT NULL";
+	        
+	        String sqlDrivers = 	"CREATE TABLE IF NOT EXISTS users " 			+
+									" (UserId 		INT PRIMARY KEY		NOT NULL," 	+
+									"  name 		VARCHAR(50)			NOT NULL," 	+
+									"  email 		VARCHAR(355) 		NOT NULL," 	+
+									"  password 	VARCHAR(20) 		NOT NULL," 	+
+									"  ratings 		double 				NOT NULL," 	+
+									"  car		 	INT			 		NOT NULL,"	+
+									"  destination 	VARCHAR(255)		NOT NULL,"	+
+									"  endStop 		VARCHAR(255)		NOT NULL";
+	        
+	        String sqlPassengers = 	"CREATE TABLE IF NOT EXISTS users " 			+
+	        						" (UserId 		INT PRIMARY KEY		NOT NULL," 	+
+	        						"  name 		VARCHAR(50)			NOT NULL," 	+
+	        						"  email 		VARCHAR(355) 		NOT NULL," 	+
+	        						"  password 	VARCHAR(20) 		NOT NULL," 	+
+	        						"  ratings 		double 				NOT NULL," 	+
+	        						"  price		double			 			,"	+
+	        						"  route 		INT					NOT NULL";
+
+	        
+	        String sqlRatings = 	"CREATE TABLE IF NOT EXISTS ratings " 			+
+									" (UserId 		INT PRIMARY KEY		NOT NULL," 	+
+									"  userRate 	VARCHAR(50)			NOT NULL," 	+
+									"  ratings 		double 				NOT NULL";
 	        
 	        stmt.executeUpdate(sqlCars);
+	        stmt.executeUpdate(sqlDrivers);
+	        stmt.executeUpdate(sqlPassengers);
+	        stmt.executeUpdate(sqlRatings);
 	        return true;
 		}
 		catch(Exception e) {
@@ -62,11 +90,24 @@ public class MySQLJDBC {
 	// CARS API
 	//=======================
 	
-	public boolean insertCar(int seats, String model, int year, int gasRate, CarClass carClass) {
-		String insertCar = String.format("INSERT INTO cars (seats, model, year, gasRate, carClass) "
-				+ "VALUES (%d, %s, %d, %d, %s)", seats, model, year, gasRate, carClass);
+	public boolean insertCar(int carId, int seats, String model, int year, int gasRate, CarClass carClass) {
+		String insertCar = String.format("INSERT INTO cars (carId, seats, model, year, gasRate, carClass) "
+				+ "VALUES (%d, %s, %d, %d, %s)", carId, seats, model, year, gasRate, carClass);
 		try {
 			if(c.createStatement().executeUpdate(insertCar) <= 0)
+				return false;
+			return true;
+		}
+		catch(Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+	
+	public boolean deleteCar(int carId) {
+		String deleteCar = String.format("DELETE FROM cars WHERE carId = %d ", carId);
+		try {
+			if(c.createStatement().executeUpdate(deleteCar) <= 0)
 				return false;
 			return true;
 		}
