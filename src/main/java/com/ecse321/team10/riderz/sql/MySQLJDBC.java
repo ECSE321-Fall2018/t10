@@ -34,13 +34,13 @@ public class MySQLJDBC {
 		        					"  model 			varchar(45) 		NOT NULL," 		+
 		        					"  year 			year(4) 			NOT NULL," 		+
 		        					"  numOfSeats 		int(11) 			NOT NULL," 		+
-		        					"  fuelEfficiency 	float	 			NOT NULL";
+		        					"  fuelEfficiency 	float	 			NOT NULL)";
 	        
 	        String sqlDrivers = 	"CREATE TABLE IF NOT EXISTS driver " 			+
 									" (operator 		varchar(40) 		PRIMARY KEY		NOT NULL," 	+
 									"  rating 			float				NOT NULL," 	+
 									"  personsRate 		int(11)		 		NOT NULL," 	+
-									"  tripsCompleted 	int(11)		 		NOT NULL" ;
+									"  tripsCompleted 	int(11)		 		NOT NULL)" ;
 							        
 	        String sqlStop = 		"CREATE TABLE IF NOT EXISTS stop " 			+
 	        						" (tripID 		int(11) PRIMARY KEY		NOT NULL," 	+
@@ -49,12 +49,12 @@ public class MySQLJDBC {
 	        						"  city		 	varchar(45) 		NOT NULL," 	+
 	        						"  province 	varchar(45) 		NOT NULL," 	+
 	        						"  country		varchar(45)			NOT NULL,"	+
-	        						"  time 		datetime			NOT NULL";
+	        						"  time 		datetime			NOT NULL)";
 
 	        
 	        String sqlTrip = 		"CREATE TABLE IF NOT EXISTS trip " 			+
 									" (tripID 		INT(11) PRIMARY KEY	NOT NULL," 	+
-									"  operator 	varchar(40)			NOT NULL" ;
+									"  operator 	varchar(40)			NOT NULL)" ;
 	        
 	        String sqlUsers = 		"CREATE TABLE IF NOT EXISTS users " 			+
 									" (username 	varchar(40) PRIMARY KEY		NOT NULL," 	+
@@ -62,7 +62,7 @@ public class MySQLJDBC {
 									"  email 		varchar(384) 		NOT NULL," 	+
 									"  phone	 	varchar(15) 		NOT NULL," 	+
 									"  firstName 	varchar(90) 		NOT NULL," 	+
-									"  lastName		varchar(90)			NOT NULL";
+									"  lastName		varchar(90)			NOT NULL)";
 	        
 	        stmt.executeUpdate(sqlCars);
 	        stmt.executeUpdate(sqlDrivers);
@@ -95,9 +95,9 @@ public class MySQLJDBC {
 	// CARS API
 	//=======================
 	
-	public boolean insertCar(int carId, int seats, String model, int year, int gasRate, CarClass carClass) {
-		String insertCar = String.format("INSERT INTO cars (carId, seats, model, year, gasRate, carClass) "
-				+ "VALUES (%d, %s, %d, %d, %s)", carId, seats, model, year, gasRate, carClass);
+	public boolean insertCar(String operator, int make, String model, int year, int numOfSeats, double fuelEfficiency) {
+		String insertCar = String.format("INSERT INTO car (operator, make, model, year, numOfSeats, fuelEfficiency) "
+				+ "VALUES (%s, %s, %s, %d, %d, %f)", operator, make, model, year, numOfSeats, fuelEfficiency);
 		try {
 			if(c.createStatement().executeUpdate(insertCar) <= 0)
 				return false;
@@ -109,8 +109,21 @@ public class MySQLJDBC {
 		}
 	}
 	
-	public boolean deleteCar(int carId) {
-		String deleteCar = String.format("DELETE FROM cars WHERE carId = %d ", carId);
+	public boolean deleteCarByID(int carID) {
+		String deleteCar = String.format("DELETE FROM car WHERE carID = %d ", carID);
+		try {
+			if(c.createStatement().executeUpdate(deleteCar) <= 0)
+				return false;
+			return true;
+		}
+		catch(Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+	
+	public boolean deleteCarByOpeartor(int operator) {
+		String deleteCar = String.format("DELETE FROM car WHERE operator = %d ", operator);
 		try {
 			if(c.createStatement().executeUpdate(deleteCar) <= 0)
 				return false;
