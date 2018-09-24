@@ -27,43 +27,48 @@ public class MySQLJDBC {
 	        logger.info("Connection to the database has been established.");
 	        Statement stmt = c.createStatement();
 	        
-	        String sqlCars = 		"CREATE TABLE IF NOT EXISTS cars " 				+
-		        					" (carId 		INT PRIMARY KEY		NOT NULL," 	+
-		        					"  seats 		INT 				NOT NULL," 	+
-		        					"  model 		VARCHAR(50) 		NOT NULL," 	+
-		        					"  year 		INT 				NOT NULL," 	+
-		        					"  gasRate 		double 				NOT NULL," 	+
-		        					"  carClass 	VARCHAR(50) 		NOT NULL";
+	        String sqlCars = 		"CREATE TABLE IF NOT EXISTS car " 					+
+		        					" (carID 			INT PRIMARY KEY		NOT NULL," 		+
+		        					"  operator 		varchar(40) 		PRIMARY KEY NOT NULL," 	+
+		        					"  make 			varchar(45) 		NOT NULL," 		+
+		        					"  model 			varchar(45) 		NOT NULL," 		+
+		        					"  year 			year(4) 			NOT NULL," 		+
+		        					"  numOfSeats 		int(11) 			NOT NULL," 		+
+		        					"  fuelEfficiency 	float	 			NOT NULL";
 	        
-	        String sqlDrivers = 	"CREATE TABLE IF NOT EXISTS users " 			+
-									" (UserId 		INT PRIMARY KEY		NOT NULL," 	+
-									"  name 		VARCHAR(50)			NOT NULL," 	+
-									"  email 		VARCHAR(355) 		NOT NULL," 	+
-									"  password 	VARCHAR(20) 		NOT NULL," 	+
-									"  ratings 		double 				NOT NULL," 	+
-									"  car		 	INT			 		NOT NULL,"	+
-									"  destination 	VARCHAR(255)		NOT NULL,"	+
-									"  endStop 		VARCHAR(255)		NOT NULL";
-	        
-	        String sqlPassengers = 	"CREATE TABLE IF NOT EXISTS users " 			+
-	        						" (UserId 		INT PRIMARY KEY		NOT NULL," 	+
-	        						"  name 		VARCHAR(50)			NOT NULL," 	+
-	        						"  email 		VARCHAR(355) 		NOT NULL," 	+
-	        						"  password 	VARCHAR(20) 		NOT NULL," 	+
-	        						"  ratings 		double 				NOT NULL," 	+
-	        						"  price		double			 			,"	+
-	        						"  route 		INT					NOT NULL";
+	        String sqlDrivers = 	"CREATE TABLE IF NOT EXISTS driver " 			+
+									" (operator 		varchar(40) 		PRIMARY KEY		NOT NULL," 	+
+									"  rating 			float				NOT NULL," 	+
+									"  personsRate 		int(11)		 		NOT NULL," 	+
+									"  tripsCompleted 	int(11)		 		NOT NULL" ;
+							        
+	        String sqlStop = 		"CREATE TABLE IF NOT EXISTS stop " 			+
+	        						" (tripID 		int(11) PRIMARY KEY		NOT NULL," 	+
+	        						"  stopNumber 	int(11)				NOT NULL," 	+
+	        						"  address 		varchar(255) 		NOT NULL," 	+
+	        						"  city		 	varchar(45) 		NOT NULL," 	+
+	        						"  province 	varchar(45) 		NOT NULL," 	+
+	        						"  country		varchar(45)			NOT NULL,"	+
+	        						"  time 		datetime			NOT NULL";
 
 	        
-	        String sqlRatings = 	"CREATE TABLE IF NOT EXISTS ratings " 			+
-									" (UserId 		INT PRIMARY KEY		NOT NULL," 	+
-									"  userRate 	VARCHAR(50)			NOT NULL," 	+
-									"  ratings 		double 				NOT NULL";
+	        String sqlTrip = 		"CREATE TABLE IF NOT EXISTS trip " 			+
+									" (tripID 		INT(11) PRIMARY KEY	NOT NULL," 	+
+									"  operator 	varchar(40)			NOT NULL" ;
+	        
+	        String sqlUsers = 		"CREATE TABLE IF NOT EXISTS users " 			+
+									" (username 	varchar(40) PRIMARY KEY		NOT NULL," 	+
+									"  password 	varchar(64)			NOT NULL," 	+
+									"  email 		varchar(384) 		NOT NULL," 	+
+									"  phone	 	varchar(15) 		NOT NULL," 	+
+									"  firstName 	varchar(90) 		NOT NULL," 	+
+									"  lastName		varchar(90)			NOT NULL";
 	        
 	        stmt.executeUpdate(sqlCars);
 	        stmt.executeUpdate(sqlDrivers);
-	        stmt.executeUpdate(sqlPassengers);
-	        stmt.executeUpdate(sqlRatings);
+	        stmt.executeUpdate(sqlStop);
+	        stmt.executeUpdate(sqlTrip);
+	        stmt.executeUpdate(sqlUsers);
 	        return true;
 		}
 		catch(Exception e) {
