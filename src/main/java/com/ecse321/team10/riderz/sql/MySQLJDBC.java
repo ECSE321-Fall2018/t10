@@ -1,14 +1,15 @@
 package com.ecse321.team10.riderz.sql;
 
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.sql.Connection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.ecse321.team10.riderz.model.CarClass;
-
+import com.ecse321.team10.riderz.model.Car;
 
 public class MySQLJDBC {
 	private static final Logger logger = LogManager.getLogger(MySQLJDBC.class);
@@ -142,6 +143,73 @@ public class MySQLJDBC {
 		}
 	}
 	
+	public boolean updateCarByOperator(String operator, int make, String model, int year, int numOfSeats, 
+			double fuelEfficiency) {
+		String updateCar = String.format( "UPDATE car make = '%s', model = '%s', year = '%d', "
+				+ "numOfSeats = '%d', fuelEfficiency = '%f' WHERE operator = '%d';", make, model, 
+				year, numOfSeats, fuelEfficiency, operator);
+		try {
+			if(c.createStatement().executeUpdate(updateCar) <= 0)
+				return false;
+			return true;
+		}
+		catch(Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+	
+	public ArrayList<Car> getAllCars() {
+        ArrayList<Car> carList = new ArrayList<Car>();
+        try {
+            ResultSet rs = c.createStatement().executeQuery("SELECT * FROM car;");
+            while (rs.next())
+                carList.add(new Car(rs.getInt("carID"), rs.getString("operator"), rs.getString("make"), 
+                		rs.getString("model"), rs.getInt("year"), rs.getInt("numOfSeats"), 
+                		rs.getDouble("fuelEfficiency")));
+            rs.close();
+            return carList;
+        } catch (Exception e) {
+        	logger.error(e.getClass().getName() + ": " + e.getMessage());
+        	return null;
+        }
+        
+    } 
+	
+	public Car getCarByID(int carID) {
+        Car car = null;
+        try {
+            ResultSet rs = c.createStatement().executeQuery(String.format("SELECT * FROM car WHERE carID = '%d';", 
+            		carID));
+            while (rs.next())
+                car = new Car(rs.getInt("carID"), rs.getString("operator"), rs.getString("make"), 
+                		rs.getString("model"), rs.getInt("year"), rs.getInt("numOfSeats"), 
+                		rs.getDouble("fuelEfficiency"));
+            rs.close();
+            return car;
+        } catch (Exception e) {
+        	logger.error(e.getClass().getName() + ": " + e.getMessage());
+        	return null;
+        }
+    }
+	
+	public Car getCarByOperator(String operator) {
+        Car car = null;
+        try {
+            ResultSet rs = c.createStatement().executeQuery(String.format("SELECT * FROM car WHERE operator = '%s';", 
+            		operator));
+            while (rs.next())
+                car = new Car(rs.getInt("carID"), rs.getString("operator"), rs.getString("make"), 
+                		rs.getString("model"), rs.getInt("year"), rs.getInt("numOfSeats"), 
+                		rs.getDouble("fuelEfficiency"));
+            rs.close();
+            return car;
+        } catch (Exception e) {
+        	logger.error(e.getClass().getName() + ": " + e.getMessage());
+        	return null;
+        }
+    }
+	
 	public boolean deleteCarByOpeartor(int operator) {
 		String deleteCar = String.format("DELETE FROM car WHERE operator = %d ", operator);
 		try {
@@ -154,6 +222,4 @@ public class MySQLJDBC {
 			return false;
 		}
 	}
-	
-	
 }
