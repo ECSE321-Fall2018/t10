@@ -95,7 +95,11 @@ public class MySQLJDBC {
 	// CARS API
 	//=======================
 	
-	public boolean insertCar(String operator, int make, String model, int year, int numOfSeats, double fuelEfficiency) {
+	//***Note concerning the by ID and by operator, this is so that we have the choice to perform operations on
+	//a car based on its unique driver or its unique ID. We need only one of the types.
+	
+	public boolean insertCar(String operator, int make, String model, int year, int numOfSeats, 
+			double fuelEfficiency) {
 		String insertCar = String.format("INSERT INTO car (operator, make, model, year, numOfSeats, fuelEfficiency) "
 				+ "VALUES (%s, %s, %s, %d, %d, %f)", operator, make, model, year, numOfSeats, fuelEfficiency);
 		try {
@@ -113,6 +117,22 @@ public class MySQLJDBC {
 		String deleteCar = String.format("DELETE FROM car WHERE carID = %d ", carID);
 		try {
 			if(c.createStatement().executeUpdate(deleteCar) <= 0)
+				return false;
+			return true;
+		}
+		catch(Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+	
+	public boolean updateCarByID(int carID, String operator, int make, String model, int year, int numOfSeats, 
+			double fuelEfficiency) {
+		String updateCar = String.format( "UPDATE car SET operator = '%s', make = '%s', model = '%s', year = '%d', "
+				+ "numOfSeats = '%d', fuelEfficiency = '%f' WHERE carID = '%d';", operator, make, model, 
+				year, numOfSeats, fuelEfficiency, carID);
+		try {
+			if(c.createStatement().executeUpdate(updateCar) <= 0)
 				return false;
 			return true;
 		}
