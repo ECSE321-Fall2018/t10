@@ -3,8 +3,13 @@ package com.ecse321.team10.riderz.sql;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
+import java.sql.PreparedStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
+
+import java.util.ArrayList;
+
+import java.security.MessageDigest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,6 +19,10 @@ import com.ecse321.team10.riderz.model.Car;
 public class MySQLJDBC {
 	private static final Logger logger = LogManager.getLogger(MySQLJDBC.class);
 	
+	private static final String connection = "jdbc:mysql://35.237.200.65:3306/dev";
+	private static final String username = "dev";
+	private static final String password = "ecse321LoGiNdEv";
+
 	private static Connection c;
 	
 	//=======================
@@ -24,52 +33,9 @@ public class MySQLJDBC {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			//this holds dummy values for now
-	        c = DriverManager.getConnection("jdbc:mysql://localhost/feedback?user=sqluser&password=sqluserpw");
+	        c = DriverManager.getConnection(connection, username, password);
 	        logger.info("Connection to the database has been established.");
 	        Statement stmt = c.createStatement();
-	        
-	        String sqlCars = 		"CREATE TABLE IF NOT EXISTS car " 					+
-		        					" (carID 			INT PRIMARY KEY		NOT NULL," 		+
-		        					"  operator 		varchar(40) 		PRIMARY KEY NOT NULL," 	+
-		        					"  make 			varchar(45) 		NOT NULL," 		+
-		        					"  model 			varchar(45) 		NOT NULL," 		+
-		        					"  year 			year(4) 			NOT NULL," 		+
-		        					"  numOfSeats 		int(11) 			NOT NULL," 		+
-		        					"  fuelEfficiency 	float	 			NOT NULL)";
-	        
-	        String sqlDrivers = 	"CREATE TABLE IF NOT EXISTS driver " 			+
-									" (operator 		varchar(40) 		PRIMARY KEY		NOT NULL," 	+
-									"  rating 			float				NOT NULL," 	+
-									"  personsRate 		int(11)		 		NOT NULL," 	+
-									"  tripsCompleted 	int(11)		 		NOT NULL)" ;
-							        
-	        String sqlStop = 		"CREATE TABLE IF NOT EXISTS stop " 			+
-	        						" (tripID 		int(11) PRIMARY KEY		NOT NULL," 	+
-	        						"  stopNumber 	int(11)				NOT NULL," 	+
-	        						"  address 		varchar(255) 		NOT NULL," 	+
-	        						"  city		 	varchar(45) 		NOT NULL," 	+
-	        						"  province 	varchar(45) 		NOT NULL," 	+
-	        						"  country		varchar(45)			NOT NULL,"	+
-	        						"  time 		datetime			NOT NULL)";
-
-	        
-	        String sqlTrip = 		"CREATE TABLE IF NOT EXISTS trip " 			+
-									" (tripID 		INT(11) PRIMARY KEY	NOT NULL," 	+
-									"  operator 	varchar(40)			NOT NULL)" ;
-	        
-	        String sqlUsers = 		"CREATE TABLE IF NOT EXISTS users " 			+
-									" (username 	varchar(40) PRIMARY KEY		NOT NULL," 	+
-									"  password 	varchar(64)			NOT NULL," 	+
-									"  email 		varchar(384) 		NOT NULL," 	+
-									"  phone	 	varchar(15) 		NOT NULL," 	+
-									"  firstName 	varchar(90) 		NOT NULL," 	+
-									"  lastName		varchar(90)			NOT NULL)";
-	        
-	        stmt.executeUpdate(sqlCars);
-	        stmt.executeUpdate(sqlDrivers);
-	        stmt.executeUpdate(sqlStop);
-	        stmt.executeUpdate(sqlTrip);
-	        stmt.executeUpdate(sqlUsers);
 	        return true;
 		}
 		catch(Exception e) {
@@ -77,6 +43,7 @@ public class MySQLJDBC {
 			return false;
 		}
 	}
+
 	public boolean closeConnection() {
 		try {
 			if (c != null) {
@@ -95,18 +62,26 @@ public class MySQLJDBC {
 	//=======================
 	// CARS API
 	//=======================
-	
-	//***Note concerning the by ID and by operator, this is so that we have the choice to perform operations on
-	//a car based on its unique driver or its unique ID. We need only one of the types.
-	
-	public boolean insertCar(String operator, int make, String model, int year, int numOfSeats, 
-			double fuelEfficiency) {
-		String insertCar = String.format("INSERT INTO car (operator, make, model, year, numOfSeats, fuelEfficiency) "
-				+ "VALUES (%s, %s, %s, %d, %d, %f)", operator, make, model, year, numOfSeats, fuelEfficiency);
+
+	public boolean insertCar(String operator, String make, String model, int year,
+							 int numOfSeats, double fuelEfficiency, String licensePlate) {
+		String insertCar = "INSERT INTO car (operator, make, model, year, numOfSeats, " +
+						   "fuelEfficiency, licensePlate) VALUES (?, ?, ?, ?, ?, ?, ?);";
+		PreparedStatement ps = null;
 		try {
-			if(c.createStatement().executeUpdate(insertCar) <= 0)
-				return false;
-			return true;
+			ps = c.prepareStatement(insertCar);
+			ps.setString(1, operator);
+			ps.setString(2, make);
+			ps.setString(3, model);
+			ps.setInt(4, year);
+			ps.setInt(5, numOfSeats);
+			ps.setDouble(6, fuelEfficiency);
+			ps.setString(7, licensePlate);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
 		}
 		catch(Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -114,44 +89,42 @@ public class MySQLJDBC {
 		}
 	}
 	
-	public boolean deleteCarByID(int carID) {
-		String deleteCar = String.format("DELETE FROM car WHERE carID = %d ", carID);
+	public boolean deleteCar(String operator) {
+		String deleteCar = "DELETE FROM car WHERE operator = ?;";
+		PreparedStatement ps = null;
 		try {
-			if(c.createStatement().executeUpdate(deleteCar) <= 0)
-				return false;
-			return true;
-		}
-		catch(Exception e) {
+			ps = c.prepareStatement(deleteCar);
+			ps.setString(1, operator);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
 			return false;
 		}
 	}
 	
-	public boolean updateCarByID(int carID, String operator, int make, String model, int year, int numOfSeats, 
-			double fuelEfficiency) {
-		String updateCar = String.format( "UPDATE car SET operator = '%s', make = '%s', model = '%s', year = '%d', "
-				+ "numOfSeats = '%d', fuelEfficiency = '%f' WHERE carID = '%d';", operator, make, model, 
-				year, numOfSeats, fuelEfficiency, carID);
+	public boolean updateCar(String operator, String make, String model, int year, 
+							 int numOfSeats, double fuelEfficiency, String licensePlate) {
+		String updateCar = "UPDATE car SET make = ?, model = ?, year = ?, numOfSeats = ?, " +
+					   	   "fuelEfficiency = ?, licensePlate = ? WHERE operator = ?;";
+		PreparedStatement ps = null;
 		try {
-			if(c.createStatement().executeUpdate(updateCar) <= 0)
-				return false;
-			return true;
-		}
-		catch(Exception e) {
-			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			ps = c.prepareStatement(updateCar);
+			ps.setString(1, make);
+			ps.setString(2, model);
+			ps.setInt(3, year);
+			ps.setInt(4, numOfSeats);
+			ps.setDouble(5, fuelEfficiency);
+			ps.setString(6, licensePlate);
+			ps.setString(7, operator);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
 			return false;
-		}
-	}
-	
-	public boolean updateCarByOperator(String operator, int make, String model, int year, int numOfSeats, 
-			double fuelEfficiency) {
-		String updateCar = String.format( "UPDATE car make = '%s', model = '%s', year = '%d', "
-				+ "numOfSeats = '%d', fuelEfficiency = '%f' WHERE operator = '%d';", make, model, 
-				year, numOfSeats, fuelEfficiency, operator);
-		try {
-			if(c.createStatement().executeUpdate(updateCar) <= 0)
-				return false;
-			return true;
 		}
 		catch(Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -163,10 +136,11 @@ public class MySQLJDBC {
         ArrayList<Car> carList = new ArrayList<Car>();
         try {
             ResultSet rs = c.createStatement().executeQuery("SELECT * FROM car;");
-            while (rs.next())
-                carList.add(new Car(rs.getInt("carID"), rs.getString("operator"), rs.getString("make"), 
+            while (rs.next()) {
+                carList.add(new Car(rs.getString("operator"), rs.getString("make"), 
                 		rs.getString("model"), rs.getInt("year"), rs.getInt("numOfSeats"), 
-                		rs.getDouble("fuelEfficiency")));
+                		rs.getDouble("fuelEfficiency"), rs.getString("licensePlate")));
+			}
             rs.close();
             return carList;
         } catch (Exception e) {
@@ -176,50 +150,88 @@ public class MySQLJDBC {
         
     } 
 	
-	public Car getCarByID(int carID) {
-        Car car = null;
-        try {
-            ResultSet rs = c.createStatement().executeQuery(String.format("SELECT * FROM car WHERE carID = '%d';", 
-            		carID));
-            while (rs.next())
-                car = new Car(rs.getInt("carID"), rs.getString("operator"), rs.getString("make"), 
-                		rs.getString("model"), rs.getInt("year"), rs.getInt("numOfSeats"), 
-                		rs.getDouble("fuelEfficiency"));
-            rs.close();
-            return car;
-        } catch (Exception e) {
-        	logger.error(e.getClass().getName() + ": " + e.getMessage());
-        	return null;
-        }
-    }
-	
 	public Car getCarByOperator(String operator) {
+		String query = "SELECT * FROM car WHERE operator = ?;";
         Car car = null;
+		PreparedStatement ps = null;
         try {
-            ResultSet rs = c.createStatement().executeQuery(String.format("SELECT * FROM car WHERE operator = '%s';", 
-            		operator));
-            while (rs.next())
-                car = new Car(rs.getInt("carID"), rs.getString("operator"), rs.getString("make"), 
-                		rs.getString("model"), rs.getInt("year"), rs.getInt("numOfSeats"), 
-                		rs.getDouble("fuelEfficiency"));
-            rs.close();
+			ps = c.prepareStatement(query);
+			ps.setString(1, operator);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                car = new Car(rs.getString("operator"), rs.getString("make"), 
+                			  rs.getString("model"), rs.getInt("year"), 
+							  rs.getInt("numOfSeats"), rs.getDouble("fuelEfficiency"), 
+							  rs.getString("licensePlate"));
+			}
+            ps.close();
             return car;
         } catch (Exception e) {
         	logger.error(e.getClass().getName() + ": " + e.getMessage());
         	return null;
         }
     }
-	
-	public boolean deleteCarByOpeartor(int operator) {
-		String deleteCar = String.format("DELETE FROM car WHERE operator = %d ", operator);
-		try {
-			if(c.createStatement().executeUpdate(deleteCar) <= 0)
-				return false;
-			return true;
-		}
-		catch(Exception e) {
-			logger.error(e.getClass().getName() + ": " + e.getMessage());
-			return false;
-		}
+
+	//=======================
+	// USERS API
+	//=======================
+	public boolean createUser(String username, String password, String email,
+							  String phone, String firstName, String lastName) {
+		return false;
+	}
+
+	public boolean deleteUser(String username) {
+		return false;
+	}
+
+	public boolean verifyLogin(String username, String password) {
+		return false;
+	}
+
+	public String getEmail(String username) {
+		return null;
+	}
+
+	public boolean setEmail(String username, String email) {
+		return false;
+	}
+
+	private String getPassword(String username) {
+		return null;
+	}
+
+	public boolean setPassword(String username, String password) {
+		return false;
+	}
+
+	//=======================
+	// DRIVER API
+	//=======================
+	public boolean createDriver(String operator) {
+		return false;
+	}
+
+	public boolean deleteDriver() {
+		return false;
+	}
+
+	public double getRating() {
+		return 0.0;
+	}
+
+	public boolean addRating(String operator, double rating) {
+		return false;
+	}
+
+	public boolean clearRating(String operator) {
+		return false;
+	}
+
+	public int getTripCompleted() {
+		return 0;
+	}
+
+	public boolean incrementTripCompleted() {
+		return false;
 	}
 }
