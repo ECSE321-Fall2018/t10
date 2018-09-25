@@ -49,7 +49,7 @@ public class Car {
 	}
 
 	public String toString() {
-		return "Operator: " + this.operator + " Make: " + this.make +
+		return "[Car] Operator: " + this.operator + " Make: " + this.make +
 			   " Model: " + this.model + " Year: " + this.year +
 			   " Number Of Seats: " + this.numOfSeats + " Fuel Efficiency: " +
 			   this.fuelEfficiency + " License Plate: " + this.licensePlate;
