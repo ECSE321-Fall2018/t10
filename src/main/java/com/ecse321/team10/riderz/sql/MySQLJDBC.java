@@ -11,10 +11,15 @@ import java.util.ArrayList;
 
 import java.security.MessageDigest;
 
+import javax.xml.bind.DatatypeConverter;
+
+import java.nio.charset.StandardCharsets;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ecse321.team10.riderz.model.Car;
+import com.ecse321.team10.riderz.model.User;
 
 public class MySQLJDBC {
 	private static final Logger logger = LogManager.getLogger(MySQLJDBC.class);
@@ -175,33 +180,164 @@ public class MySQLJDBC {
 	//=======================
 	// USERS API
 	//=======================
-	public boolean createUser(String username, String password, String email,
+	public boolean insertUser(String username, String password, String email,
 							  String phone, String firstName, String lastName) {
-		return false;
+		String insertUser = "INSERT INTO users (username, password, email, phone, " +
+							"firstName, lastName) VALUES (?, ?, ?, ?, ?, ?);";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(insertUser);
+			ps.setString(1, username);
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
+			ps.setString(2, DatatypeConverter.printHexBinary(hash));
+			ps.setString(3, email);
+			ps.setString(4, phone);
+			ps.setString(5, firstName);
+			ps.setString(6, lastName);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
 	}
 
 	public boolean deleteUser(String username) {
-		return false;
+		String deleteUser = "DELETE FROM users WHERE username = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(deleteUser);
+			ps.setString(1, username);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	public User getUserByUsername(String username) {
+		String getUser = "SELECT * FROM users WHERE username = ?;";
+		User user = null;
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(getUser);
+			ps.setString(1, username);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				user = new User(rs.getString("username"), rs.getString("password"),
+								rs.getString("email"), rs.getString("phone"),
+								rs.getString("firstName"), rs.getString("lastName"));
+			}
+			ps.close();
+			return user;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	public ArrayList<User> getAllUsers() {
+		ArrayList<User> userList = new ArrayList<User>();
+		try {
+			ResultSet rs = c.createStatement().executeQuery("SELECT * FROM users;");
+			while (rs.next()) {
+				userList.add(new User(rs.getString("username"), rs.getString("password"),
+						rs.getString("email"), rs.getString("phone"),
+						rs.getString("firstName"), rs.getString("lastName")));
+			}
+			rs.close();
+			return userList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
 	}
 
 	public boolean verifyLogin(String username, String password) {
-		return false;
+		String verifyLogin = "SELECT username FROM users WHERE username = ? AND password = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(verifyLogin);
+			ps.setString(1, username);
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
+			ps.setString(2, DatatypeConverter.printHexBinary(hash));
+			ResultSet rs = ps.executeQuery();
+			rs.last();
+			if (rs.getRow() == 1) {
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
 	}
 
 	public String getEmail(String username) {
-		return null;
+		String getEmail = "SELECT email FROM users WHERE username = ?;";
+		PreparedStatement ps = null;
+		String email = null;
+		try {
+			ps = c.prepareStatement(getEmail);
+			ps.setString(1, username);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				email = rs.getString("email");
+			}
+			ps.close();
+			return email;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
 	}
 
 	public boolean setEmail(String username, String email) {
-		return false;
-	}
-
-	private String getPassword(String username) {
-		return null;
+		String setEmail = "UPDATE users SET email = ? WHERE username = ?;";
+	   	PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(setEmail);
+			ps.setString(1, email);
+			ps.setString(2, username);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
 	}
 
 	public boolean setPassword(String username, String password) {
-		return false;
+		String setPassword = "UPDATE users SET password = ? WHERE username = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(setPassword);
+
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
+			ps.setString(1, DatatypeConverter.printHexBinary(hash));
+			ps.setString(2, username);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
 	}
 
 	//=======================
