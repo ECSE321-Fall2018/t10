@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import com.ecse321.team10.riderz.model.Driver;
 import com.ecse321.team10.riderz.model.Car;
 import com.ecse321.team10.riderz.model.User;
+import com.ecse321.team10.riderz.model.Trip;
 
 public class MySQLJDBC {
 	private static final Logger logger = LogManager.getLogger(MySQLJDBC.class);
@@ -564,6 +565,95 @@ public class MySQLJDBC {
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
 			return false;
+		}
+	}
+
+	//=======================
+	// TRIP API
+	//=======================
+	public boolean insertTrip(String operator) {
+		String insertTrip = "INSERT INTO trip(operator) VALUES (?);";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(insertTrip);
+			ps.setString(1, operator);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	public boolean deleteTrip(int tripID, String operator) {
+		String deleteTrip = "DELETE FROM trip WHERE tripID = ? AND operator = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(deleteTrip);
+			ps.setInt(1, tripID);
+			ps.setString(2, operator);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	public boolean deleteAllTrips(String operator) {
+		String deleteAllTrips = "DELETE FROM trip WHERE operator = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(deleteAllTrips);
+			ps.setString(1, operator);
+			if (ps.executeUpdate() != 0) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	public ArrayList<Trip> getTripsByUsername(String operator) {
+		ArrayList<Trip> tripList = new ArrayList<Trip>();
+		String getTripsByUsername = "SELECT * FROM trip WHERE operator = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(getTripsByUsername);
+			ps.setString(1, operator);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				tripList.add(new Trip(rs.getInt("tripID"), rs.getString("operator")));
+			}
+			rs.close();
+			return tripList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	public ArrayList<Trip> getAllTrips() {
+		ArrayList<Trip> tripList = new ArrayList<Trip>();
+		try {
+			ResultSet rs = c.createStatement().executeQuery("SELECT * FROM trip;");
+			while (rs.next()) {
+				tripList.add(new Trip(rs.getInt("tripID"), rs.getString("operator")));
+			}
+			rs.close();
+			return tripList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
 		}
 	}
 }
