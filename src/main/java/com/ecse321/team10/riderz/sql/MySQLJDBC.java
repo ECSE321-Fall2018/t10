@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.ecse321.team10.riderz.model.Driver;
 import com.ecse321.team10.riderz.model.Car;
 import com.ecse321.team10.riderz.model.User;
 
@@ -343,31 +344,189 @@ public class MySQLJDBC {
 	//=======================
 	// DRIVER API
 	//=======================
-	public boolean createDriver(String operator) {
-		return false;
+	public boolean insertDriver(String operator) {
+		String insertDriver = "INSERT INTO driver (operator, rating, personsRated, " +
+							  "tripsCompleted) VALUES (?, 0.0, 0, 0);";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(insertDriver);
+			ps.setString(1, operator);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
 	}
 
-	public boolean deleteDriver() {
-		return false;
+	public boolean deleteDriver(String operator) {
+		String deleteDriver = "DELETE FROM driver WHERE operator = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(deleteDriver);
+			ps.setString(1, operator);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
 	}
 
-	public double getRating() {
-		return 0.0;
+	public Driver getDriverByUsername(String operator) {
+		String getDriver = "SELECT * FROM driver WHERE operator = ?;";
+		Driver driver = null;
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(getDriver);
+			ps.setString(1, operator);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				driver = new Driver(rs.getString("operator"), rs.getDouble("rating"),
+									rs.getInt("personsRated"), rs.getInt("tripsCompleted"));
+			}
+			ps.close();
+			return driver;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	public ArrayList<Driver> getAllDrivers() {
+		ArrayList<Driver> driverList = new ArrayList<Driver>();
+		try {
+			ResultSet rs = c.createStatement().executeQuery("SELECT * FROM driver;");
+			while (rs.next()) {
+				driverList.add(new Driver(rs.getString("operator"), rs.getDouble("rating"),
+										  rs.getInt("personsRated"), rs.getInt("tripsCompleted")));
+			}
+			rs.close();
+			return driverList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	public double getRating(String operator) {
+		String getRating = "SELECT rating FROM driver WHERE operator = ?;";
+		PreparedStatement ps = null;
+		double rating = 0.0;
+		try {
+			ps = c.prepareStatement(getRating);
+			ps.setString(1, operator);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				rating = rs.getDouble("rating");
+			}
+			ps.close();
+			return rating;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return 0.0;
+		}
 	}
 
 	public boolean addRating(String operator, double rating) {
-		return false;
+		String addRating = "UPDATE driver SET rating = ? WHERE operator = ?;";
+		double oldRating = getRating(operator);
+		int personsRated = getPersonsRated(operator);
+		PreparedStatement ps = null;
+		try {
+			double newRating = ((personsRated * oldRating) + rating) / (personsRated + 1);
+			ps = c.prepareStatement(addRating);
+			ps.setDouble(1, newRating);
+			ps.setString(2, operator);
+			if (ps.executeUpdate() == 1 && 
+				incrementPersonsRated(operator)) {
+
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
 	}
 
-	public boolean clearRating(String operator) {
-		return false;
+	public int getPersonsRated(String operator) {
+		String getPersonsRated = "SELECT personsRated FROM driver WHERE operator = ?;";
+		PreparedStatement ps = null;
+		int personsRated = 0;
+		try {
+			ps = c.prepareStatement(getPersonsRated);
+			ps.setString(1, operator);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				personsRated = rs.getInt("personsRated");
+			}
+			ps.close();
+			return personsRated;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return 0;
+		}
 	}
 
-	public int getTripCompleted() {
-		return 0;
+	public boolean incrementPersonsRated(String operator) {
+		String incrementPersonsRated = "UPDATE driver SET personsRated = personsRated + 1 " +
+									   "WHERE operator = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(incrementPersonsRated);
+			ps.setString(1, operator);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
 	}
 
-	public boolean incrementTripCompleted() {
-		return false;
+	public int getTripsCompleted(String operator) {
+		String getTripsCompleted = "SELECT tripsCompleted FROM driver WHERE operator = ?;";
+		PreparedStatement ps = null;
+		int tripsCompleted = 0;
+		try {
+			ps = c.prepareStatement(getTripsCompleted);
+			ps.setString(1, operator);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				tripsCompleted = rs.getInt("tripsCompleted");
+			}
+			ps.close();
+			return tripsCompleted;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return 0;
+		}
+	}
+
+	public boolean incrementTripsCompleted(String operator) {
+		String incrementTripsCompleted = "UPDATE driver SET tripsCompleted = tripsCompleted + 1 " +
+									   	 "WHERE operator = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(incrementTripsCompleted);
+			ps.setString(1, operator);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
 	}
 }
