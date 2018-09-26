@@ -283,6 +283,43 @@ public class MySQLJDBC {
 		}
 	}
 
+	public String getPhone(String username) {
+		String getPhone = "SELECT phone FROM users WHERE username = ?;";
+		PreparedStatement ps = null;
+		String phone = null;
+		try {
+			ps = c.prepareStatement(getPhone);
+			ps.setString(1, username);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				phone = rs.getString("phone");
+			}
+			ps.close();
+			return phone;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	public boolean setPhone(String username, String phone) {
+		String setPhone = "UPDATE users SET phone = ? WHERE username = ?;";
+	   	PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(setPhone);
+			ps.setString(1, phone);
+			ps.setString(2, username);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
 	public String getEmail(String username) {
 		String getEmail = "SELECT email FROM users WHERE username = ?;";
 		PreparedStatement ps = null;
