@@ -23,7 +23,9 @@ import com.ecse321.team10.riderz.model.Driver;
 import com.ecse321.team10.riderz.model.Car;
 import com.ecse321.team10.riderz.model.User;
 import com.ecse321.team10.riderz.model.Trip;
-import com.ecse321.team10.riderz.model.Stop;
+import com.ecse321.team10.riderz.model.Iterary;
+import com.ecse321.team10.riderz.model.Location;
+import com.ecse321.team10.riderz.model.Reservation;
 
 public class MySQLJDBC {
 	private static final Logger logger = LogManager.getLogger(MySQLJDBC.class);
@@ -644,6 +646,26 @@ public class MySQLJDBC {
 		}
 	}
 
+	public Trip getLastTripByUsername(String operator) {
+		String getLastTripByUsername = "SELECT * FROM trip WHERE operator = ? ORDER BY " +
+									   "tripID DESC LIMIT 1;";
+		PreparedStatement ps = null;
+		Trip trip = null;
+		try {
+			ps = c.prepareStatement(getLastTripByUsername);
+			ps.setString(1, operator);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				trip = new Trip(rs.getInt("tripID"), rs.getString("operator"));
+			}
+			ps.close();
+			return trip;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
 	public ArrayList<Trip> getAllTrips() {
 		ArrayList<Trip> tripList = new ArrayList<Trip>();
 		try {
@@ -660,22 +682,24 @@ public class MySQLJDBC {
 	}
 
 	//=======================
-	// STOP API
+	// Iterary API
 	//=======================
-	public boolean insertStop(Stop stop) {
-		String insertStop = "INSERT INTO stop(tripID, stopNumber, address, city, province, " +
-							"country, timestamp, seatsLeft) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+	public boolean insertIterary(Iterary iterary) {
+		String insertIterary = "INSERT INTO iterary(tripID, startingLongitude, " +
+							   "startingLatitude, startingTime, endingLongitude, " +
+							   "endingLatitude, endingTime, seatsLeft) " +
+							   "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement ps = null;
 		try {
-			ps = c.prepareStatement(insertStop);
-			ps.setInt(1, stop.getTripID());
-			ps.setInt(2, stop.getStopNumber());
-			ps.setString(3, stop.getAddress());
-			ps.setString(4, stop.getCity().toUpperCase());
-			ps.setString(5, stop.getProvince().toUpperCase());
-			ps.setString(6, stop.getCountry().toUpperCase());
-			ps.setTimestamp(7, stop.getTimestamp());
-			ps.setInt(8, stop.getSeatsLeft());
+			ps = c.prepareStatement(insertIterary);
+			ps.setInt(1, iterary.getTripID());
+			ps.setDouble(2, iterary.getStartingLongitude());
+			ps.setDouble(3, iterary.getStartingLatitude());
+			ps.setTimestamp(4, iterary.getStartingTime());
+			ps.setDouble(5, iterary.getEndingLongitude());
+			ps.setDouble(6, iterary.getEndingLatitude());
+			ps.setTimestamp(7, iterary.getEndingTime());
+			ps.setInt(8, iterary.getSeatsLeft());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
 				return true;
@@ -687,47 +711,22 @@ public class MySQLJDBC {
 		}
 	}
 
-	public boolean insertStops(ArrayList<Stop> stopList) {
-		String insertStops = "INSERT INTO stop(tripID, stopNumber, address, city, province, " +
-							 "country, timestamp, seatsLeft) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+	public boolean updateIterary(Iterary iterary) {
+		String updateIterary = "UPDATE iterary SET startingLongitude = ?, " +
+							   "startingLatitude = ?, startingTime = ?, " +
+							   "endingLongitude = ?, endingLatitude = ?, " +
+							   "endingTime = ?, seatsLeft = ? WHERE tripID = ?;";
 		PreparedStatement ps = null;
 		try {
-			for (int i = 0; i < stopList.size(); i++) {
-				ps = c.prepareStatement(insertStops);
-				ps.setInt(1, stopList.get(i).getTripID());
-				ps.setInt(2, stopList.get(i).getStopNumber());
-				ps.setString(3, stopList.get(i).getAddress());
-				ps.setString(4, stopList.get(i).getCity().toUpperCase());
-				ps.setString(5, stopList.get(i).getProvince().toUpperCase());
-				ps.setString(6, stopList.get(i).getCountry().toUpperCase());
-				ps.setTimestamp(7, stopList.get(i).getTimestamp());
-				ps.setInt(8, stopList.get(i).getSeatsLeft());
-				if (ps.executeUpdate() == 0) {
-					return false;
-				}
-				ps.close();
-			}
-			return true;
-		} catch (Exception e) {
-			logger.error(e.getClass().getName() + ": " + e.getMessage());
-			return false;
-		}
-	}
-
-	public boolean updateStop(Stop stop) {
-		String updateStop = "UPDATE stop SET address = ?, city = ?, province = ?, " +
-							"country = ?, timestamp = ?, seatsLeft = ? WHERE tripID = ? AND stopNumber = ?;";
-		PreparedStatement ps = null;
-		try {
-			ps = c.prepareStatement(updateStop);
-			ps.setString(1, stop.getAddress());
-			ps.setString(2, stop.getCity());
-			ps.setString(3, stop.getProvince());
-			ps.setString(4, stop.getCountry());
-			ps.setTimestamp(5, stop.getTimestamp());
-			ps.setInt(6, stop.getSeatsLeft());
-			ps.setInt(7, stop.getTripID());
-			ps.setInt(8, stop.getStopNumber());
+			ps = c.prepareStatement(updateIterary);
+			ps.setDouble(1, iterary.getStartingLongitude());
+			ps.setDouble(2, iterary.getStartingLatitude());
+			ps.setTimestamp(3, iterary.getStartingTime());
+			ps.setDouble(4, iterary.getEndingLongitude());
+			ps.setDouble(5, iterary.getEndingLatitude());
+			ps.setTimestamp(6, iterary.getEndingTime());
+			ps.setInt(7, iterary.getSeatsLeft());
+			ps.setInt(8, iterary.getTripID());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
 				return true;
@@ -739,13 +738,12 @@ public class MySQLJDBC {
 		}
 	}
 
-	public boolean deleteStop(int tripID, int stopNumber) {
-		String deleteStop = "DELETE FROM stop WHERE tripID = ? AND stopNumber = ?;";
+	public boolean deleteIterary(int tripID) {
+		String deleteStop = "DELETE FROM iterary WHERE tripID = ?;";
 		PreparedStatement ps = null;
 		try {
 			ps = c.prepareStatement(deleteStop);
 			ps.setInt(1, tripID);
-			ps.setInt(2, stopNumber);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
 				return true;
@@ -757,74 +755,75 @@ public class MySQLJDBC {
 		}
 	}
 
-	public boolean deleteStops(int tripID) {
-		String deleteStops = "DELETE FROM stop WHERE tripID = ?;";
+	public Iterary getIteraryByTripID(int tripID) {
+		Iterary iterary = null;
+		String getIteraryByTripID = "SELECT * FROM iterary WHERE tripID = ?;";
 		PreparedStatement ps = null;
 		try {
-			ps = c.prepareStatement(deleteStops);
-			ps.setInt(1, tripID);
-			if (ps.executeUpdate() == 0) {
-				return false;
-			}
-			ps.close();
-			return true;
-		} catch (Exception e) {
-			logger.error(e.getClass().getName() + ": " + e.getMessage());
-			return false;
-		}
-	}
-
-	public ArrayList<Stop> getStopsByTripID(int tripID) {
-		ArrayList<Stop> stopList = new ArrayList<Stop>();
-		String getStopByTripID = "SELECT * FROM stop WHERE tripID = ?;";
-		PreparedStatement ps = null;
-		try {
-			ps = c.prepareStatement(getStopByTripID);
+			ps = c.prepareStatement(getIteraryByTripID);
 			ps.setInt(1, tripID);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				stopList.add(new Stop(rs.getInt("tripID"), rs.getInt("stopNumber"), rs.getString("address"),
-									  rs.getString("city"), rs.getString("province"), rs.getString("country"),
-									  rs.getTimestamp("timestamp"), rs.getInt("seatsLeft")));
+				iterary = new Iterary(rs.getInt("tripID"),
+									  rs.getDouble("startingLongitude"),
+									  rs.getDouble("startingLatitude"),
+									  rs.getTimestamp("startingTime"),
+									  rs.getDouble("endingLongitude"),
+									  rs.getDouble("endingLatitude"),
+									  rs.getTimestamp("endingTime"),
+									  rs.getInt("seatsLeft"));
 			}
 			rs.close();
-			return stopList;
+			return iterary;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
 			return null;
 		}
 	}
 
-	public ArrayList<Integer> getTripsByCity(String startingCity, Timestamp startingDate, String endingCity) {
-		ArrayList<Integer> tripIDList = new ArrayList<Integer>();
-		String getTripID = "SELECT DISTINCT(tripID) FROM stop WHERE tripID IN " +
-						   "(SELECT tripID FROM stop WHERE city = ? AND timestamp >= ? " +
-						   "AND seatsLeft > 0) AND city = ? AND timestamp > NOW() AND seatsLeft > 0;";
+	public ArrayList<Iterary> getIteraryNearDestination(double endingLongitude,
+					double endingLatitude, double maximumDistance, Timestamp arrivalTime) {
+		ArrayList<Iterary> iteraryList = new ArrayList<Iterary>();
+		double radiusOfEarth = 6371000.0;
+		String getIteraryNearDestination = "SELECT * FROM iterary WHERE SQRT(" +
+						   "POWER((2 * PI() * ? * (ABS(endingLongitude - ?) / 360.0)), 2) + " +
+						   "POWER((2 * PI() * ? * (ABS(endingLatitude - ?) / 360.0)), 2)) <= ? " +
+						   "AND endingTime > NOW() AND endingTime <= ?;";
 		PreparedStatement ps = null;
 		try {
-			ps = c.prepareStatement(getTripID);
-			ps.setString(1, startingCity.toUpperCase());
-			ps.setTimestamp(2, startingDate);
-			ps.setString(3, endingCity.toUpperCase());
+			ps = c.prepareStatement(getIteraryNearDestination);
+			ps.setDouble(1, radiusOfEarth);
+			ps.setDouble(2, endingLongitude);
+			ps.setDouble(3, radiusOfEarth);
+			ps.setDouble(4, endingLatitude);
+			ps.setDouble(5, maximumDistance);
+			ps.setTimestamp(6, arrivalTime);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				tripIDList.add(new Integer(rs.getInt("tripID")));
+				iteraryList.add(new Iterary(rs.getInt("tripID"),
+											rs.getDouble("startingLongitude"),
+										    rs.getDouble("startingLatitude"),
+											rs.getTimestamp("startingTime"),
+											rs.getDouble("endingLongitude"),
+											rs.getDouble("endingLatitude"),
+											rs.getTimestamp("endingTime"),
+											rs.getInt("seatsLeft")));
 			}
 			ps.close();
-			return tripIDList;
+			return iteraryList;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
 			return null;
 		}
 	}
 
-	public boolean incrementSeatsLeft(int tripID, int stopNumber) {
-		String incrementSeatsLeft = "UPDATE stop SET seatsLeft = seatsLeft + 1 WHERE tripID = ? AND stopNumber = ?;";
+	public boolean incrementSeatsLeft(int tripID) {
+		String incrementSeatsLeft = "UPDATE iterary SET seatsLeft = seatsLeft + 1 " +
+									"WHERE tripID = ?;";
 		PreparedStatement ps = null;
 		try {
 			ps = c.prepareStatement(incrementSeatsLeft);
 			ps.setInt(1, tripID);
-			ps.setInt(2, stopNumber);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
 				return true;
@@ -836,13 +835,13 @@ public class MySQLJDBC {
 		}
 	}
 
-	public boolean decrementSeatsLeft(int tripID, int stopNumber) {
-		String decrementSeatsLeft = "UPDATE stop SET seatsLeft = seatsLeft - 1 WHERE tripID = ? AND stopNumber = ?;";
+	public boolean decrementSeatsLeft(int tripID) {
+		String decrementSeatsLeft = "UPDATE iterary SET seatsLeft = seatsLeft - 1 " +
+									"WHERE tripID = ?;";
 		PreparedStatement ps = null;
 		try {
 			ps = c.prepareStatement(decrementSeatsLeft);
 			ps.setInt(1, tripID);
-			ps.setInt(2, stopNumber);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
 				return true;
@@ -854,4 +853,149 @@ public class MySQLJDBC {
 		}
 	}
 
+	//=======================
+	// LOCATION API
+	//=======================
+	public boolean insertLocation(Location location) {
+		String insertLocation = "INSERT INTO location (operator, longitude, latitude) VALUES (?, ?, ?);";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(insertLocation);
+			ps.setString(1, location.getOperator());
+			ps.setDouble(2, location.getLongitude());
+			ps.setDouble(3, location.getLatitude());
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	public ArrayList<Location> getLocationNear(double longitude, double latitude, double maximumDistance) {
+		ArrayList<Location> locationList = new ArrayList<Location>();
+		String getLocationNear = "SELECT * FROM location WHERE SQRT(" +
+						   		 "POWER((2 * PI() * ? * (ABS(longitude - ?) / 360.0)), 2) + " +
+						   		 "POWER((2 * PI() * ? * (ABS(latitude - ?) / 360.0)), 2)) <= ?;";
+		PreparedStatement ps = null;
+		double radiusOfEarth = 6371000;
+		try {
+			ps = c.prepareStatement(getLocationNear);
+			ps.setDouble(1, radiusOfEarth);
+			ps.setDouble(2, longitude);
+			ps.setDouble(3, radiusOfEarth);
+			ps.setDouble(4, latitude);
+			ps.setDouble(5, maximumDistance);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				locationList.add(new Location(rs.getString("operator"), rs.getDouble("longitude"),
+											  rs.getDouble("latitude")));
+			}
+			rs.close();
+			return locationList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	public Location getLocationByUsername(String operator) {
+		String getLocationByUsername = "SELECT * FROM location WHERE operator = ?;";
+		Location location = null;
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(getLocationByUsername);
+			ps.setString(1, operator);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				location = new Location(rs.getString("operator"), rs.getDouble("longitude"),
+										rs.getDouble("latitude"));
+			}
+			rs.close();
+			return location;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	public boolean updateLocation(Location location) {
+		String updateLocation = "UPDATE location SET longitude = ? AND latitude = ? WHERE operator = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(updateLocation);
+			ps.setDouble(1, location.getLongitude());
+			ps.setDouble(2, location.getLatitude());
+			ps.setString(3, location.getOperator());
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	//=======================
+	// RESERVATION API
+	//=======================
+	public boolean insertReservation(Reservation reservation) {
+		String insertReservation = "INSERT INTO reservation (operator, tripID) VALUES (?, ?);";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(insertReservation);
+			ps.setString(1, reservation.getOperator());
+			ps.setInt(2, reservation.getTripID());
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	public boolean deleteReservation(Reservation reservation) {
+		String deleteReservation = "DELETE FROM reservation WHERE operator = ? AND tripID = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(deleteReservation);
+			ps.setString(1, reservation.getOperator());
+			ps.setInt(2, reservation.getTripID());
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	public ArrayList<Reservation> getReservationByUsername(String operator) {
+		String getReservationByUsername = "SELECT * FROM reservation WHERE operator = ?;";
+		PreparedStatement ps = null;
+		ArrayList<Reservation> reservationList = new ArrayList<Reservation>();
+		try {
+			ps = c.prepareStatement(getReservationByUsername);
+			ps.setString(1, operator);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				reservationList.add(new Reservation(rs.getString("operator"), rs.getInt("tripID")));
+			}
+			rs.close();
+			return reservationList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
 }
