@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 
 import java.util.ArrayList;
 
@@ -22,6 +23,7 @@ import com.ecse321.team10.riderz.model.Driver;
 import com.ecse321.team10.riderz.model.Car;
 import com.ecse321.team10.riderz.model.User;
 import com.ecse321.team10.riderz.model.Trip;
+import com.ecse321.team10.riderz.model.Stop;
 
 public class MySQLJDBC {
 	private static final Logger logger = LogManager.getLogger(MySQLJDBC.class);
@@ -656,4 +658,200 @@ public class MySQLJDBC {
 			return null;
 		}
 	}
+
+	//=======================
+	// STOP API
+	//=======================
+	public boolean insertStop(Stop stop) {
+		String insertStop = "INSERT INTO stop(tripID, stopNumber, address, city, province, " +
+							"country, timestamp, seatsLeft) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(insertStop);
+			ps.setInt(1, stop.getTripID());
+			ps.setInt(2, stop.getStopNumber());
+			ps.setString(3, stop.getAddress());
+			ps.setString(4, stop.getCity().toUpperCase());
+			ps.setString(5, stop.getProvince().toUpperCase());
+			ps.setString(6, stop.getCountry().toUpperCase());
+			ps.setTimestamp(7, stop.getTimestamp());
+			ps.setInt(8, stop.getSeatsLeft());
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	public boolean insertStops(ArrayList<Stop> stopList) {
+		String insertStops = "INSERT INTO stop(tripID, stopNumber, address, city, province, " +
+							 "country, timestamp, seatsLeft) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+		PreparedStatement ps = null;
+		try {
+			for (int i = 0; i < stopList.size(); i++) {
+				ps = c.prepareStatement(insertStops);
+				ps.setInt(1, stopList.get(i).getTripID());
+				ps.setInt(2, stopList.get(i).getStopNumber());
+				ps.setString(3, stopList.get(i).getAddress());
+				ps.setString(4, stopList.get(i).getCity().toUpperCase());
+				ps.setString(5, stopList.get(i).getProvince().toUpperCase());
+				ps.setString(6, stopList.get(i).getCountry().toUpperCase());
+				ps.setTimestamp(7, stopList.get(i).getTimestamp());
+				ps.setInt(8, stopList.get(i).getSeatsLeft());
+				if (ps.executeUpdate() == 0) {
+					return false;
+				}
+				ps.close();
+			}
+			return true;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	public boolean updateStop(Stop stop) {
+		String updateStop = "UPDATE stop SET address = ?, city = ?, province = ?, " +
+							"country = ?, timestamp = ?, seatsLeft = ? WHERE tripID = ? AND stopNumber = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(updateStop);
+			ps.setString(1, stop.getAddress());
+			ps.setString(2, stop.getCity());
+			ps.setString(3, stop.getProvince());
+			ps.setString(4, stop.getCountry());
+			ps.setTimestamp(5, stop.getTimestamp());
+			ps.setInt(6, stop.getSeatsLeft());
+			ps.setInt(7, stop.getTripID());
+			ps.setInt(8, stop.getStopNumber());
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	public boolean deleteStop(int tripID, int stopNumber) {
+		String deleteStop = "DELETE FROM stop WHERE tripID = ? AND stopNumber = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(deleteStop);
+			ps.setInt(1, tripID);
+			ps.setInt(2, stopNumber);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	public boolean deleteStops(int tripID) {
+		String deleteStops = "DELETE FROM stop WHERE tripID = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(deleteStops);
+			ps.setInt(1, tripID);
+			if (ps.executeUpdate() == 0) {
+				return false;
+			}
+			ps.close();
+			return true;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	public ArrayList<Stop> getStopsByTripID(int tripID) {
+		ArrayList<Stop> stopList = new ArrayList<Stop>();
+		String getStopByTripID = "SELECT * FROM stop WHERE tripID = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(getStopByTripID);
+			ps.setInt(1, tripID);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				stopList.add(new Stop(rs.getInt("tripID"), rs.getInt("stopNumber"), rs.getString("address"),
+									  rs.getString("city"), rs.getString("province"), rs.getString("country"),
+									  rs.getTimestamp("timestamp"), rs.getInt("seatsLeft")));
+			}
+			rs.close();
+			return stopList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	public ArrayList<Integer> getTripsByCity(String startingCity, Timestamp startingDate, String endingCity) {
+		ArrayList<Integer> tripIDList = new ArrayList<Integer>();
+		String getTripID = "SELECT DISTINCT(tripID) FROM stop WHERE tripID IN " +
+						   "(SELECT tripID FROM stop WHERE city = ? AND timestamp >= ? " +
+						   "AND seatsLeft > 0) AND city = ? AND timestamp > NOW() AND seatsLeft > 0;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(getTripID);
+			ps.setString(1, startingCity.toUpperCase());
+			ps.setTimestamp(2, startingDate);
+			ps.setString(3, endingCity.toUpperCase());
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				tripIDList.add(new Integer(rs.getInt("tripID")));
+			}
+			ps.close();
+			return tripIDList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	public boolean incrementSeatsLeft(int tripID, int stopNumber) {
+		String incrementSeatsLeft = "UPDATE stop SET seatsLeft = seatsLeft + 1 WHERE tripID = ? AND stopNumber = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(incrementSeatsLeft);
+			ps.setInt(1, tripID);
+			ps.setInt(2, stopNumber);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	public boolean decrementSeatsLeft(int tripID, int stopNumber) {
+		String decrementSeatsLeft = "UPDATE stop SET seatsLeft = seatsLeft - 1 WHERE tripID = ? AND stopNumber = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(decrementSeatsLeft);
+			ps.setInt(1, tripID);
+			ps.setInt(2, stopNumber);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
 }
