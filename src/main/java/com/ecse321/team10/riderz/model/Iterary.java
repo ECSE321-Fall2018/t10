@@ -2,6 +2,10 @@ package com.ecse321.team10.riderz.model;
 
 import java.sql.Timestamp;
 
+/**
+ * An object representing an iterary entry.
+ * @version 1.0
+ */
 public class Iterary {
 	private int tripID;
 	private double startingLongitude;
@@ -57,6 +61,10 @@ public class Iterary {
 		return this.seatsLeft;
 	}
 
+	/**
+	 * Obtains a String representation of this object.
+	 * @return A String representing the object.
+	 */
 	public String toString() {
 		return "[Iterary] TripID: " + this.tripID + " Starting Longitude: " +
 			   this.startingLongitude + " Starting Latitude: " + this.startingLatitude +

@@ -1,5 +1,9 @@
 package com.ecse321.team10.riderz.model;
 
+/**
+ * An object representing a driver entry.
+ * @version 1.0
+ */
 public class Driver {
 	private String operator;
 	private double rating;
@@ -29,6 +33,10 @@ public class Driver {
 		return this.tripsCompleted;
 	}
 
+	/**
+	 * Obtains a String representation of this object.
+	 * @return A String representing the object.
+	 */
 	public String toString() {
 		return "[Driver] Operator: " + this.operator + " Rating: " + this.rating +
 			   " Persons Rated: " + this.personsRated + " Trips Completed: " +

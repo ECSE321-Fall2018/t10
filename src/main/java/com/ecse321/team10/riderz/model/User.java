@@ -1,5 +1,9 @@
 package com.ecse321.team10.riderz.model;
 
+/**
+ * An object representing an user entry.
+ * @version 1.0
+ */
 public class User {
 	private String username;
 	private String password;
@@ -42,6 +46,10 @@ public class User {
 		return this.lastName;
 	}
 
+	/**
+	 * Obtains a String representation of this object.
+	 * @return A String representing the object.
+	 */
 	public String toString() {
 		return "[User] Username: " + this.username + " Password: " + this.password +
 			   " Email: " + this.email + " Phone: " + this.phone + " First Name: " +

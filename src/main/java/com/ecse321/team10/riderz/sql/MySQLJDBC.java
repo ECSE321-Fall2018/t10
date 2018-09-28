@@ -27,26 +27,34 @@ import com.ecse321.team10.riderz.model.Iterary;
 import com.ecse321.team10.riderz.model.Location;
 import com.ecse321.team10.riderz.model.Reservation;
 
+/**
+ * <p>Persistance layer constructed using JDBC. Provides direct access to the database.</p>
+ * <p><b>Warning</b> - Potentially delete methods are potentially destructive... Use with caution. -
+ * <b>Warning</b></p>
+ * @version 1.00
+ */
 public class MySQLJDBC {
 	private static final Logger logger = LogManager.getLogger(MySQLJDBC.class);
-	
+
 	private static final String connection = "jdbc:mysql://35.237.200.65:3306/dev";
 	private static final String username = "dev";
 	private static final String password = "ecse321LoGiNdEv";
 
 	private static Connection c;
-	
+
 	//=======================
 	// CONNECTIONS
 	//=======================
-	
+	/**
+	 * Establishes connection to database using credentials provided above.
+	 * @return True if the connection has been established. False if any error occurs.
+	 */
 	public boolean connect() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			//this holds dummy values for now
 	        c = DriverManager.getConnection(connection, username, password);
 	        logger.info("Connection to the database has been established.");
-	        Statement stmt = c.createStatement();
 	        return true;
 		}
 		catch(Exception e) {
@@ -55,6 +63,10 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Disconnects from the database.
+	 * @return True if the connection has been severed. False if any error occurs.
+	 */
 	public boolean closeConnection() {
 		try {
 			if (c != null) {
@@ -73,21 +85,24 @@ public class MySQLJDBC {
 	//=======================
 	// CARS API
 	//=======================
-
-	public boolean insertCar(String operator, String make, String model, int year,
-							 int numOfSeats, double fuelEfficiency, String licensePlate) {
+	/**
+	 * Inserts a Car object into the database.
+	 * @param	car		- 	A Car object to be inserted into the database.
+	 * @return 	True if the Car object has been inserted. False if any error occurs.
+	 */
+	public boolean insertCar(Car car) {
 		String insertCar = "INSERT INTO car (operator, make, model, year, numOfSeats, " +
 						   "fuelEfficiency, licensePlate) VALUES (?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement ps = null;
 		try {
 			ps = c.prepareStatement(insertCar);
-			ps.setString(1, operator);
-			ps.setString(2, make);
-			ps.setString(3, model);
-			ps.setInt(4, year);
-			ps.setInt(5, numOfSeats);
-			ps.setDouble(6, fuelEfficiency);
-			ps.setString(7, licensePlate);
+			ps.setString(1, car.getOperator());
+			ps.setString(2, car.getMake());
+			ps.setString(3, car.getModel());
+			ps.setInt(4, car.getYear());
+			ps.setInt(5, car.getNumOfSeats());
+			ps.setDouble(6, car.getFuelEfficiency());
+			ps.setString(7, car.getLicensePlate());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
 				return true;
@@ -100,6 +115,11 @@ public class MySQLJDBC {
 		}
 	}
 	
+	/**
+	 * Deletes a Car object entry from the database based on an username.
+	 * @param operator	- 	A String representing an username.
+	 * @return True if an entry was deleted. False otherwise.
+	 */
 	public boolean deleteCar(String operator) {
 		String deleteCar = "DELETE FROM car WHERE operator = ?;";
 		PreparedStatement ps = null;
@@ -117,20 +137,24 @@ public class MySQLJDBC {
 		}
 	}
 	
-	public boolean updateCar(String operator, String make, String model, int year, 
-							 int numOfSeats, double fuelEfficiency, String licensePlate) {
+	/**
+	 * Updates an entry within the database to values stored with a Car object.
+	 * @param car 		-	A Car object to be updated to within the database
+	 * @return True if an entry has been updated. False otherwise.
+	 */
+	public boolean updateCar(Car car) {
 		String updateCar = "UPDATE car SET make = ?, model = ?, year = ?, numOfSeats = ?, " +
 					   	   "fuelEfficiency = ?, licensePlate = ? WHERE operator = ?;";
 		PreparedStatement ps = null;
 		try {
 			ps = c.prepareStatement(updateCar);
-			ps.setString(1, make);
-			ps.setString(2, model);
-			ps.setInt(3, year);
-			ps.setInt(4, numOfSeats);
-			ps.setDouble(5, fuelEfficiency);
-			ps.setString(6, licensePlate);
-			ps.setString(7, operator);
+			ps.setString(1, car.getMake());
+			ps.setString(2, car.getModel());
+			ps.setInt(3, car.getYear());
+			ps.setInt(4, car.getNumOfSeats());
+			ps.setDouble(5, car.getFuelEfficiency());
+			ps.setString(6, car.getLicensePlate());
+			ps.setString(7, car.getOperator());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
 				return true;
@@ -143,6 +167,10 @@ public class MySQLJDBC {
 		}
 	}
 	
+	/**
+	 * Obtains all Car entries from the database.
+	 * @return An ArrayList of Car objects. Null otherwise.
+	 */
 	public ArrayList<Car> getAllCars() {
         ArrayList<Car> carList = new ArrayList<Car>();
         try {
@@ -161,6 +189,11 @@ public class MySQLJDBC {
         
     } 
 	
+	/**
+	 * Searches within the database for an entry based on an username.
+	 * @param operator 	- 	A String representing an username.
+	 * @return A Car object if an entry was found. Null otherwise.
+	 */
 	public Car getCarByOperator(String operator) {
 		String query = "SELECT * FROM car WHERE operator = ?;";
         Car car = null;
@@ -186,21 +219,25 @@ public class MySQLJDBC {
 	//=======================
 	// USERS API
 	//=======================
-	public boolean insertUser(String username, String password, String email,
-							  String phone, String firstName, String lastName) {
+	/**
+	 * Inserts an User object into the database.
+	 * @param user 		- 	An User object to insert into the database.
+	 * @return True if the User was inserted into the database. False otherwise.
+	 */
+	public boolean insertUser(User user) {
 		String insertUser = "INSERT INTO users (username, password, email, phone, " +
 							"firstName, lastName) VALUES (?, ?, ?, ?, ?, ?);";
 		PreparedStatement ps = null;
 		try {
 			ps = c.prepareStatement(insertUser);
-			ps.setString(1, username);
+			ps.setString(1, user.getUsername());
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
+			byte[] hash = md.digest(user.getPassword().getBytes(StandardCharsets.UTF_8));
 			ps.setString(2, DatatypeConverter.printHexBinary(hash));
-			ps.setString(3, email);
-			ps.setString(4, phone);
-			ps.setString(5, firstName);
-			ps.setString(6, lastName);
+			ps.setString(3, user.getEmail());
+			ps.setString(4, user.getPhone());
+			ps.setString(5, user.getFirstName());
+			ps.setString(6, user.getLastName());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
 				return true;
@@ -212,6 +249,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Deletes an User from the database based on the User's username.
+	 * @param username 	- 	A String representing the User's username
+	 * @return True if an entry was deleted from the database. False otherwise.
+	 */
 	public boolean deleteUser(String username) {
 		String deleteUser = "DELETE FROM users WHERE username = ?;";
 		PreparedStatement ps = null;
@@ -229,6 +271,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Fetches an User from the database based on the User's username.
+	 * @param username 	- 	A String representing the User's username
+	 * @return An User object if an entry was found. Null otherwise.
+	 */
 	public User getUserByUsername(String username) {
 		String getUser = "SELECT * FROM users WHERE username = ?;";
 		User user = null;
@@ -250,6 +297,10 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Fetches all User from the database.
+	 * @return An ArrayList of User object. Null if an error occurred.
+	 */
 	public ArrayList<User> getAllUsers() {
 		ArrayList<User> userList = new ArrayList<User>();
 		try {
@@ -267,6 +318,12 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Verifies if the username and password combination exists within the database.
+	 * @param username 	- 	A String representing the User's username
+	 * @param password 	- 	A String representing the User's password
+	 * @return True if the combination exists. False otherwise.
+	 */
 	public boolean verifyLogin(String username, String password) {
 		String verifyLogin = "SELECT username FROM users WHERE username = ? AND password = ?;";
 		PreparedStatement ps = null;
@@ -288,6 +345,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Fetches the phone of a User based on their username.
+	 * @param username 	- 	A String representing the User's username
+	 * @return A String representing the User's phone number if the User was found. False otherwise.
+	 */
 	public String getPhone(String username) {
 		String getPhone = "SELECT phone FROM users WHERE username = ?;";
 		PreparedStatement ps = null;
@@ -307,6 +369,12 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Updates a User's phone number.
+	 * @param username 	- 	A String representing the User's username
+	 * @param phone 	-	A String representing the new phone number
+	 * @return True if an entry was updated. False otherwise.
+	 */
 	public boolean setPhone(String username, String phone) {
 		String setPhone = "UPDATE users SET phone = ? WHERE username = ?;";
 	   	PreparedStatement ps = null;
@@ -325,6 +393,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Obtains an User's email address.
+	 * @param username 	-	A String representing an User's username.
+	 * @return A String representing an email address if found. False otherwise.
+	 */
 	public String getEmail(String username) {
 		String getEmail = "SELECT email FROM users WHERE username = ?;";
 		PreparedStatement ps = null;
@@ -344,6 +417,12 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Updates an User's email address.
+	 * @param username	-	A String representing an User's username.
+	 * @param email		-	A String representing a new email address.
+	 * @return True if an entry was updated. False otherwise.
+	 */
 	public boolean setEmail(String username, String email) {
 		String setEmail = "UPDATE users SET email = ? WHERE username = ?;";
 	   	PreparedStatement ps = null;
@@ -362,6 +441,12 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Updates an User's password.
+	 * @param username	-	A String representing an User's username.
+	 * @param password	-	A String representing a new password.
+	 * @return True if an entry was updated. False otherwise.
+	 */
 	public boolean setPassword(String username, String password) {
 		String setPassword = "UPDATE users SET password = ? WHERE username = ?;";
 		PreparedStatement ps = null;
@@ -386,6 +471,11 @@ public class MySQLJDBC {
 	//=======================
 	// DRIVER API
 	//=======================
+	/**
+	 * Inserts an User as a driver into the database.
+	 * @param operator	-	A String representing an User's username.
+	 * @return True if an entry was inserted. False otherwise.
+	 */
 	public boolean insertDriver(String operator) {
 		String insertDriver = "INSERT INTO driver (operator, rating, personsRated, " +
 							  "tripsCompleted) VALUES (?, 0.0, 0, 0);";
@@ -404,6 +494,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Deletes a driver from the database.
+	 * @param operator	-	A String representing an User's username.
+	 * @return True if an entry was deleted. False otherwise.
+	 */
 	public boolean deleteDriver(String operator) {
 		String deleteDriver = "DELETE FROM driver WHERE operator = ?;";
 		PreparedStatement ps = null;
@@ -421,6 +516,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Obtains a Driver object representing an entry from the database.
+	 * @param operator	-	A String representing an User's username.
+	 * @return A Driver object if an entry was found. Null otherwise.
+	 */
 	public Driver getDriverByUsername(String operator) {
 		String getDriver = "SELECT * FROM driver WHERE operator = ?;";
 		Driver driver = null;
@@ -441,6 +541,10 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Fetches all entries from the database.
+	 * @return An ArrayList of Driver object. Null if an error occurred.
+	 */
 	public ArrayList<Driver> getAllDrivers() {
 		ArrayList<Driver> driverList = new ArrayList<Driver>();
 		try {
@@ -457,6 +561,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Obtains a driver's rating.
+	 * @param operator	-	A String representing an User's username.
+	 * @return A double if the driver was found. 0.0 otherwise.
+	 */
 	public double getRating(String operator) {
 		String getRating = "SELECT rating FROM driver WHERE operator = ?;";
 		PreparedStatement ps = null;
@@ -476,6 +585,12 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Updates a driver's rating.
+	 * @param operator	-	A String representing an User's username.
+	 * @param rating	-	A double representing a driver's rating.
+	 * @return True if an entry was updated. False otherwise.
+	 */
 	public boolean addRating(String operator, double rating) {
 		String addRating = "UPDATE driver SET rating = ? WHERE operator = ?;";
 		double oldRating = getRating(operator);
@@ -488,7 +603,7 @@ public class MySQLJDBC {
 			ps.setString(2, operator);
 			if (ps.executeUpdate() == 1 && 
 				incrementPersonsRated(operator)) {
-
+				ps.close();
 				return true;
 			}
 			return false;
@@ -498,6 +613,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Obtains the number of people who have rated a driver.
+	 * @param operator	- 	A String representing an User's username.
+	 * @return An integer if an entry was found. 0 otherwise.
+	 */
 	public int getPersonsRated(String operator) {
 		String getPersonsRated = "SELECT personsRated FROM driver WHERE operator = ?;";
 		PreparedStatement ps = null;
@@ -517,6 +637,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Increments by 1 the number of people who have rated the driver.
+	 * @param operator	-	A String representing an User's username.
+	 * @return True if an entry was updated. False otherwise.
+	 */
 	public boolean incrementPersonsRated(String operator) {
 		String incrementPersonsRated = "UPDATE driver SET personsRated = personsRated + 1 " +
 									   "WHERE operator = ?;";
@@ -535,6 +660,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Obtains the number of trips completed of a driver.
+	 * @param operator	-	A String representing an User's username.
+	 * @return An integer if an entry was found. 0 otherwise.
+	 */
 	public int getTripsCompleted(String operator) {
 		String getTripsCompleted = "SELECT tripsCompleted FROM driver WHERE operator = ?;";
 		PreparedStatement ps = null;
@@ -554,6 +684,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Increments by 1 the number of trips completed by a driver.
+	 * @param operator	-	A String representing an User's username.
+	 * @return True if an entry was updated. False otherwise.
+	 */
 	public boolean incrementTripsCompleted(String operator) {
 		String incrementTripsCompleted = "UPDATE driver SET tripsCompleted = tripsCompleted + 1 " +
 									   	 "WHERE operator = ?;";
@@ -575,6 +710,11 @@ public class MySQLJDBC {
 	//=======================
 	// TRIP API
 	//=======================
+	/**
+	 * Inserts a new trip for an User into the database.
+	 * @param operator	-	A String representing an User's username.
+	 * @return True if an entry was inserted. False otherwise.
+	 */
 	public boolean insertTrip(String operator) {
 		String insertTrip = "INSERT INTO trip(operator) VALUES (?);";
 		PreparedStatement ps = null;
@@ -592,6 +732,12 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Deletes from the database a trip based on the tripID and the User's username.
+	 * @param tripID	-	An integer uniquely identifying a trip.
+	 * @param operator	-	A String representing an User's username.
+	 * @return True if an entry was deleted. False otherwise.
+	 */
 	public boolean deleteTrip(int tripID, String operator) {
 		String deleteTrip = "DELETE FROM trip WHERE tripID = ? AND operator = ?;";
 		PreparedStatement ps = null;
@@ -610,6 +756,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Deletes all trips for a specific User.
+	 * @param operator	-	A String representing an User's username.
+	 * @return True if entries were deleted. False otherwise.
+	 */
 	public boolean deleteAllTrips(String operator) {
 		String deleteAllTrips = "DELETE FROM trip WHERE operator = ?;";
 		PreparedStatement ps = null;
@@ -627,6 +778,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Fetches all trips for a specific User.
+	 * @param operator	-	A String representing an User's username.
+	 * @return An ArrayList of Trip objects. Null if an error occurred.
+	 */
 	public ArrayList<Trip> getTripsByUsername(String operator) {
 		ArrayList<Trip> tripList = new ArrayList<Trip>();
 		String getTripsByUsername = "SELECT * FROM trip WHERE operator = ?;";
@@ -646,6 +802,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Fetches the last trip for a specific User.
+	 * @param operator	-	A String representing an User's username.
+	 * @return A Trip object if found. Null otherwise.
+	 */
 	public Trip getLastTripByUsername(String operator) {
 		String getLastTripByUsername = "SELECT * FROM trip WHERE operator = ? ORDER BY " +
 									   "tripID DESC LIMIT 1;";
@@ -666,6 +827,10 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Fetches all trips from the database.
+	 * @return An ArrayList of Trip objects. Null if an error occurred.
+	 */
 	public ArrayList<Trip> getAllTrips() {
 		ArrayList<Trip> tripList = new ArrayList<Trip>();
 		try {
@@ -684,6 +849,11 @@ public class MySQLJDBC {
 	//=======================
 	// Iterary API
 	//=======================
+	/**
+	 * Inserts an Iterary object into the database.
+	 * @param iterary	-	An Iterary object to be inserted into the database.
+	 * @return True if an entry was inserted. False otherwise.
+	 */
 	public boolean insertIterary(Iterary iterary) {
 		String insertIterary = "INSERT INTO iterary(tripID, startingLongitude, " +
 							   "startingLatitude, startingTime, endingLongitude, " +
@@ -711,6 +881,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Updates an Iterary object in the database.
+	 * @param iterary	-	An Iterary object to be updated within the database.
+	 * @return True if an entry was updated. False otherwise.
+	 */
 	public boolean updateIterary(Iterary iterary) {
 		String updateIterary = "UPDATE iterary SET startingLongitude = ?, " +
 							   "startingLatitude = ?, startingTime = ?, " +
@@ -738,6 +913,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Deletes a iterary from the database.
+	 * @param tripID	-	An integer uniquely identifying an iterary.
+	 * @return True if an entry was deleted from the database. False otherwise.
+	 */
 	public boolean deleteIterary(int tripID) {
 		String deleteStop = "DELETE FROM iterary WHERE tripID = ?;";
 		PreparedStatement ps = null;
@@ -755,6 +935,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Fetches an iterary from the database based on a trip ID.
+	 * @param tripID	-	An integer uniquely identifying a trip.
+	 * @return An Iterary object if found in the database. Null otherwise.
+	 */
 	public Iterary getIteraryByTripID(int tripID) {
 		Iterary iterary = null;
 		String getIteraryByTripID = "SELECT * FROM iterary WHERE tripID = ?;";
@@ -781,6 +966,15 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Fetches entries from the database fitting search criteria based on a spherical distance
+	 * algorithm. Recommended to have a low maximum search radius to obtain more accurate results.
+	 * @param endingLongitude	-	A double representing destination longitude.
+	 * @param endingLatitude	-	A double representing destination latitude.
+	 * @param maximumDistance	-	A double representing maximum search radius in meters.
+	 * @param arrivalTime		-	A java.sql.Timestamp representing preferred arrival time
+	 * @return An ArrayList of Iterary objects matching the search criteria. Null if an error occurred.
+	 */
 	public ArrayList<Iterary> getIteraryNearDestination(double endingLongitude,
 					double endingLatitude, double maximumDistance, Timestamp arrivalTime) {
 		ArrayList<Iterary> iteraryList = new ArrayList<Iterary>();
@@ -817,6 +1011,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Increments by 1 the number of seats available in the car.
+	 * @param tripID	-	An integer uniquely identifying an iterary.
+	 * @return True if an entry was updated. False otherwise.
+	 */
 	public boolean incrementSeatsLeft(int tripID) {
 		String incrementSeatsLeft = "UPDATE iterary SET seatsLeft = seatsLeft + 1 " +
 									"WHERE tripID = ?;";
@@ -835,6 +1034,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Decrements by 1 the number of seats available in the car.
+	 * @param tripID	-	An integer uniquely identifying an iterary.
+	 * @return True if an entry was updated. False otherwise.
+	 */
 	public boolean decrementSeatsLeft(int tripID) {
 		String decrementSeatsLeft = "UPDATE iterary SET seatsLeft = seatsLeft - 1 " +
 									"WHERE tripID = ?;";
@@ -856,6 +1060,11 @@ public class MySQLJDBC {
 	//=======================
 	// LOCATION API
 	//=======================
+	/**
+	 * Inserts a Location object into the database.
+	 * @param location	-	A Location object to be inserted into the database.
+	 * @return True if an entry was inserted. False otherwise.
+	 */
 	public boolean insertLocation(Location location) {
 		String insertLocation = "INSERT INTO location (operator, longitude, latitude) VALUES (?, ?, ?);";
 		PreparedStatement ps = null;
@@ -875,6 +1084,14 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Fetches entries from the database fitting search criteria based on a spherical distance
+	 * algorithm. Recommended to have a low maximum search radius to obtain more accurate results.
+	 * @param endingLongitude	-	A double representing current User's longitude.
+	 * @param endingLatitude	-	A double representing current User's latitude.
+	 * @param maximumDistance	-	A double representing maximum search radius in meters.
+	 * @return An ArrayList of Location objects matching the search criteria. Null if an error occurred.
+	 */
 	public ArrayList<Location> getLocationNear(double longitude, double latitude, double maximumDistance) {
 		ArrayList<Location> locationList = new ArrayList<Location>();
 		String getLocationNear = "SELECT * FROM location WHERE SQRT(" +
@@ -902,6 +1119,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Fetches the User's location from the database.
+	 * @param operator	-	A String representing an User's username.
+	 * @return A Location object if an entry was found. Null otherwise.
+	 */
 	public Location getLocationByUsername(String operator) {
 		String getLocationByUsername = "SELECT * FROM location WHERE operator = ?;";
 		Location location = null;
@@ -922,6 +1144,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Updates a location entry within the database.
+	 * @param location	-	A Location object to be updated within the database.
+	 * @return True if an entry was updated. False otherwise.
+	 */
 	public boolean updateLocation(Location location) {
 		String updateLocation = "UPDATE location SET longitude = ? AND latitude = ? WHERE operator = ?;";
 		PreparedStatement ps = null;
@@ -944,6 +1171,11 @@ public class MySQLJDBC {
 	//=======================
 	// RESERVATION API
 	//=======================
+	/**
+	 * Inserts a Reservation object into the database.
+	 * @param reservation	-	A Reservation object to be inserted into the database.
+	 * @return True if an entry was inserted into the database.
+	 */
 	public boolean insertReservation(Reservation reservation) {
 		String insertReservation = "INSERT INTO reservation (operator, tripID) VALUES (?, ?);";
 		PreparedStatement ps = null;
@@ -962,6 +1194,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Deletes an entry from the database.
+	 * @param reservation	-	A Reservation object to be deleted from the database.
+	 * @return True if an entry was deleted from the database. False otherwise.
+	 */
 	public boolean deleteReservation(Reservation reservation) {
 		String deleteReservation = "DELETE FROM reservation WHERE operator = ? AND tripID = ?;";
 		PreparedStatement ps = null;
@@ -980,6 +1217,11 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Fetches from the database all reservations for a specific User.
+	 * @param operator		-	A String representing an User's username.
+	 * @return An ArrayList of Reservation objects. Null if an error occurred.
+	 */
 	public ArrayList<Reservation> getReservationByUsername(String operator) {
 		String getReservationByUsername = "SELECT * FROM reservation WHERE operator = ?;";
 		PreparedStatement ps = null;

@@ -1,5 +1,9 @@
 package com.ecse321.team10.riderz.model;
 
+/**
+ * An object representing a car entry.
+ * @version 1.0
+ */
 public class Car {
 	private String operator;
 	private String make;
@@ -40,7 +44,7 @@ public class Car {
 		return this.numOfSeats;
 	}
 
-	public double getfuelEfficiency() {
+	public double getFuelEfficiency() {
 		return this.fuelEfficiency;
 	}
 
@@ -48,6 +52,10 @@ public class Car {
 		return this.licensePlate;
 	}
 
+	/**
+	 * Obtains a String representation of this object.
+	 * @return A String representing the object.
+	 */
 	public String toString() {
 		return "[Car] Operator: " + this.operator + " Make: " + this.make +
 			   " Model: " + this.model + " Year: " + this.year +

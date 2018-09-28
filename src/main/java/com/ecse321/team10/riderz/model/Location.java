@@ -1,5 +1,9 @@
 package com.ecse321.team10.riderz.model;
 
+/**
+ * An object representing a location entry.
+ * @version 1.0
+ */
 public class Location {
 	private String operator;
 	private double longitude;
@@ -23,6 +27,10 @@ public class Location {
 		return this.latitude;
 	}
 
+	/**
+	 * Obtains a String representation of this object.
+	 * @return A String representing the object.
+	 */
 	public String toString() {
 		return "[Location] Operator: " + this.operator + " Longitude: " + this.longitude +
 			   " Latitude: " + this.latitude;
