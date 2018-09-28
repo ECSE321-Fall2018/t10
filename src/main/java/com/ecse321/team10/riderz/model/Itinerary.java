@@ -3,10 +3,10 @@ package com.ecse321.team10.riderz.model;
 import java.sql.Timestamp;
 
 /**
- * An object representing an iterary entry.
+ * An object representing an itinerary entry.
  * @version 1.0
  */
-public class Iterary {
+public class Itinerary {
 	private int tripID;
 	private double startingLongitude;
 	private double startingLatitude;
@@ -16,7 +16,7 @@ public class Iterary {
 	private Timestamp endingTime;
 	private int seatsLeft;
 
-	public Iterary (int tripID, double startingLongitude, double startingLatitude,
+	public Itinerary (int tripID, double startingLongitude, double startingLatitude,
 				   	Timestamp startingTime, double endingLongitude,
 					double endingLatitude, Timestamp endingTime, int seatsLeft) {
 		this.tripID = tripID;
@@ -66,7 +66,7 @@ public class Iterary {
 	 * @return A String representing the object.
 	 */
 	public String toString() {
-		return "[Iterary] TripID: " + this.tripID + " Starting Longitude: " +
+		return "[Itinerary] TripID: " + this.tripID + " Starting Longitude: " +
 			   this.startingLongitude + " Starting Latitude: " + this.startingLatitude +
 			   " Starting Time: " + this.startingTime.toString() + 
 			   " Ending Longitude: " + this.endingLongitude + " Ending Latitude: " +

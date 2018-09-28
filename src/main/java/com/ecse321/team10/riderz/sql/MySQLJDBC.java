@@ -23,7 +23,7 @@ import com.ecse321.team10.riderz.model.Driver;
 import com.ecse321.team10.riderz.model.Car;
 import com.ecse321.team10.riderz.model.User;
 import com.ecse321.team10.riderz.model.Trip;
-import com.ecse321.team10.riderz.model.Iterary;
+import com.ecse321.team10.riderz.model.Itinerary;
 import com.ecse321.team10.riderz.model.Location;
 import com.ecse321.team10.riderz.model.Reservation;
 
@@ -847,29 +847,29 @@ public class MySQLJDBC {
 	}
 
 	//=======================
-	// Iterary API
+	// Itinerary API
 	//=======================
 	/**
-	 * Inserts an Iterary object into the database.
-	 * @param iterary	-	An Iterary object to be inserted into the database.
+	 * Inserts an Itinerary object into the database.
+	 * @param itinerary	-	An Itinerary object to be inserted into the database.
 	 * @return True if an entry was inserted. False otherwise.
 	 */
-	public boolean insertIterary(Iterary iterary) {
-		String insertIterary = "INSERT INTO iterary(tripID, startingLongitude, " +
+	public boolean insertItinerary(Itinerary itinerary) {
+		String insertItinerary = "INSERT INTO itinerary(tripID, startingLongitude, " +
 							   "startingLatitude, startingTime, endingLongitude, " +
 							   "endingLatitude, endingTime, seatsLeft) " +
 							   "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement ps = null;
 		try {
-			ps = c.prepareStatement(insertIterary);
-			ps.setInt(1, iterary.getTripID());
-			ps.setDouble(2, iterary.getStartingLongitude());
-			ps.setDouble(3, iterary.getStartingLatitude());
-			ps.setTimestamp(4, iterary.getStartingTime());
-			ps.setDouble(5, iterary.getEndingLongitude());
-			ps.setDouble(6, iterary.getEndingLatitude());
-			ps.setTimestamp(7, iterary.getEndingTime());
-			ps.setInt(8, iterary.getSeatsLeft());
+			ps = c.prepareStatement(insertItinerary);
+			ps.setInt(1, itinerary.getTripID());
+			ps.setDouble(2, itinerary.getStartingLongitude());
+			ps.setDouble(3, itinerary.getStartingLatitude());
+			ps.setTimestamp(4, itinerary.getStartingTime());
+			ps.setDouble(5, itinerary.getEndingLongitude());
+			ps.setDouble(6, itinerary.getEndingLatitude());
+			ps.setTimestamp(7, itinerary.getEndingTime());
+			ps.setInt(8, itinerary.getSeatsLeft());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
 				return true;
@@ -882,26 +882,26 @@ public class MySQLJDBC {
 	}
 
 	/**
-	 * Updates an Iterary object in the database.
-	 * @param iterary	-	An Iterary object to be updated within the database.
+	 * Updates an Itinerary object in the database.
+	 * @param itinerary	-	An Itinerary object to be updated within the database.
 	 * @return True if an entry was updated. False otherwise.
 	 */
-	public boolean updateIterary(Iterary iterary) {
-		String updateIterary = "UPDATE iterary SET startingLongitude = ?, " +
+	public boolean updateItinerary(Itinerary itinerary) {
+		String updateItinerary = "UPDATE itinerary SET startingLongitude = ?, " +
 							   "startingLatitude = ?, startingTime = ?, " +
 							   "endingLongitude = ?, endingLatitude = ?, " +
 							   "endingTime = ?, seatsLeft = ? WHERE tripID = ?;";
 		PreparedStatement ps = null;
 		try {
-			ps = c.prepareStatement(updateIterary);
-			ps.setDouble(1, iterary.getStartingLongitude());
-			ps.setDouble(2, iterary.getStartingLatitude());
-			ps.setTimestamp(3, iterary.getStartingTime());
-			ps.setDouble(4, iterary.getEndingLongitude());
-			ps.setDouble(5, iterary.getEndingLatitude());
-			ps.setTimestamp(6, iterary.getEndingTime());
-			ps.setInt(7, iterary.getSeatsLeft());
-			ps.setInt(8, iterary.getTripID());
+			ps = c.prepareStatement(updateItinerary);
+			ps.setDouble(1, itinerary.getStartingLongitude());
+			ps.setDouble(2, itinerary.getStartingLatitude());
+			ps.setTimestamp(3, itinerary.getStartingTime());
+			ps.setDouble(4, itinerary.getEndingLongitude());
+			ps.setDouble(5, itinerary.getEndingLatitude());
+			ps.setTimestamp(6, itinerary.getEndingTime());
+			ps.setInt(7, itinerary.getSeatsLeft());
+			ps.setInt(8, itinerary.getTripID());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
 				return true;
@@ -914,12 +914,12 @@ public class MySQLJDBC {
 	}
 
 	/**
-	 * Deletes a iterary from the database.
-	 * @param tripID	-	An integer uniquely identifying an iterary.
+	 * Deletes a itinerary from the database.
+	 * @param tripID	-	An integer uniquely identifying an itinerary.
 	 * @return True if an entry was deleted from the database. False otherwise.
 	 */
-	public boolean deleteIterary(int tripID) {
-		String deleteStop = "DELETE FROM iterary WHERE tripID = ?;";
+	public boolean deleteItinerary(int tripID) {
+		String deleteStop = "DELETE FROM itinerary WHERE tripID = ?;";
 		PreparedStatement ps = null;
 		try {
 			ps = c.prepareStatement(deleteStop);
@@ -936,20 +936,20 @@ public class MySQLJDBC {
 	}
 
 	/**
-	 * Fetches an iterary from the database based on a trip ID.
+	 * Fetches an itinerary from the database based on a trip ID.
 	 * @param tripID	-	An integer uniquely identifying a trip.
-	 * @return An Iterary object if found in the database. Null otherwise.
+	 * @return An Itinerary object if found in the database. Null otherwise.
 	 */
-	public Iterary getIteraryByTripID(int tripID) {
-		Iterary iterary = null;
-		String getIteraryByTripID = "SELECT * FROM iterary WHERE tripID = ?;";
+	public Itinerary getItineraryByTripID(int tripID) {
+		Itinerary itinerary = null;
+		String getItineraryByTripID = "SELECT * FROM itinerary WHERE tripID = ?;";
 		PreparedStatement ps = null;
 		try {
-			ps = c.prepareStatement(getIteraryByTripID);
+			ps = c.prepareStatement(getItineraryByTripID);
 			ps.setInt(1, tripID);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				iterary = new Iterary(rs.getInt("tripID"),
+				itinerary = new Itinerary(rs.getInt("tripID"),
 									  rs.getDouble("startingLongitude"),
 									  rs.getDouble("startingLatitude"),
 									  rs.getTimestamp("startingTime"),
@@ -959,7 +959,7 @@ public class MySQLJDBC {
 									  rs.getInt("seatsLeft"));
 			}
 			rs.close();
-			return iterary;
+			return itinerary;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
 			return null;
@@ -973,19 +973,19 @@ public class MySQLJDBC {
 	 * @param endingLatitude	-	A double representing destination latitude.
 	 * @param maximumDistance	-	A double representing maximum search radius in meters.
 	 * @param arrivalTime		-	A java.sql.Timestamp representing preferred arrival time
-	 * @return An ArrayList of Iterary objects matching the search criteria. Null if an error occurred.
+	 * @return An ArrayList of Itinerary objects matching the search criteria. Null if an error occurred.
 	 */
-	public ArrayList<Iterary> getIteraryNearDestination(double endingLongitude,
+	public ArrayList<Itinerary> getItineraryNearDestination(double endingLongitude,
 					double endingLatitude, double maximumDistance, Timestamp arrivalTime) {
-		ArrayList<Iterary> iteraryList = new ArrayList<Iterary>();
+		ArrayList<Itinerary> itineraryList = new ArrayList<Itinerary>();
 		double radiusOfEarth = 6371000.0;
-		String getIteraryNearDestination = "SELECT * FROM iterary WHERE SQRT(" +
+		String getItineraryNearDestination = "SELECT * FROM itinerary WHERE SQRT(" +
 						   "POWER((2 * PI() * ? * (ABS(endingLongitude - ?) / 360.0)), 2) + " +
 						   "POWER((2 * PI() * ? * (ABS(endingLatitude - ?) / 360.0)), 2)) <= ? " +
 						   "AND endingTime > NOW() AND endingTime <= ?;";
 		PreparedStatement ps = null;
 		try {
-			ps = c.prepareStatement(getIteraryNearDestination);
+			ps = c.prepareStatement(getItineraryNearDestination);
 			ps.setDouble(1, radiusOfEarth);
 			ps.setDouble(2, endingLongitude);
 			ps.setDouble(3, radiusOfEarth);
@@ -994,7 +994,7 @@ public class MySQLJDBC {
 			ps.setTimestamp(6, arrivalTime);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				iteraryList.add(new Iterary(rs.getInt("tripID"),
+				itineraryList.add(new Itinerary(rs.getInt("tripID"),
 											rs.getDouble("startingLongitude"),
 										    rs.getDouble("startingLatitude"),
 											rs.getTimestamp("startingTime"),
@@ -1004,7 +1004,7 @@ public class MySQLJDBC {
 											rs.getInt("seatsLeft")));
 			}
 			ps.close();
-			return iteraryList;
+			return itineraryList;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
 			return null;
@@ -1013,11 +1013,11 @@ public class MySQLJDBC {
 
 	/**
 	 * Increments by 1 the number of seats available in the car.
-	 * @param tripID	-	An integer uniquely identifying an iterary.
+	 * @param tripID	-	An integer uniquely identifying an itinerary.
 	 * @return True if an entry was updated. False otherwise.
 	 */
 	public boolean incrementSeatsLeft(int tripID) {
-		String incrementSeatsLeft = "UPDATE iterary SET seatsLeft = seatsLeft + 1 " +
+		String incrementSeatsLeft = "UPDATE itinerary SET seatsLeft = seatsLeft + 1 " +
 									"WHERE tripID = ?;";
 		PreparedStatement ps = null;
 		try {
@@ -1036,11 +1036,11 @@ public class MySQLJDBC {
 
 	/**
 	 * Decrements by 1 the number of seats available in the car.
-	 * @param tripID	-	An integer uniquely identifying an iterary.
+	 * @param tripID	-	An integer uniquely identifying an itinerary.
 	 * @return True if an entry was updated. False otherwise.
 	 */
 	public boolean decrementSeatsLeft(int tripID) {
-		String decrementSeatsLeft = "UPDATE iterary SET seatsLeft = seatsLeft - 1 " +
+		String decrementSeatsLeft = "UPDATE itinerary SET seatsLeft = seatsLeft - 1 " +
 									"WHERE tripID = ?;";
 		PreparedStatement ps = null;
 		try {
