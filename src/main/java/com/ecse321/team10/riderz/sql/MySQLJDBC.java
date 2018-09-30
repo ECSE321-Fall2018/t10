@@ -71,7 +71,7 @@ public class MySQLJDBC {
 		try {
 			if (c != null) {
                 c.close();
-                System.out.println("Connection to the database has been closed.");
+                logger.info("Connection to the database has been closed.");
                 return true;
             }
 			return false;
@@ -105,6 +105,7 @@ public class MySQLJDBC {
 			ps.setString(7, car.getLicensePlate());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Car %s has been inserted in the database."), car.getOperator());
 				return true;
 			}
 			return false;
@@ -128,6 +129,7 @@ public class MySQLJDBC {
 			ps.setString(1, operator);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Car %s has been deleted from the database."), operator);
 				return true;
 			}
 			return false;
@@ -157,6 +159,7 @@ public class MySQLJDBC {
 			ps.setString(7, car.getOperator());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Car %s has been updated in the database."), car.getOperator());
 				return true;
 			}
 			return false;
@@ -181,6 +184,7 @@ public class MySQLJDBC {
                 		rs.getDouble("fuelEfficiency"), rs.getString("licensePlate")));
 			}
             rs.close();
+            logger.info("SELECT * FROM car;");
             return carList;
         } catch (Exception e) {
         	logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -209,6 +213,7 @@ public class MySQLJDBC {
 							  rs.getString("licensePlate"));
 			}
             ps.close();
+            logger.info(String.format("Car %s has been returned from the database."), car.getOperator());
             return car;
         } catch (Exception e) {
         	logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -240,6 +245,7 @@ public class MySQLJDBC {
 			ps.setString(6, user.getLastName());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("User %s has been inserted in the database."), user.getUsername());
 				return true;
 			}
 			return false;
@@ -262,6 +268,7 @@ public class MySQLJDBC {
 			ps.setString(1, username);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("User %s has been deleted from the database."), username);
 				return true;
 			}
 			return false;
@@ -290,6 +297,7 @@ public class MySQLJDBC {
 								rs.getString("firstName"), rs.getString("lastName"));
 			}
 			ps.close();
+			logger.info(String.format("User %s has been returned from the database."), user.getUsername());
 			return user;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -311,6 +319,7 @@ public class MySQLJDBC {
 						rs.getString("firstName"), rs.getString("lastName")));
 			}
 			rs.close();
+			logger.info("SELECT * FROM users;");
 			return userList;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -336,6 +345,7 @@ public class MySQLJDBC {
 			ResultSet rs = ps.executeQuery();
 			rs.last();
 			if (rs.getRow() == 1) {
+				logger.info(String.format("Login for %s has been verified."), username);
 				return true;
 			}
 			return false;
@@ -362,6 +372,7 @@ public class MySQLJDBC {
 				phone = rs.getString("phone");
 			}
 			ps.close();
+			logger.info(String.format("Phone for %s has been returned from the database."), username);
 			return phone;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -384,6 +395,7 @@ public class MySQLJDBC {
 			ps.setString(2, username);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Phone for %s has been updated in the database."), username);
 				return true;
 			}
 			return false;
@@ -408,6 +420,7 @@ public class MySQLJDBC {
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
 				email = rs.getString("email");
+				logger.info(String.format("Email for %s has been returned from the database."), username);
 			}
 			ps.close();
 			return email;
@@ -432,6 +445,7 @@ public class MySQLJDBC {
 			ps.setString(2, username);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Email for %s has been updated in the database."), username);
 				return true;
 			}
 			return false;
@@ -459,6 +473,7 @@ public class MySQLJDBC {
 			ps.setString(2, username);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Password for %s has been updated in the database."), username);
 				return true;
 			}
 			return false;
@@ -485,6 +500,7 @@ public class MySQLJDBC {
 			ps.setString(1, operator);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Driver %s has been inserted in the database."), operator);
 				return true;
 			}
 			return false;
@@ -507,6 +523,7 @@ public class MySQLJDBC {
 			ps.setString(1, operator);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Driver %s has been deleted from the database."), operator);
 				return true;
 			}
 			return false;
@@ -534,6 +551,7 @@ public class MySQLJDBC {
 									rs.getInt("personsRated"), rs.getInt("tripsCompleted"));
 			}
 			ps.close();
+			logger.info(String.format("Driver %s has been returned from the database."), operator);
 			return driver;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -554,6 +572,7 @@ public class MySQLJDBC {
 										  rs.getInt("personsRated"), rs.getInt("tripsCompleted")));
 			}
 			rs.close();
+			logger.info("SELECT * FROM driver");
 			return driverList;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -578,6 +597,7 @@ public class MySQLJDBC {
 				rating = rs.getDouble("rating");
 			}
 			ps.close();
+			logger.info(String.format("Rating for %s has been returned from the database."), operator);
 			return rating;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -604,6 +624,7 @@ public class MySQLJDBC {
 			if (ps.executeUpdate() == 1 && 
 				incrementPersonsRated(operator)) {
 				ps.close();
+				logger.info(String.format("Rating for %s has been updated in the database."), operator);
 				return true;
 			}
 			return false;
@@ -630,6 +651,7 @@ public class MySQLJDBC {
 				personsRated = rs.getInt("personsRated");
 			}
 			ps.close();
+			logger.info(String.format("PersonsRated for %s has been returned from the database."), operator);
 			return personsRated;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -651,6 +673,7 @@ public class MySQLJDBC {
 			ps.setString(1, operator);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("PersonsRated for %s has been increased by 1 in the database."), operator);
 				return true;
 			}
 			return false;
@@ -677,6 +700,7 @@ public class MySQLJDBC {
 				tripsCompleted = rs.getInt("tripsCompleted");
 			}
 			ps.close();
+			logger.info(String.format("TripsCompleted for %s has been returned from the database."), operator);
 			return tripsCompleted;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -698,6 +722,7 @@ public class MySQLJDBC {
 			ps.setString(1, operator);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("TripsCompleted for %s has been increased by 1 in the database."), operator);
 				return true;
 			}
 			return false;
@@ -723,6 +748,7 @@ public class MySQLJDBC {
 			ps.setString(1, operator);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Trip for %s has been inserted in the database."), operator);
 				return true;
 			}
 			return false;
@@ -747,6 +773,7 @@ public class MySQLJDBC {
 			ps.setString(2, operator);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Trip for %s has been removed the database."), operator);
 				return true;
 			}
 			return false;
@@ -769,6 +796,7 @@ public class MySQLJDBC {
 			ps.setString(1, operator);
 			if (ps.executeUpdate() != 0) {
 				ps.close();
+				logger.info(String.format("All trips for %s has been removed from the database."), operator);
 				return true;
 			}
 			return false;
@@ -795,6 +823,7 @@ public class MySQLJDBC {
 				tripList.add(new Trip(rs.getInt("tripID"), rs.getString("operator")));
 			}
 			rs.close();
+			logger.info(String.format("All trips for %s has been returned from the database."), operator);
 			return tripList;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -819,6 +848,7 @@ public class MySQLJDBC {
 			if (rs.next()) {
 				trip = new Trip(rs.getInt("tripID"), rs.getString("operator"));
 			}
+			logger.info(String.format("Last trip for %s has been returned from the database."), operator);
 			ps.close();
 			return trip;
 		} catch (Exception e) {
@@ -839,6 +869,7 @@ public class MySQLJDBC {
 				tripList.add(new Trip(rs.getInt("tripID"), rs.getString("operator")));
 			}
 			rs.close();
+			logger.info("All trips for all users have been returned from the database.");
 			return tripList;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -872,6 +903,7 @@ public class MySQLJDBC {
 			ps.setInt(8, itinerary.getSeatsLeft());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Itinerary for %s has been inserted in the database."), itinerary.getTripID());
 				return true;
 			}
 			return false;
@@ -904,6 +936,7 @@ public class MySQLJDBC {
 			ps.setInt(8, itinerary.getTripID());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Itinerary for %s has been updated in the database."), itinerary.getTripID());
 				return true;
 			}
 			return false;
@@ -926,6 +959,7 @@ public class MySQLJDBC {
 			ps.setInt(1, tripID);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Itinerary for %s has been deleted from the database."), tripID);
 				return true;
 			}
 			return false;
@@ -959,6 +993,7 @@ public class MySQLJDBC {
 									  rs.getInt("seatsLeft"));
 			}
 			rs.close();
+			logger.info(String.format("Itinerary %s has been returned from the database."), tripID);
 			return itinerary;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -1004,6 +1039,7 @@ public class MySQLJDBC {
 											rs.getInt("seatsLeft")));
 			}
 			ps.close();
+			logger.info("Closest itineraries near destination have been returned from the database.");
 			return itineraryList;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -1025,6 +1061,7 @@ public class MySQLJDBC {
 			ps.setInt(1, tripID);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Itinerary seats left for %s has been incremented in the database."), tripID);
 				return true;
 			}
 			return false;
@@ -1048,6 +1085,7 @@ public class MySQLJDBC {
 			ps.setInt(1, tripID);
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Itinerary seats left for %s has been decremented in the database."), tripID);
 				return true;
 			}
 			return false;
@@ -1075,6 +1113,7 @@ public class MySQLJDBC {
 			ps.setDouble(3, location.getLatitude());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Location of %s has been inserted in the database."), location.getOperator());
 				return true;
 			}
 			return false;
@@ -1112,6 +1151,7 @@ public class MySQLJDBC {
 											  rs.getDouble("latitude")));
 			}
 			rs.close();
+			logger.info("Nearest location of drivers have been returned from the database.");
 			return locationList;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -1137,6 +1177,7 @@ public class MySQLJDBC {
 										rs.getDouble("latitude"));
 			}
 			rs.close();
+			logger.info(String.format("Location of %s has been returned from the database."), operator);
 			return location;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -1159,6 +1200,7 @@ public class MySQLJDBC {
 			ps.setString(3, location.getOperator());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Location of %s has been updated in the database."), location.getOperator());
 				return true;
 			}
 			return false;
@@ -1185,6 +1227,7 @@ public class MySQLJDBC {
 			ps.setInt(2, reservation.getTripID());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Reservation of %s has been inserted in the database."), reservation.getOperator());
 				return true;
 			}
 			return false;
@@ -1208,6 +1251,7 @@ public class MySQLJDBC {
 			ps.setInt(2, reservation.getTripID());
 			if (ps.executeUpdate() == 1) {
 				ps.close();
+				logger.info(String.format("Reservation of %s has been deleted from the database."), reservation.getOperator());
 				return true;
 			}
 			return false;
@@ -1234,6 +1278,7 @@ public class MySQLJDBC {
 				reservationList.add(new Reservation(rs.getString("operator"), rs.getInt("tripID")));
 			}
 			rs.close();
+			logger.info(String.format("All reservations of %s has been returned from the database."), operator);
 			return reservationList;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
