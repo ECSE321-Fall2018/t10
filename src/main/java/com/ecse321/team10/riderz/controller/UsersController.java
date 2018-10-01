@@ -2,12 +2,14 @@ package com.ecse321.team10.riderz.controller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecse321.team10.riderz.dto.UserDto;
 import com.ecse321.team10.riderz.sql.MySQLJDBC;
 
 @RestController

@@ -1,5 +1,6 @@
 package com.ecse321.team10.riderz;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,11 @@ public class RiderzApplication {
 	private MySQLJDBC sql;
 	public static void main(String[] args) {
 		SpringApplication.run(RiderzApplication.class, args);
+	}
+	
+	@Bean
+	public ModelMapper modelMapper() {
+	    return new ModelMapper();
 	}
 	
 	@Bean
