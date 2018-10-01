@@ -31,6 +31,7 @@ public class UsersController {
 	}
 	
 	private static final Logger logger = LogManager.getLogger(RiderzController.class);
+	
 	@PostMapping("/addUser/{username}")
 	public UserDto addUser(	@PathVariable("username") String username,
 							@RequestParam String password,
