@@ -9,7 +9,6 @@ public class UserDto {
 	private String lastName;
 	
 	public UserDto() {
-		
 	}
 	
 	public UserDto(String username, String password, String email,
@@ -44,5 +43,27 @@ public class UserDto {
 
 	public String getLastName() {
 		return this.lastName;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 }
