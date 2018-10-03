@@ -7,9 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+import java.util.Date;
 import java.security.MessageDigest;
 
 import javax.xml.bind.DatatypeConverter;
@@ -572,6 +572,32 @@ public class MySQLJDBC {
 										  rs.getInt("personsRated"), rs.getInt("tripsCompleted")));
 			}
 			rs.close();
+			logger.info("SELECT * FROM driver");
+			return driverList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	/**
+	 * Fetches all drivers above or equal to a rating.
+	 * @param rating	-	A double representing a minimum rating.
+	 * @return An ArrayList of Driver objects fitting the criteria. Null otherwise if an error occurred.
+	 */
+	public ArrayList<Driver> getAllDriversAboveRating(double rating) {
+		ArrayList<Driver> driverList = new ArrayList<Driver>();
+		PreparedStatement ps = null;
+		String getAllDriversAboveRating = "SELECT * FROM driver WHERE rating >= ?;";
+		try {
+			ps = c.prepareStatement(getAllDriversAboveRating);
+			ps.setDouble(1, rating);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				driverList.add(new Driver(rs.getString("operator"), rs.getDouble("rating"),
+										  rs.getInt("personsRated"), rs.getInt("tripsCompleted")));
+			}
+			ps.close();
 			logger.info("SELECT * FROM driver");
 			return driverList;
 		} catch (Exception e) {
@@ -1285,5 +1311,20 @@ public class MySQLJDBC {
 			return null;
 		}
 	}
-	
+
+	/**
+	 * Converts a String into a java.util.Timestamp Object.
+	 * @param ts		-	A String representing a timestamp in yyyy-MM-dd hh:mm:ss.SSS format
+	 * @return A Timestamp object or null if an error occurred.
+	 */
+	public Timestamp convertStringToTimestamp(String ts) {
+		try {
+		    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+		    Date parsedDate = dateFormat.parse(ts);
+		    return new Timestamp(parsedDate.getTime());
+		} catch(Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+		    return null;
+		}
+	}
 }
