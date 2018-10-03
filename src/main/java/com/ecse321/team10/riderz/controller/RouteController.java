@@ -48,7 +48,7 @@ public class RouteController {
 	
 	private static final Logger logger = LogManager.getLogger(RiderzController.class);
 	
-	//localhost:8088/insertItinerary/36/15.33534/12.4442/2019-01-01 01:00:00/40.3324/34.3321/2019-01-01 01:30:00/3
+	//localhost:8088/insertItinerary/36/15.33534/12.44412/2019-01-01 01:00:00.000/40.33245/34.33214/2019-01-01 01:30:00.000/3
 	
 	@GetMapping("/insertItinerary/{tripID}/{startingLongitude}/{startingLatitude}/{startingTime}/{endingLongitude}/{endingLatitude}/{endingTime}/{seatsLeft}")
 	public ItineraryDto insertItinerary(@PathVariable("tripID") int tripID,
@@ -74,8 +74,31 @@ public class RouteController {
 	}
 	
 	
+	//localhost:8088/updateItinerary/36/25.1111/26.3114/2019-01-01 02:00:00.000/40.33245/34.33214/2019-01-01 02:30:05.000/2
 	
-	
+	@GetMapping("/updateItinerary/{tripID}/{startingLongitude}/{startingLatitude}/{startingTime}/{endingLongitude}/{endingLatitude}/{endingTime}/{seatsLeft}")
+	public ItineraryDto updateItinerary(@PathVariable("tripID") int tripID,
+										@PathVariable("startingLongitude") double startingLongitude,
+										@PathVariable("startingLatitude") double startingLatitude,
+										@PathVariable("startingTime") String startingTime,
+										@PathVariable("endingLongitude") double endingLongitude,
+										@PathVariable("endingLatitude") double endingLatitude,
+										@PathVariable("endingTime") String endingTime,
+										@PathVariable("seatsLeft") int seatsLeft) {
+		
+		Timestamp startingTimeStamp = stringtoTimeStamp(startingTime);
+		Timestamp endingTimeStamp = stringtoTimeStamp(endingTime);
+		
+		Itinerary updatedItinerary = new Itinerary(tripID, startingLongitude, startingLatitude, startingTimeStamp, endingLongitude, endingLatitude, endingTimeStamp, seatsLeft);
+		sql.connect();
+		if (sql.updateItinerary(updatedItinerary)) {
+			sql.closeConnection();
+			return intineraryConvertToDto(updatedItinerary);
+		}
+		sql.closeConnection();
+		return null;
+		
+	}
 	
 	
 	// *** Helper Method ***

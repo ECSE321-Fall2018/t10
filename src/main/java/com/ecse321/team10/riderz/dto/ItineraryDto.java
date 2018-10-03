@@ -12,6 +12,9 @@ public class ItineraryDto {
 	private Timestamp endingTime;
 	private int seatsLeft;
 
+	public ItineraryDto() {
+	}
+	
 	public ItineraryDto (int tripID, double startingLongitude, double startingLatitude,
 				   	Timestamp startingTime, double endingLongitude,
 					double endingLatitude, Timestamp endingTime, int seatsLeft) {
@@ -55,6 +58,38 @@ public class ItineraryDto {
 
 	public int getSeatsLeft() {
 		return this.seatsLeft;
+	}
+	
+	public void setTripID(int tripId) {
+		this.tripID = tripId;
+	}
+
+	public void setStartingLongitude(double startingLongitude) {
+		this.startingLongitude = startingLongitude;
+	}
+
+	public void setStartingLatitude(double startingLatitude) {
+		this.startingLatitude = startingLatitude;
+	}
+
+	public void setStartingTime(Timestamp startingTime) {
+		this.startingTime = startingTime;
+	}
+
+	public void setEndingLongitude(double endingLongitude) {
+		this.endingLongitude = endingLongitude;
+	}
+
+	public void setEndingLatitude(double endingLatitude) {
+		this.endingLatitude = endingLatitude;
+	}
+
+	public void setEndingTime(Timestamp endingTime) {
+		this.endingTime = endingTime;
+	}
+
+	public void setSeatsLeft(int seatsLeft) {
+		this.seatsLeft = seatsLeft;
 	}
 
 }
