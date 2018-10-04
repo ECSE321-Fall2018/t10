@@ -145,7 +145,7 @@ public class MySQLJDBC {
 	 * @return True if an entry has been updated. False otherwise.
 	 */
 	public boolean updateCar(Car car) {
-		String updateCar = "UPDATE car SET make = ?, model = ?, year = ?, numOfSeats = ?, " +
+		String updateCar = "UPDATE car SET make = ?, model = ?, year = ?, numOfSeats = ?, " + 
 					   	   "fuelEfficiency = ?, licensePlate = ? WHERE operator = ?;";
 		PreparedStatement ps = null;
 		try {
