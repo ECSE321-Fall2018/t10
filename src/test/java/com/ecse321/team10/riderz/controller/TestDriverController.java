@@ -18,36 +18,36 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class TestDriverController {
-	@Autowired
-    private MockMvc mockMvc;
-	
-	@Test
-	public void testGetDriverByUsername() throws Exception {
-		 this.mockMvc.perform(get("/driver?operator=testmei")).andDo(print()).andExpect(status().isOk())
-         .andExpect(content().string(containsString("{operator: testmei, rating: 0, personsRated: 0, tripsCompleted: 0}")));
-	}
-	
-	@Test
-	public void testGetAllDrivers() throws Exception {
-		 this.mockMvc.perform(get("/driver/all")).andDo(print()).andExpect(status().isOk())
-         .andExpect(content().string(containsString("")));
-	}
-	
-	@Test
-	public void testGetDriverRating() throws Exception {
-		 this.mockMvc.perform(get("/driver/rating?operator=testmei")).andDo(print()).andExpect(status().isOk())
-         .andExpect(content().string(containsString("")));
-	}
-	
-	@Test
-	public void testGetDriverRatingFrequency() throws Exception {
-		 this.mockMvc.perform(get("/driver/rating/frequency?operator=testmei")).andDo(print()).andExpect(status().isOk())
-         .andExpect(content().string(containsString("")));
-	}
-	
-	@Test
-	public void testGetDriverTripsCompleted() throws Exception {
-		 this.mockMvc.perform(get("/driver/trip?operator=testmei")).andDo(print()).andExpect(status().isOk())
-         .andExpect(content().string(containsString("")));
-	}
+//	@Autowired
+//    private MockMvc mockMvc;
+//	
+//	@Test
+//	public void testGetDriverByUsername() throws Exception {
+//		 this.mockMvc.perform(get("/driver?operator=testmei")).andDo(print()).andExpect(status().isOk())
+//         .andExpect(content().string(containsString("{operator: testmei, rating: 0, personsRated: 0, tripsCompleted: 0}")));
+//	}
+//	
+//	@Test
+//	public void testGetAllDrivers() throws Exception {
+//		 this.mockMvc.perform(get("/driver/all")).andDo(print()).andExpect(status().isOk())
+//         .andExpect(content().string(containsString("")));
+//	}
+//	
+//	@Test
+//	public void testGetDriverRating() throws Exception {
+//		 this.mockMvc.perform(get("/driver/rating?operator=testmei")).andDo(print()).andExpect(status().isOk())
+//         .andExpect(content().string(containsString("")));
+//	}
+//	
+//	@Test
+//	public void testGetDriverRatingFrequency() throws Exception {
+//		 this.mockMvc.perform(get("/driver/rating/frequency?operator=testmei")).andDo(print()).andExpect(status().isOk())
+//         .andExpect(content().string(containsString("")));
+//	}
+//	
+//	@Test
+//	public void testGetDriverTripsCompleted() throws Exception {
+//		 this.mockMvc.perform(get("/driver/trip?operator=testmei")).andDo(print()).andExpect(status().isOk())
+//         .andExpect(content().string(containsString("")));
+//	}
 }
