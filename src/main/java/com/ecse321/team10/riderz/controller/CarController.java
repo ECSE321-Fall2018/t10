@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequestMapping("/car")
+
 @RestController
 public class CarController {
 
@@ -25,8 +27,8 @@ public class CarController {
 
 	private static final Logger logger = LogManager.getLogger(RiderzController.class);
 
-	@PostMapping("/insertCar/{operator}")
-	public CarDto addCar(@PathVariable("operator") String operator,
+	@PostMapping("")
+	public CarDto addCar(@RequestParam String operator,
 						 @RequestParam String make,
 						 @RequestParam String model,
 						 @RequestParam int year,
@@ -37,22 +39,29 @@ public class CarController {
 		sql.connect();
 		if(sql.insertCar(car)) {
 			sql.closeConnection();
+			logger.info("Successfully added a new car for operator" + operator);
 			return convertToDto(car);
 		}
+		logger.info("There an incorrect parameter");
 		sql.closeConnection();
 		return null;
 	}
 
-	@DeleteMapping("/deleteCar/{operator}")
-	public CarDto deleteCar(@PathVariable("operator") String operator) {
+	@DeleteMapping("")
+	public void deleteCar(@RequestParam String operator) {
 		sql.connect();
-		sql.deleteCar(operator);
-		sql.closeConnection();
-		return null;
+		if (operator != null){
+			sql.deleteCar(operator);
+			sql.closeConnection();
+			logger.info("Successfully deleted the car owned by: " + operator);
+		}else{
+			sql.closeConnection();
+			logger.info("There was no operator");
+		}
 	}
 
-	@PutMapping("/updateCar/{operator}")
-	public CarDto updateCar(@PathVariable("operator") String operator,
+	@PutMapping("")
+	public CarDto updateCar(@RequestParam String operator,
 						 	@RequestParam String make,
 						 	@RequestParam String model,
 						 	@RequestParam int year,
@@ -63,27 +72,36 @@ public class CarController {
 		sql.connect();
 		if(sql.updateCar(car)) {
 			sql.closeConnection();
+			logger.info("Update the car information which belongs to: " + operator);
 			return convertToDto(car);
 		}
 		sql.closeConnection();
+		logger.info("There was an incorrect parameter");
 		return null;
 	}
 
-	@GetMapping("/getCar/{operator}")
-	public CarDto getCar(@PathVariable("operator") String operator) {
+	@GetMapping("")
+	public CarDto getCar(@RequestParam String operator) {
 		sql.connect();
-		Car car = sql.getCarByOperator(operator);
+		if (operator != null){
+			Car car = sql.getCarByOperator(operator);
+			sql.closeConnection();
+			logger.info("Successfully retrieved the car of operator: " + operator);
+			return convertToDto(car);
+		}
 		sql.closeConnection();
-		return convertToDto(car);
+		logger.info("There was no operator value");
+		return null;
 	}
 
-	@GetMapping("/getAllCars")
+	@GetMapping("/all")
 	public List<CarDto> getAllCar() {
 		sql.connect();
 		List<CarDto> cars = new ArrayList<CarDto>();
 		for(Car car : sql.getAllCars())
 			cars.add(convertToDto(car));
 		sql.closeConnection();
+		logger.info("Successfully got a list of all the cars");
 		return cars;
 	}
 }
