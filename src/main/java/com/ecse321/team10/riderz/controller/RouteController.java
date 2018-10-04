@@ -56,7 +56,19 @@ public class RouteController {
 	//For Testing purpose:
 	//localhost:8088/insertItinerary/36/15.33534/12.44412/2019-01-01 01:00:00.000/40.33245/34.33214/2019-01-01 01:30:00.000/3
 	
-	// Insert an itinerary
+	/**
+	 * Insert an itinerary
+	 * 
+	 * @param tripID
+	 * @param startingLongitude
+	 * @param startingLatitude
+	 * @param startingTime
+	 * @param endingLongitude
+	 * @param endingLatitude
+	 * @param endingTime
+	 * @param seatsLeft
+	 * @return
+	 */
 	@GetMapping("/insertItinerary/{tripID}/{startingLongitude}/{startingLatitude}/{startingTime}/{endingLongitude}/{endingLatitude}/{endingTime}/{seatsLeft}")
 	public ItineraryDto insertItinerary(@PathVariable("tripID") int tripID,
 										@PathVariable("startingLongitude") double startingLongitude,
@@ -83,7 +95,19 @@ public class RouteController {
 	//For Testing purpose:
 	//localhost:8088/updateItinerary/36/25.1111/26.3114/2019-01-01 02:00:00.000/40.33245/34.33214/2019-01-01 02:30:05.000/2
 	
-	//Update an itinerary
+	/**
+	 * Update an itinerary
+	 * 
+	 * @param tripID
+	 * @param startingLongitude
+	 * @param startingLatitude
+	 * @param startingTime
+	 * @param endingLongitude
+	 * @param endingLatitude
+	 * @param endingTime
+	 * @param seatsLeft
+	 * @return
+	 */
 	@GetMapping("/updateItinerary/{tripID}/{startingLongitude}/{startingLatitude}/{startingTime}/{endingLongitude}/{endingLatitude}/{endingTime}/{seatsLeft}")
 	public ItineraryDto updateItinerary(@PathVariable("tripID") int tripID,
 										@PathVariable("startingLongitude") double startingLongitude,
@@ -111,24 +135,53 @@ public class RouteController {
 	//For Testing purpose:
 	//localhost:8088/deleteItinerary/36
 	
-	//Delete an itinerary
+	/**
+	 * Delete an itinerary
+	 * 
+	 * @param tripID
+	 * @return
+	 */
 	@GetMapping("/deleteItinerary/{tripID}")
-	public boolean deleteItinerary(@PathVariable("tripID") int tripID) {
+	public String deleteItinerary(@PathVariable("tripID") int tripID) {
 		
 		int deleteTripID = tripID;
 		sql.connect();
 		if (sql.deleteItinerary(deleteTripID)) {
 			sql.closeConnection();
-			return true;
+			return String.format("Itinerary %s was deleted", deleteTripID);
 		}
 		sql.closeConnection();
-		return false;
-	
-	
+		return "Itinerary does not exist";	
 	}
 	
+	//For Testing purpose:
+	//localhost:8088/getItineraryByTripID/36
+	/**
+	 * Obtain the Itinerary information base on the tripID
+	 * 
+	 * @param tripID
+	 * @return
+	 */
+	@GetMapping("/getItineraryByTripID/{tripID}")
+	public ItineraryDto getItineraryByTripID(@PathVariable("tripID") int tripID) {
+		Itinerary itinerary = null;
+		
+		sql.connect();
+		itinerary = sql.getItineraryByTripID(tripID);
+		if (itinerary != null) {
+			sql.closeConnection();
+			return intineraryConvertToDto(itinerary);
+		}
+		sql.closeConnection();
+		return null;
+	}
 	
-	//--- Helper Method ---
+	/**
+	 * Helper Method: convert a string to a timeStamp
+	 * 
+	 * @param timeString
+	 * @return
+	 */
 	private Timestamp stringtoTimeStamp (String timeString) {
 		try {
 		    SimpleDateFormat dateLayout = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
