@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ecse321.team10.riderz.dto.ItineraryDto;
 import com.ecse321.team10.riderz.dto.UserDto;
 import com.ecse321.team10.riderz.model.Itinerary;
+import com.ecse321.team10.riderz.model.Location;
 import com.ecse321.team10.riderz.model.User;
 // Add 3 imports: itinerarydto, locationdto, reservationdto
 import com.ecse321.team10.riderz.sql.MySQLJDBC;
@@ -256,6 +257,34 @@ public class RouteController {
 		sql.closeConnection();
 		return String.format("Itinerary %s does not exist.", tripID);
 	}
+	
+	
+	//For testing purpose:
+	//localhost:8088/insertLocation/MatTest/45.41991240/-75.983142
+	/**
+	 * Insert a Location object into the database. Note the operator must already exist.
+	 * 
+	 * Location object: operator, longitude, latitude
+	 * @param operator  - A String representing the name of the driver
+	 * @param longitude - A double representing the longitude
+	 * @param latitude  - A double representing the latitude
+	 * @return message  - A String representing if the location was successfully inserted or not.
+	 */
+	@GetMapping("/insertLocation/{operator}/{longitude}/{latitude}")
+	public String insertLocation(@PathVariable("operator") String operator,
+								 @PathVariable("longitude") double longitude,
+								 @PathVariable("latitude") double latitude) {
+		
+		Location location = new Location(operator, longitude, latitude);
+		sql.connect();
+		if (sql.insertLocation(location)) {
+			sql.closeConnection();
+			return String.format("Location of %s has been inserted into the database.", location.getOperator());
+		}
+		sql.closeConnection();
+		return String.format("Location of %s could not be inserted into the database.", location.getOperator());
+	}
+	
 	
 	
 	/**
