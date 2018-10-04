@@ -35,6 +35,9 @@ public class CarController {
 						 @RequestParam int numberOfSeats,
 						 @RequestParam double fuelEfficiency,
 						 @RequestParam String licensePlate) {
+		make = alphabetFilter(make);
+		model = specialCharacterFilter(model);
+		licensePlate = specialCharacterFilter(licensePlate);
 		Car car = new Car(operator, make, model, year, numberOfSeats, fuelEfficiency, licensePlate);
 		sql.connect();
 		if(sql.insertCar(car)) {
@@ -68,6 +71,9 @@ public class CarController {
 						 	@RequestParam int numberOfSeats,
 						 	@RequestParam double fuelEfficiency,
 						 	@RequestParam String licensePlate) {
+		make = alphabetFilter(make);
+		model = specialCharacterFilter(model);
+		licensePlate = specialCharacterFilter(licensePlate);
 		Car car = new Car(operator, make, model, year, numberOfSeats, fuelEfficiency, licensePlate);
 		sql.connect();
 		if(sql.updateCar(car)) {
@@ -103,5 +109,13 @@ public class CarController {
 		sql.closeConnection();
 		logger.info("Successfully got a list of all the cars");
 		return cars;
+	}
+
+	private static String alphabetFilter(String word){
+		return word.replaceAll("[^A-Za-z ]", "");
+	}
+
+	private static String specialCharacterFilter(String word){
+		return word.replaceAll("[^A-Za-z0-9 ]", "");
 	}
 }
