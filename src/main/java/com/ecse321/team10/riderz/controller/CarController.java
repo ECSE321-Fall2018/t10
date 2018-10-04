@@ -51,15 +51,18 @@ public class CarController {
 	}
 
 	@DeleteMapping("")
-	public void deleteCar(@RequestParam String operator) {
+	public boolean deleteCar(@RequestParam String operator) {
 		sql.connect();
 		if (operator != null){
 			sql.deleteCar(operator);
 			sql.closeConnection();
 			logger.info("Successfully deleted the car owned by: " + operator);
-		}else{
+			return true;
+		}
+		else{
 			sql.closeConnection();
 			logger.info("There was no operator");
+			return false;
 		}
 	}
 
