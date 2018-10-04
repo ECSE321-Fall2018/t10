@@ -95,7 +95,7 @@ public class RouteController {
 	}
 	
 	//For Testing purpose:
-	//localhost:8088/updateItinerary/36/25.1111/26.3114/2019-01-01 02:00:00.000/40.33245/34.33214/2019-01-01 02:30:05.000/2
+	//localhost:8088/updateItinerary/36/25.1111/26.3114/2019-01-01 02:00:00.000/40.33245/34.33214/2019-01-01 02:30:05.000/1
 	
 	/**
 	 * Update an itinerary
@@ -199,7 +199,7 @@ public class RouteController {
 	 * @return itineraryList    -   A List of Itinerary representing the itineraries found base on the criteria. Return Null if none was found.
 	 */
 	@GetMapping("/getItineraryNearDestination/{endingLongitude}/{endingLatitude}/{maximumDistance}/{arrivalTime}")
-	public List<ItineraryDto> getItineraryNearDestination(@PathVariable("endingLongitude") double endingLongitude,
+	public List<ItineraryDto> getItineraryNearDestination(	@PathVariable("endingLongitude") double endingLongitude,
 															@PathVariable("endingLatitude") double endingLatitude,
 															@PathVariable("maximumDistance") double maximumDistance,
 															@PathVariable("arrivalTime") String arrivalTime){
@@ -214,6 +214,48 @@ public class RouteController {
 		return itineraryList;
 	}
 	
+	
+	
+	//localhost:8088/incrementSeatsLeft/35
+	//localhost:8088/getItineraryByTripID/35
+	/**
+	 * Increment by 1 the number of seats left in the itinerary given by the tripID
+	 * 
+	 * @param tripIDAn integer uniquely identifying a trip
+	 * @return message - A string indicating if the number of seats was incremented successfully for the tripID
+	 */
+	@GetMapping("/incrementSeatsLeft/{tripID}")
+	public String incrementSeatsLeft(@PathVariable("tripID")int tripID) {
+		
+		sql.connect();
+		if (sql.incrementSeatsLeft(tripID)) {
+			sql.closeConnection();
+			return String.format("The number of seats left in the itinerary %s was incremented.", tripID);
+		}
+		sql.closeConnection();
+		return String.format("Itinerary %s does not exist.", tripID);
+	}
+	
+	
+	//localhost:8088/decrementSeatsLeft/35
+	//localhost:8088/getItineraryByTripID/35
+	/**
+	 * Decrements by 1 the number of seats left in the itinerary given by the tripID
+	 * 
+	 * @param tripID - An integer uniquely identifying a trip
+	 * @return message - A string indicating if the number of seats was incremented successfully for the tripID
+	 */
+	@GetMapping("/decrementSeatsLeft/{tripID}")
+	public String decrementSeatsLeft(@PathVariable("tripID")int tripID) {
+		
+		sql.connect();
+		if (sql.decrementSeatsLeft(tripID)) {
+			sql.closeConnection();
+			return String.format("The number of seats left in the itinerary %s was decremented.", tripID);
+		}
+		sql.closeConnection();
+		return String.format("Itinerary %s does not exist.", tripID);
+	}
 	
 	
 	/**
