@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +35,7 @@ public class UsersController {
 	}
 	
 	private static final Logger logger = LogManager.getLogger(RiderzController.class);
-	
+
 	@PostMapping("addUser")
 	public UserDto addUser(	@RequestParam String username,
 							@RequestParam String password,
@@ -54,7 +55,7 @@ public class UsersController {
 	}
 	
 	@GetMapping("getUser")
-	public UserDto getUser(	@RequestParam("username") String username) {
+	public UserDto getUser(	@RequestParam String username) {
 		if(sql.connect()){
 			User user = sql.getUserByUsername(username);
 			sql.closeConnection();
@@ -74,20 +75,83 @@ public class UsersController {
 			sql.closeConnection();
 			return users;
 		}
-		else{
-			sql.closeConnection();
-			return null;
-		}
+		return null;
 	}
 
-	//Note: Will need a verification to allow this to happen
-	//otherwise anyone can just delete user via url
+	//Note: Implemented basic authentication
+	//todo is to better security
 	@DeleteMapping("deleteUser")
-	public void deleteUser(@RequestParam("username") String username){
-		if(sql.connect()){
+	public void deleteUser(@RequestParam String username, @RequestParam String password){
+		if(sql.connect() && sql.verifyLogin(username,password)){
 			sql.deleteUser(username);
 			sql.closeConnection();
 		}
 	}
+	
+
+	@PostMapping("login")
+	public boolean verifyLogin( @RequestParam String username, @RequestParam String password) {
+		if(sql.connect()){
+			boolean login=sql.verifyLogin(username,password);
+			sql.closeConnection();
+			return login;
+		}
+		return false;						
+	}
+
+	@GetMapping("getPhone")
+	public String getPhone( @RequestParam String username ){
+		if(sql.connect()){
+			
+			String phone = sql.getPhone(username);
+			sql.closeConnection();
+			return phone;
+		}
+		return null;
+	}
+
+	@PutMapping("setPhone")
+	public boolean setPhone( @RequestParam String username,@RequestParam String phone){
+		if(sql.connect()){
+			boolean numberChanged = sql.setPhone(username, phone);
+			sql.closeConnection();
+			return numberChanged;
+		}
+		return false;
+	}
+
+	@GetMapping("getEmail")
+	public String getEmail( @RequestParam String username ){
+		if(sql.connect()){
+			String email = sql.getEmail(username);
+			sql.closeConnection();
+			return email;
+		}
+		return null;
+	}
+
+	@PutMapping("setEmail")
+	public boolean setEmail(@RequestParam String username,@RequestParam String email ){
+		if(sql.connect()){
+			boolean emailChanged = sql.setEmail(username,email);
+			sql.closeConnection();
+			return emailChanged;
+		}
+		return false;
+	}
+
+	//Successfully changes password but can implement email verification later
+	@PutMapping("setPassword")
+	public boolean setPassword(@RequestParam String username,@RequestParam String password, @RequestParam String newPassword){
+		if(sql.connect() && sql.verifyLogin(username,password)){
+			boolean changedPass= sql.setPassword(username,newPassword);
+			sql.closeConnection();
+			return changedPass;
+		}
+		sql.closeConnection();
+		return false;
+	}
+
+
 
 }
