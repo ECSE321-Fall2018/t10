@@ -43,10 +43,9 @@ public class DriversController {
 		Driver driver = sql.getDriverByUsername(operator);
 		if(driver != null) {
 			sql.closeConnection();
-			logger.info("Fetched driver with operator name: "+ operator);
-			logger.info("Driver info: "+ driver.toString());
+			logger.info("Fetched driver with operator name: "+ operator + 
+					" with info: " + driver.toString());
 			DriverDto dto = convertToDto(driver);
-			logger.info("Driver dto: "+ dto.getOperator());
 			return dto;
 		}
 		sql.closeConnection();
