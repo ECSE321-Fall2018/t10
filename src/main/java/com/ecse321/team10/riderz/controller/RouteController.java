@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date; //may be sql import instead?
+import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +24,11 @@ import com.ecse321.team10.riderz.dto.ItineraryDto;
 import com.ecse321.team10.riderz.model.Itinerary;
 // Add 3 imports: itinerarydto, locationdto, reservationdto
 import com.ecse321.team10.riderz.sql.MySQLJDBC;
+
+/**
+ * Route Controller handling URLS and routing to the specified information within the DB
+ * Handles all relevant information concerning itineraries
+ */
 
 @RestController
 public class RouteController {
@@ -48,8 +53,10 @@ public class RouteController {
 	
 	private static final Logger logger = LogManager.getLogger(RiderzController.class);
 	
+	//For Testing purpose:
 	//localhost:8088/insertItinerary/36/15.33534/12.44412/2019-01-01 01:00:00.000/40.33245/34.33214/2019-01-01 01:30:00.000/3
 	
+	// Insert an itinerary
 	@GetMapping("/insertItinerary/{tripID}/{startingLongitude}/{startingLatitude}/{startingTime}/{endingLongitude}/{endingLatitude}/{endingTime}/{seatsLeft}")
 	public ItineraryDto insertItinerary(@PathVariable("tripID") int tripID,
 										@PathVariable("startingLongitude") double startingLongitude,
@@ -73,9 +80,10 @@ public class RouteController {
 		return null;
 	}
 	
-	
+	//For Testing purpose:
 	//localhost:8088/updateItinerary/36/25.1111/26.3114/2019-01-01 02:00:00.000/40.33245/34.33214/2019-01-01 02:30:05.000/2
 	
+	//Update an itinerary
 	@GetMapping("/updateItinerary/{tripID}/{startingLongitude}/{startingLatitude}/{startingTime}/{endingLongitude}/{endingLatitude}/{endingTime}/{seatsLeft}")
 	public ItineraryDto updateItinerary(@PathVariable("tripID") int tripID,
 										@PathVariable("startingLongitude") double startingLongitude,
@@ -100,9 +108,27 @@ public class RouteController {
 		
 	}
 	
+	//For Testing purpose:
+	//localhost:8088/deleteItinerary/36
 	
-	// *** Helper Method ***
+	//Delete an itinerary
+	@GetMapping("/deleteItinerary/{tripID}")
+	public boolean deleteItinerary(@PathVariable("tripID") int tripID) {
+		
+		int deleteTripID = tripID;
+		sql.connect();
+		if (sql.deleteItinerary(deleteTripID)) {
+			sql.closeConnection();
+			return true;
+		}
+		sql.closeConnection();
+		return false;
 	
+	
+	}
+	
+	
+	//--- Helper Method ---
 	private Timestamp stringtoTimeStamp (String timeString) {
 		try {
 		    SimpleDateFormat dateLayout = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
