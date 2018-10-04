@@ -1217,7 +1217,7 @@ public class MySQLJDBC {
 	 * @return True if an entry was updated. False otherwise.
 	 */
 	public boolean updateLocation(Location location) {
-		String updateLocation = "UPDATE location SET longitude = ? AND latitude = ? WHERE operator = ?;";
+		String updateLocation = "UPDATE location SET longitude = ?, latitude = ? WHERE operator = ?;";
 		PreparedStatement ps = null;
 		try {
 			ps = c.prepareStatement(updateLocation);
@@ -1236,13 +1236,36 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Deletes the location of an user from the database.
+	 * @param operator	-	A String representing an User's username.
+	 * @return True if an entry was delete from the database. False otherwise.
+	 */
+	public boolean deleteLocation(String operator) {
+		String deleteLocation = "DELETE FROM location WHERE operator = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(deleteLocation);
+			ps.setString(1, operator);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				logger.info(String.format("Location of '%s' has been deleted from the database.", operator));
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
 	//=======================
 	// RESERVATION API
 	//=======================
 	/**
 	 * Inserts a Reservation object into the database.
 	 * @param reservation	-	A Reservation object to be inserted into the database.
-	 * @return True if an entry was inserted into the database.
+	 * @return True if an entry was inserted into the database. False otherwise.
 	 */
 	public boolean insertReservation(Reservation reservation) {
 		String insertReservation = "INSERT INTO reservation (operator, tripID) VALUES (?, ?);";
