@@ -225,7 +225,7 @@ public class RouteController {
 	/**
 	 * Increment by 1 the number of seats left in the itinerary given by the tripID
 	 * 
-	 * @param tripIDAn integer uniquely identifying a trip
+	 * @param tripID   - An integer uniquely identifying a trip
 	 * @return message - A string indicating if the number of seats was incremented successfully for the tripID
 	 */
 	@GetMapping("/incrementSeatsLeft/{tripID}")
@@ -336,14 +336,16 @@ public class RouteController {
 		return null;
 	}
 	
-	
+	// *************************** STEVEN FIXED BUG IN ANOTHER BRANCH : UNIT TESTING WILL NOT WORK TILL MERGE ON DEV ************************************
 	//For testing purpose:
 	//localhost:8088/updateLocation/MatTest/55.513513/-83.421255
 	//localhost:8088/updateLocation/abc/15.513513/-13.4242455
 	//localhost:8088/updateLocation/WrongName/15.513513/-13.4242455
 	/**
 	 * Updates a location entry within the database.
-	 * @param location	-	A Location object to be updated within the database.
+	 * @param operator	-	A String representing the name of the operator.
+	 * @param longitude -   A String representing the longitude.
+	 * @param latitude  -   A String representing the latitude.
 	 * @return message  -   A String representing if the location was successfully updated or not.
 	 */
 	@GetMapping("/updateLocation/{operator}/{longitude}/{latitude}")
@@ -361,8 +363,79 @@ public class RouteController {
 		return String.format("Location of %s does not exist", operator);
 	}
 	
-		
 	
+	//For testing purpose:
+	//localhost:8088/insertReservation/MatTest/36
+	//localhost:8088/insertReservation/MatTest/35
+	//localhost:8088/insertReservation/MatTest/35
+	//localhost:8088/insertReservation/Mattest/36
+	//localhost:8088/insertReservation/Mattest/35
+	//localhost:8088/insertReservation/WrongName/36
+	//localhost:8088/insertReservation/MatTest/1009
+	/**
+	 * Inserts a Reservation object into the database.The operator and the tripId must exist
+	 * @param opeartor	-	A String representing the name of the operator.
+	 * @param tripID    -   An integer uniquely identifying a trip.
+	 * @return message  -   A String representing if the Reservation was successfully inserted or not.
+	 */
+	@GetMapping("/insertReservation/{operator}/{tripID}")
+	public String insertReservation(@PathVariable("operator") String operator,
+									@PathVariable("tripID") int tripID) {
+		sql.connect();
+		Reservation reservation = new Reservation(operator, tripID);
+		if (sql.insertReservation(reservation)) {
+			sql.closeConnection();
+			return "Reservation of " + operator + " has been inserted for the tripID: " + tripID;
+		}
+		sql.closeConnection();
+		return "Reservation of " + operator + " is invalid for the tripID: " + tripID;
+	}
+	
+	
+	//For testing purpose:
+	//localhost:8088/deleteReservation/MatTest/36
+	//localhost:8088/deleteReservation/mattest/35
+	/**
+	 * Deletes an entry from the database.
+	 * 
+	 * @param operator  - A String representing the name of the operator.
+	 * @param tripID    - An integer uniquely identifying a trip.
+	 * @return message  - A String representing if the Reservation was successfully deleted or not.
+	 */
+	@GetMapping("/deleteReservation/{operator}/{tripID}")
+	public String deleteReservation(@PathVariable("operator") String operator,
+									@PathVariable("tripID") int tripID) {
+		sql.connect();
+		Reservation reservation = new Reservation(operator, tripID);
+		if (sql.deleteReservation(reservation)) {
+			sql.closeConnection();
+			return "Reservation of " + operator + " has been deleted for the tripID: " + tripID;
+		}
+		sql.closeConnection();
+		return "Reservation of " + operator + " is invalid for the tripID: " + tripID;
+	}
+	
+	//For testing purpose:
+	//localhost:8088/insertReservation/MatTest/36
+	//localhost:8088/insertReservation/MatTest/35
+	//localhost:8088/getReservationByUsername/MatTest
+	/**
+	 * Fetches from the database all reservations for a specific User.
+	 * 
+	 * @param operator         - A String representing the name of the operator.
+	 * @return reservationList - A List of reservation for a specific user
+	 */
+	@GetMapping("/getReservationByUsername/{operator}")
+	public List<ReservationDto> getReservationByUsername(@PathVariable("operator") String operator) {
+		
+		sql.connect();		
+		List<ReservationDto> reservationList = new ArrayList<ReservationDto>();
+		for(Reservation reservation : sql.getReservationByUsername(operator))
+			reservationList.add(reservationConvertToDto(reservation));
+		sql.closeConnection();
+		return reservationList;
+	}
+
 	/**
 	 * Helper Method: convert a string to a timeStamp
 	 * 
