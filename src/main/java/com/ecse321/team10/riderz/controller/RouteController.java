@@ -364,7 +364,25 @@ public class RouteController {
 		return String.format("Location of %s does not exist", operator);
 	}
 	
+	/**
+	 * Deletes the location of an user from the database.
+	 * 
+	 * @param operator  -	A String representing the name of the operator.
+	 * @return message  -   A String representing if the location was successfully deleted or not.
+	 */
+	@GetMapping("/deleteLocation/{operator}")
+	public String deleteLocation(@PathVariable("operator") String operator) {
+		
+		sql.connect();
+		if (sql.deleteLocation(operator)) {
+			sql.closeConnection();
+			return String.format("Location of %s has been deleted.", operator);
+		}
+		sql.closeConnection();
+		return String.format("Location of %s does not exist", operator);
+	}
 	
+
 	//For testing purpose:
 	//localhost:8088/insertReservation/MatTest/36
 	//localhost:8088/insertReservation/MatTest/35

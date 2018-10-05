@@ -36,18 +36,23 @@ public class TestRouteController {
 	
 	int tripID;
 	int tripID2;
+	int tripID3;
 	
 	@Before
 	public void setup() {
 		
 		User user = new User("unitTest-Sav", "unitTestSavoie", "mat_savoie@hotmail.com", "1234445555", "Mat", "Sav");
+		User user2 = new User("unitTest-MatSav", "unitTestMatSavoie2", "mat_savoie2@hotmail.com", "1121234445555", "Matthieu", "Savi");
 		
 		sql.connect();
 		sql.insertUser(user);
+		sql.insertUser(user2);
 		sql.insertTrip("unitTest-Sav");
 		tripID = sql.getLastTripByUsername("unitTest-Sav").getTripID();
 		sql.insertTrip("unitTest-Sav");
 		tripID2 = sql.getLastTripByUsername("unitTest-Sav").getTripID();
+		sql.insertTrip("unitTest-MatSav");
+		tripID3 = sql.getLastTripByUsername("unitTest-MatSav").getTripID();
 		sql.closeConnection();
 	}
 	
@@ -56,7 +61,9 @@ public class TestRouteController {
 		sql.connect();
 		sql.deleteTrip(tripID, "unitTest-Sav");
 		sql.deleteTrip(tripID2, "unitTest-Sav");
+		sql.deleteTrip(tripID3, "unitTest-MatSav");
 		sql.deleteUser("unitTest-Sav");
+		sql.deleteUser("unitTest-MatSav");
 		sql.closeConnection();
 	}
 	
@@ -160,5 +167,36 @@ public class TestRouteController {
 		
 		this.mockMvc.perform(get("/deleteItinerary/" + tripID2)).andDo(print()).andExpect(status().isOk())
 		.andExpect(content().string(containsString("Itinerary " +tripID2 +" was deleted.")));
-	}	
+	}
+
+	@Test
+	public void testLocation ()throws Exception {
+		
+		// Testing insert Location
+		this.mockMvc.perform(get("/insertLocation/unitTest-Sav/45.4199124/-75.983142")).andDo(print()).andExpect(status().isOk())
+		.andExpect(content().string(containsString("Location of unitTest-Sav has been inserted into the database.")));
+		
+		// Testing insert Location
+		this.mockMvc.perform(get("/insertLocation/unitTest-MatSav/45.4199111/-75.983111")).andDo(print()).andExpect(status().isOk())
+		.andExpect(content().string(containsString("Location of unitTest-MatSav has been inserted into the database.")));
+		
+		// Testing get Location by userName
+		this.mockMvc.perform(get("/getLocationByUsername/unitTest-MatSav")).andDo(print()).andExpect(status().isOk())
+		.andExpect(content().string(containsString("{\"operator\":\"unitTest-MatSav\",\"longitude\":45.4199111,\"latitude\":-75.983111}")));
+		
+		// Testing get location near
+		this.mockMvc.perform(get("/getLocationNear/45.4199131/-75.983121/1000")).andDo(print()).andExpect(status().isOk())
+		.andExpect(content().string(containsString("{\"operator\":\"unitTest-MatSav\",\"longitude\":45.4199111,\"latitude\":-75.983111},{\"operator\":\"unitTest-Sav\",\"longitude\":45.4199124,\"latitude\":-75.983142}")));
+		
+		// Testing update Location
+		this.mockMvc.perform(get("/updateLocation/unitTest-MatSav/11.111111/-75.111111")).andDo(print()).andExpect(status().isOk())
+		.andExpect(content().string(containsString("Location of unitTest-MatSav has been updated.")));
+		
+		// Testing get delete by userName
+		this.mockMvc.perform(get("/deleteLocation/unitTest-MatSav")).andDo(print()).andExpect(status().isOk())
+		.andExpect(content().string(containsString("Location of unitTest-MatSav has been deleted.")));
+
+		this.mockMvc.perform(get("/deleteLocation/unitTest-Sav")).andDo(print()).andExpect(status().isOk())
+		.andExpect(content().string(containsString("Location of unitTest-Sav has been deleted.")));		
+	}
 }
