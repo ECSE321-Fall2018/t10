@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecse321.team10.riderz.dto.ItineraryDto;
 import com.ecse321.team10.riderz.dto.LocationDto;
+import com.ecse321.team10.riderz.dto.ReservationDto;
 import com.ecse321.team10.riderz.dto.UserDto;
 import com.ecse321.team10.riderz.model.Itinerary;
 import com.ecse321.team10.riderz.model.Location;
+import com.ecse321.team10.riderz.model.Reservation;
 import com.ecse321.team10.riderz.model.User;
 import com.ecse321.team10.riderz.sql.MySQLJDBC;
 
@@ -45,11 +47,11 @@ public class RouteController {
 	private LocationDto locationConvertToDto(Location location) {
 		return modelMapper.map(location, LocationDto.class);
 	}
-	/*
+	
 	private ReservationDto reservationConvertToDto(Reservation reservation) {
 		return modelMapper.map(reservation, ReservationDto.class);
 	}
-	 */
+	
 	private ItineraryDto intineraryConvertToDto(Itinerary itinerary) {
 		return modelMapper.map(itinerary, ItineraryDto.class);
 	}
@@ -298,7 +300,7 @@ public class RouteController {
 	 * @param endingLongitude	-	A double representing current User's longitude.
 	 * @param endingLatitude	-	A double representing current User's latitude.
 	 * @param maximumDistance	-	A double representing maximum search radius in meters.
-	 * @return An ArrayList of Location objects matching the search criteria. Null if an error occurred.
+	 * @return locationList     -   A List of Location objects matching the search criteria. Null if an error occurred.
 	 */
 	@GetMapping("/getLocationNear/{longitude}/{latitude}/{maximumDistance}")
 	public List<LocationDto> getLocationNear(@PathVariable("longitude") double longitude,
@@ -311,15 +313,14 @@ public class RouteController {
 		sql.closeConnection();
 		return locationList;
 	}
-	
-	
+		
 	//For testing purpose:
 	//localhost:8088/getLocationByUsername/MatTest
 	//localhost:8088/getLocationByUsername/mattest
 	//localhost:8088/getLocationByUsername/MatTestWrong
 	/**
 	 * Fetches the User's location from the database.
-	 * @param operator	-	A String representing an User's username.
+	 * @param operator	-	A String representing an User's userName.
 	 * @return A Location object if an entry was found. Null otherwise.
 	 */
 	@GetMapping("/getLocationByUsername/{operator}")
@@ -334,6 +335,33 @@ public class RouteController {
 		sql.closeConnection();
 		return null;
 	}
+	
+	
+	//For testing purpose:
+	//localhost:8088/updateLocation/MatTest/55.513513/-83.421255
+	//localhost:8088/updateLocation/abc/15.513513/-13.4242455
+	//localhost:8088/updateLocation/WrongName/15.513513/-13.4242455
+	/**
+	 * Updates a location entry within the database.
+	 * @param location	-	A Location object to be updated within the database.
+	 * @return message  -   A String representing if the location was successfully updated or not.
+	 */
+	@GetMapping("/updateLocation/{operator}/{longitude}/{latitude}")
+	public String updateLocation(@PathVariable("operator") String operator,
+								 @PathVariable("longitude") double longitude,
+								 @PathVariable("latitude") double latitude) {
+		
+		Location location = new Location(operator, longitude, latitude);
+		sql.connect();
+		if (sql.updateLocation(location)) {
+			sql.closeConnection();
+			return String.format("Location of %s has been updated.", operator);
+		}
+		sql.closeConnection();
+		return String.format("Location of %s does not exist", operator);
+	}
+	
+		
 	
 	/**
 	 * Helper Method: convert a string to a timeStamp
