@@ -7,7 +7,7 @@
 ### Technologies
 Build System:               Maven
 Backend Server framework:   Java Spring
-Persistence:                MySQL JPA or JDBC (will have to decide on this)
+Persistence:                MySQL and JDBC
 Unit Tests:                 JUnit
 Hosting:                    Tomcat8
 
@@ -21,17 +21,17 @@ Hosting:                    Tomcat8
 
 ## Backlog
 * Backlog <br/>
-	* Create backend using Spring (critical) <br/>
+	* Create backend using Spring (critical) (WIP) <br/>
 		* Vehicle make, year, number of seats <br/>
 		* Accounts <br/>
 		* Starting point and Destination point (address) <br/>
 		* Range of dates <br/>
 		* Price (offer) <br/>
-	* Create database using MySQL and hibernate (critical) <br/>
+	* Create database using MySQL and hibernate (critical)(Completed) <br/>
 	* Create authentication process (low) <br/>
 		* Posting add user page <br/>
 		* Posting login page <br/>
-	* Create unit tests (high) <br/>
+	* Create unit tests (high) (WIP)<br/>
 
 ## Worflow
 
