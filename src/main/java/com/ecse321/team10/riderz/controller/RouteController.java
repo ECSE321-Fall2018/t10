@@ -21,11 +21,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecse321.team10.riderz.dto.ItineraryDto;
+import com.ecse321.team10.riderz.dto.LocationDto;
 import com.ecse321.team10.riderz.dto.UserDto;
 import com.ecse321.team10.riderz.model.Itinerary;
 import com.ecse321.team10.riderz.model.Location;
 import com.ecse321.team10.riderz.model.User;
-// Add 3 imports: itinerarydto, locationdto, reservationdto
 import com.ecse321.team10.riderz.sql.MySQLJDBC;
 
 /**
@@ -41,11 +41,11 @@ public class RouteController {
 	
 	@Autowired
 	private ModelMapper modelMapper;
-	/*
+	
 	private LocationDto locationConvertToDto(Location location) {
 		return modelMapper.map(location, LocationDto.class);
 	}
-
+	/*
 	private ReservationDto reservationConvertToDto(Reservation reservation) {
 		return modelMapper.map(reservation, ReservationDto.class);
 	}
@@ -89,6 +89,7 @@ public class RouteController {
 		sql.connect();
 		if (sql.insertItinerary(itinerary)) {
 			sql.closeConnection();
+			//logger.info("starting time: " + startingTimeStamp + " and ending time: " + endingTimeStamp);
 			return intineraryConvertToDto(itinerary);
 		}
 		sql.closeConnection();
@@ -261,6 +262,7 @@ public class RouteController {
 	
 	//For testing purpose:
 	//localhost:8088/insertLocation/MatTest/45.41991240/-75.983142
+	//localhost:8088/insertLocation/abc/45.41995000/-75.983400
 	/**
 	 * Insert a Location object into the database. Note the operator must already exist.
 	 * 
@@ -286,6 +288,52 @@ public class RouteController {
 	}
 	
 	
+	//For testing purpose:
+	//localhost:8088/getLocationNear/45.41991330/-75.983111/1000.0000
+	//localhost:8088/getLocationNear/46.41991330/-80.983111/1000000.0000
+	/**
+	 * Fetches entries from the database fitting search criteria based on a spherical distance
+	 * algorithm. Recommended to have a low maximum search radius to obtain more accurate results.
+	 * 
+	 * @param endingLongitude	-	A double representing current User's longitude.
+	 * @param endingLatitude	-	A double representing current User's latitude.
+	 * @param maximumDistance	-	A double representing maximum search radius in meters.
+	 * @return An ArrayList of Location objects matching the search criteria. Null if an error occurred.
+	 */
+	@GetMapping("/getLocationNear/{longitude}/{latitude}/{maximumDistance}")
+	public List<LocationDto> getLocationNear(@PathVariable("longitude") double longitude,
+											 @PathVariable("latitude") double latittude,
+											 @PathVariable("maximumDistance") double maximumDistance){
+		sql.connect();		
+		List<LocationDto> locationList = new ArrayList<LocationDto>();
+		for(Location location : sql.getLocationNear(longitude, latittude, maximumDistance))
+			locationList.add(locationConvertToDto(location));
+		sql.closeConnection();
+		return locationList;
+	}
+	
+	
+	//For testing purpose:
+	//localhost:8088/getLocationByUsername/MatTest
+	//localhost:8088/getLocationByUsername/mattest
+	//localhost:8088/getLocationByUsername/MatTestWrong
+	/**
+	 * Fetches the User's location from the database.
+	 * @param operator	-	A String representing an User's username.
+	 * @return A Location object if an entry was found. Null otherwise.
+	 */
+	@GetMapping("/getLocationByUsername/{operator}")
+	public Location getLocationByUsername(@PathVariable("operator") String operator) {
+		
+		sql.connect();
+		Location location = sql.getLocationByUsername(operator);
+		if (location != null) {
+			sql.closeConnection();
+			return location;
+		}
+		sql.closeConnection();
+		return null;
+	}
 	
 	/**
 	 * Helper Method: convert a string to a timeStamp
