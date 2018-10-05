@@ -1,7 +1,7 @@
 package com.ecse321.team10.riderz.controller;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+//import org.apache.logging.log4j.LogManager;
+//import org.apache.logging.log4j.Logger;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
@@ -10,24 +10,24 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+//import org.apache.logging.log4j.LogManager;
+//import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+//import org.springframework.web.bind.annotation.PostMapping;
+//import org.springframework.web.bind.annotation.RequestParam;
+//import org.springframework.web.bind.annotation.RestController;
 
 import com.ecse321.team10.riderz.dto.ItineraryDto;
 import com.ecse321.team10.riderz.dto.LocationDto;
 import com.ecse321.team10.riderz.dto.ReservationDto;
-import com.ecse321.team10.riderz.dto.UserDto;
+//import com.ecse321.team10.riderz.dto.UserDto;
 import com.ecse321.team10.riderz.model.Itinerary;
 import com.ecse321.team10.riderz.model.Location;
 import com.ecse321.team10.riderz.model.Reservation;
-import com.ecse321.team10.riderz.model.User;
+//import com.ecse321.team10.riderz.model.User;
 import com.ecse321.team10.riderz.sql.MySQLJDBC;
 
 /**
@@ -56,11 +56,12 @@ public class RouteController {
 		return modelMapper.map(itinerary, ItineraryDto.class);
 	}
 	
-	private static final Logger logger = LogManager.getLogger(RiderzController.class);
+	//private static final Logger logger = LogManager.getLogger(RiderzController.class);
 	
 	//For Testing purpose:
 	//localhost:8088/insertItinerary/36/15.33534/12.44412/2019-01-01 01:00:00.000/40.33245/34.33214/2019-01-01 01:30:00.000/3
 	
+	//localhost:8088/insertItinerary/35/45.419980/-73.883442/2019-01-01 02:00:00.000/45.456180/-73.862320/2019-01-01 02:30:00.000/3
 	/**
 	 * Insert an itinerary
 	 * 
@@ -191,7 +192,7 @@ public class RouteController {
 	//localhost:8088/getItineraryNearDestination/10.456181/-10.862321/500000000.160000/2019-01-02 03:30:00.000
 	
 	//localhost:8088/insertItinerary/36/15.33534/12.44412/2019-01-01 01:00:00.000/45.456580/-73.869320/2019-01-01 01:30:00.000/3
-	//localhost:8088/getItineraryNearDestination/45.456880/-73.869920/1000.00000/2019-01-01 04:30:00.000
+	//localhost:8088/getItineraryNearDestination/45.45688/-73.869920/1000.00000/2019-01-01 04:30:00.000
 	/**
 	 * Obtains all the Itineraries fitting search criteria based on a spherical distance
 	 * algorithm. Low search radius is recommended for accurate results.
