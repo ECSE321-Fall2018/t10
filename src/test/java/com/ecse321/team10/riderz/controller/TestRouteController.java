@@ -136,32 +136,5 @@ public class TestRouteController {
 		
 		this.mockMvc.perform(get("/deleteItinerary/" + tripID2)).andDo(print()).andExpect(status().isOk())
 		.andExpect(content().string(containsString("Itinerary " +tripID2 +" was deleted.")));
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * Helper Method: convert a string to a timeStamp
-	 * 
-	 * @param timeString - A time represented in a string
-	 * @return timeStamp - A time represented by a timeStamp
-	 */
-	/*
-	private Timestamp stringtoTimeStamp (String timeString) {
-		try {
-		    SimpleDateFormat dateLayout = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-		    Date date = dateLayout.parse(timeString);
-		    Timestamp timeStamp = new java.sql.Timestamp(date.getTime());
-		    return timeStamp;
-		} catch(Exception e) {
-			return null;
-		}
-	}
-	*/
-	
+	}	
 }
