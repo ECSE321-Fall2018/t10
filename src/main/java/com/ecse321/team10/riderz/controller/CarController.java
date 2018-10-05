@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RequestMapping("/car")
 
@@ -35,9 +37,22 @@ public class CarController {
 						 @RequestParam int numberOfSeats,
 						 @RequestParam double fuelEfficiency,
 						 @RequestParam String licensePlate) {
-		make = alphabetFilter(make);
-		model = specialCharacterFilter(model);
-		licensePlate = specialCharacterFilter(licensePlate);
+
+		if(!isOnlyAlphabetic(make)){
+			logger.info("Your make " + make + " must contain only letters in the alphabet");
+			return null;
+		}
+
+		if (!isAlphaNumeric(model)){
+			logger.info(("Your car model " + model + " must not contain special characters"));
+			return null;
+		}
+
+		if (!isAlphaNumeric(licensePlate)){
+			logger.info("Your license plate " + licensePlate + " must not contain special characters");
+			return null;
+		}
+
 		Car car = new Car(operator, make, model, year, numberOfSeats, fuelEfficiency, licensePlate);
 		sql.connect();
 		if(sql.insertCar(car)) {
@@ -74,9 +89,22 @@ public class CarController {
 						 	@RequestParam int numberOfSeats,
 						 	@RequestParam double fuelEfficiency,
 						 	@RequestParam String licensePlate) {
-		make = alphabetFilter(make);
-		model = specialCharacterFilter(model);
-		licensePlate = specialCharacterFilter(licensePlate);
+
+		if(!isOnlyAlphabetic(make)){
+			logger.info("Your make " + make + " must contain only letters in the alphabet");
+			return null;
+		}
+
+		if (!isAlphaNumeric(model)){
+			logger.info(("Your car model " + model + " must not contain special characters"));
+			return null;
+		}
+
+		if (!isAlphaNumeric(licensePlate)){
+			logger.info("Your license plate " + licensePlate + " must not contain special characters");
+			return null;
+		}
+
 		Car car = new Car(operator, make, model, year, numberOfSeats, fuelEfficiency, licensePlate);
 		sql.connect();
 		if(sql.updateCar(car)) {
@@ -114,11 +142,15 @@ public class CarController {
 		return cars;
 	}
 
-	private static String alphabetFilter(String word){
-		return word.replaceAll("[^A-Za-z ]", "");
+	private static Boolean isOnlyAlphabetic(String word){
+		Pattern special = Pattern.compile("[^A-Za-z ]");
+		Matcher hasSpecial = special.matcher(word);
+		return !hasSpecial.find();
 	}
 
-	private static String specialCharacterFilter(String word){
-		return word.replaceAll("[^A-Za-z0-9 ]", "");
+	private static Boolean isAlphaNumeric(String word){
+		Pattern special = Pattern.compile("[^A-Za-z0-9 ]");
+		Matcher hasSpecial = special.matcher(word);
+		return !hasSpecial.find();
 	}
 }
