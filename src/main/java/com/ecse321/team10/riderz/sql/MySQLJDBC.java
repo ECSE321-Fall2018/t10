@@ -1335,6 +1335,9 @@ public class MySQLJDBC {
 		}
 	}
 
+	//=======================
+	// Helper API
+	//=======================
 	/**
 	 * Converts a String into a java.util.Timestamp Object.
 	 * @param ts		-	A String representing a timestamp in yyyy-MM-dd hh:mm:ss.SSS format
@@ -1348,6 +1351,37 @@ public class MySQLJDBC {
 		} catch(Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
 		    return null;
+		}
+	}
+
+	/**
+	 * Clears all tables within the database. For testing purposes only...
+	 * DO NOT USE IN ANY PUBLICLY AVAILABLE ACCESS POINTS!
+	 * @return True if truncation completed successfully. False if an error occurred.
+	 */
+	public boolean purgeDatabase() {
+		String purgeItinerary = "TRUNCATE TABLE itinerary;";
+		String purgeLocation = "TRUNCATE TABLE location;";
+		String purgeReservation = "TRUNCATE TABLE reservation;";
+		String purgeTrip = "TRUNCATE TABLE trip;";
+		String purgeCar = "TRUNCATE TABLE car;";
+		String purgeDriver = "TRUNCATE TABLE driver;";
+		String purgeUsers = "TRUNCATE TABLE users;";
+		try {
+			c.createStatement().executeUpdate("SET FOREIGN_KEY_CHECKS = 0;");
+			c.createStatement().executeUpdate(purgeCar);
+			c.createStatement().executeUpdate(purgeDriver);
+			c.createStatement().executeUpdate(purgeItinerary);
+			c.createStatement().executeUpdate(purgeLocation);
+			c.createStatement().executeUpdate(purgeReservation);
+			c.createStatement().executeUpdate(purgeTrip);
+			c.createStatement().executeUpdate(purgeUsers);
+			c.createStatement().executeUpdate("SET FOREIGN_KEY_CHECKS = 1;");
+			logger.info("Database has been truncated");
+			return true;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
 		}
 	}
 }
