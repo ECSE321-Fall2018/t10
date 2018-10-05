@@ -17,6 +17,9 @@ import com.ecse321.team10.riderz.dto.DriverDto;
 import com.ecse321.team10.riderz.model.Driver;
 import com.ecse321.team10.riderz.sql.MySQLJDBC;
 
+/**
+ * Controller for the Driver's API
+ */
 @RestController
 @RequestMapping(value = "/driver")
 public class DriversController {
@@ -33,6 +36,12 @@ public class DriversController {
 	
 	private static final Logger logger = LogManager.getLogger(RiderzController.class);
 
+	/**
+	 * Fetches a Driver from the database using the Driver's operator name.
+	 * @param operator 	- 	A String representing the Driver's operator name.
+	 * @return A DriverDto object if an a Driver with that operator name was found 
+	 * in the database. Null otherwise.
+	 */
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public DriverDto getDriverByUsername(@RequestParam String operator) {
 		if(!isAlphanumeric(operator)) {
@@ -84,12 +93,16 @@ public class DriversController {
 //		}
 //	}
 	
+	/**
+	 * Fetches all Drivers from the database.
+	 * @return An ArrayList of DriverDto object(s) if an one or more Drivers were 
+	 * found in the database. Null otherwise.
+	 */
 	@RequestMapping(value = "all", method = RequestMethod.GET)
 	public ArrayList<DriverDto> getAllDrivers() {
 		sql.connect();
 		ArrayList<Driver> drivers = sql.getAllDrivers();
 		ArrayList<DriverDto> driversDto = new ArrayList<DriverDto>();
-		
 		if(drivers != null) {
 			sql.closeConnection();
 			if(drivers.isEmpty()) {
@@ -103,11 +116,16 @@ public class DriversController {
 				return driversDto;
 			}
 		}
-		
 		sql.closeConnection();
 		return null;
 	}
 	
+	/**
+	 * Fetches a Driver's rating from the database using their operator name.
+	 * @param operator 	- 	A String representing the Driver's operator name.
+	 * @return A double number representing the Driver's rating if a Driver with 
+	 * that operator name was found in the database. Zero otherwise.
+	 */
 	@RequestMapping(value = "rating", method = RequestMethod.GET)
 	public double getDriverRating(@RequestParam String operator) {
 		sql.connect();
@@ -117,6 +135,13 @@ public class DriversController {
 		return rating;
 	}
 	
+	/**
+	 * Updates a Driver's rating with a new rating using their operator name.
+	 * @param operator 	- 	A String representing the Driver's operator name.
+	 * @param rating 	- 	A double representing the Driver's new rating.
+	 * @return True if a Driver with the inputed operator name was found and
+	 * its rating was successfully updated. False otherwise.
+	 */
 	@RequestMapping(value = "rating", method = RequestMethod.PUT)
 	public boolean updateDriverRating(@RequestParam String operator, @RequestParam double rating) {
 		if(!isAlphanumeric(operator)) {
@@ -135,6 +160,13 @@ public class DriversController {
 		return false;
 	}
 	
+	/**
+	 * Fetches the number of people who have rated a specific Driver using 
+	 * their operator name.
+	 * @param operator 	- 	A String representing the Driver's operator name.
+	 * @return An integer number representing the number of people who have 
+	 * rated the Driver with the inputed operator name. Zero otherwise.
+	 */
 	@RequestMapping(value = "rating/frequency", method = RequestMethod.GET)
 	public int getDriverRatingFrequency(@RequestParam String operator) {
 		sql.connect();
@@ -144,6 +176,13 @@ public class DriversController {
 		return personsRated;
 	}
 	
+	/**
+	 * Increments the number of people who have rated a specific Driver using 
+	 * their operator name.
+	 * @param operator 	- 	A String representing the Driver's operator name.
+	 * @return True if the number of people who have rated the Driver with the inputed
+	 * operator name has been successfully incremented. False otherwise.
+	 */
 	@RequestMapping(value = "rating/frequency", method = RequestMethod.PUT)
 	public boolean incrementDriverRatingFrequency(@RequestParam String operator) {
 		if(!isAlphanumeric(operator)) {
@@ -162,6 +201,13 @@ public class DriversController {
 		return false;
 	}
 	
+	/**
+	 * Fetches a Driver's number of completed trips from the database 
+	 * using their operator name.
+	 * @param operator 	- 	A String representing the Driver's operator name.
+	 * @return An integer number representing the Driver's number of completed trips
+	 * if a Driver with that operator name was found in the database. Zero otherwise.
+	 */
 	@RequestMapping(value = "trip", method = RequestMethod.GET)
 	public int getDriverTripsCompleted(@RequestParam String operator) {
 		sql.connect();
@@ -171,6 +217,13 @@ public class DriversController {
 		return completedTrips;
 	}
 	
+	/**
+	 * Increments a Driver's number of completed trips using their operator name.
+	 * @param operator 	- 	A String representing the Driver's operator name.
+	 * @return True if a Driver with that operator name was found in the database
+	 * and if their number of complete trips has been successfully incremented. 
+	 * False otherwise.
+	 */
 	@RequestMapping(value = "trip", method = RequestMethod.PUT)
 	public boolean incrementDriverTripsCompleted(@RequestParam String operator) {
 		if(!isAlphanumeric(operator)) {
@@ -189,6 +242,14 @@ public class DriversController {
 		return false;
 	}
 	
+	/**
+	 * Creates a new Driver from an existing User. The User's username becomes 
+	 * the Driver's operator name.
+	 * @param operator 	- 	A String representing the User's username or the new
+	 * Driver's operator name.
+	 * @return True if a new Driver with the inputed operator name has been successfully 
+	 * created from an existing user of that username. False otherwise.
+	 */
 	@RequestMapping(value = "new", method = RequestMethod.PUT)
 	public boolean newDriver(@RequestParam String operator) {
 		if(!isAlphanumeric(operator)) {
@@ -207,6 +268,12 @@ public class DriversController {
 		return false;
 	}
 	
+	/**
+	 * Deletes a Driver from the database using their operator name.
+	 * @param operator 	- 	A String representing the Driver's operator name.
+	 * @return True if a Driver of the inputed operator name has been 
+	 * successfully deleted from the database. False otherwise.
+	 */
 	@RequestMapping(value = "delete", method = RequestMethod.PUT)
 	public boolean deleteDriver(@RequestParam String operator) {
 		if(!isAlphanumeric(operator)) {
@@ -225,11 +292,22 @@ public class DriversController {
 		return false;
 	} 
 	
+	/**
+	 * Validates if an input is valid for an operator name. Operator names
+	 * can only be alphanumeric and can contain a dash character.
+	 * @param operator 	- 	A String representing the Driver's operator name.
+	 * @return True if the input name is valid. False otherwise.
+	 */
 	@RequestMapping(value = "validate/name", method = RequestMethod.GET)
 	public boolean validate(@RequestParam String operator) {
 		return isAlphanumeric(operator);
 	}
 	
+	/**
+	 * Validates if an input if it is alphanumeric or contains a dash.
+	 * @param input 	- 	The String to be validated
+	 * @return True if the input String is valid. False otherwise.
+	 */
 	private boolean isAlphanumeric(String input) {
 		Pattern special = Pattern.compile("[!@#$%&*()_+=|<>?{}\\[\\]~/^]");
 	    Matcher hasSpecial = special.matcher(input);
