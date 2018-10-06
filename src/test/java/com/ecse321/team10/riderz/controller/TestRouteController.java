@@ -120,6 +120,7 @@ public class TestRouteController {
 	*/
 	
 	/**
+	 * Testing Itinerary
 	 * 
 	 * IMPORTANT NOTE:
 	 * *** Testing for Travis CI ***
@@ -169,8 +170,11 @@ public class TestRouteController {
 		.andExpect(content().string(containsString("Itinerary " +tripID2 +" was deleted.")));
 	}
 
+	/**
+	 * Testing Location
+	 */
 	@Test
-	public void testLocation ()throws Exception {
+	public void testLocation () throws Exception {
 		
 		// Testing insert Location
 		this.mockMvc.perform(get("/insertLocation/unitTest-Sav/45.4199124/-75.983142")).andDo(print()).andExpect(status().isOk())
@@ -198,5 +202,33 @@ public class TestRouteController {
 
 		this.mockMvc.perform(get("/deleteLocation/unitTest-Sav")).andDo(print()).andExpect(status().isOk())
 		.andExpect(content().string(containsString("Location of unitTest-Sav has been deleted.")));		
+	}
+	
+	/**
+	 * Testing Reservation
+	 */
+	@Test
+	public void testReservation () throws Exception{
+		
+		// Testing insert Reservation
+		this.mockMvc.perform(get("/insertReservation/unitTest-Sav/"+ tripID)).andDo(print()).andExpect(status().isOk())
+		.andExpect(content().string(containsString("Reservation of unitTest-Sav has been inserted for the tripID: " + tripID)));
+		
+		this.mockMvc.perform(get("/insertReservation/unitTest-Sav/"+ tripID2)).andDo(print()).andExpect(status().isOk())
+		.andExpect(content().string(containsString("Reservation of unitTest-Sav has been inserted for the tripID: " + tripID2)));
+		/*
+		// Testing get reservations by user name
+		this.mockMvc.perform(get("/getReservationByUsername/unitTest-Sav/")).andDo(print()).andExpect(status().isOk())
+		.andExpect(content().string(containsString("{\"operator\":\"unitTest-Sav\",\"tripID\":"+ tripID +"},{\"operator\":\"unitTest-Sav\",\"tripID\":"+tripID2+"}")));
+		*/
+		this.mockMvc.perform(get("/getReservationByUsername/unitTest-Sav/")).andDo(print()).andExpect(status().isOk())
+		.andExpect(content().string(containsString("{\"tripID\":"+tripID+",\"operator\":\"unitTest-Sav\"},{\"tripID\":"+tripID2+",\"operator\":\"unitTest-Sav\"}")));
+		
+		// Testing delete Reservation
+		this.mockMvc.perform(get("/deleteReservation/unitTest-Sav/"+ tripID)).andDo(print()).andExpect(status().isOk())
+		.andExpect(content().string(containsString("Reservation of unitTest-Sav has been deleted for the tripID: " + tripID)));
+		
+		this.mockMvc.perform(get("/deleteReservation/unitTest-Sav/"+ tripID2)).andDo(print()).andExpect(status().isOk())
+		.andExpect(content().string(containsString("Reservation of unitTest-Sav has been deleted for the tripID: " + tripID2)));
 	}
 }
