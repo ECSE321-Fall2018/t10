@@ -75,7 +75,7 @@ public class TestUserController {
                                 .andExpect(jsonPath("$.username").value("test-ty"))
                                 .andExpect(jsonPath("$.firstName").value("test-ty-first-name"))
                                 .andExpect(jsonPath("$.lastName").value("test-ty-last-name"))
-                                .andExpect(jsonPath("$.phone").value("514-638-410"))
+                                .andExpect(jsonPath("$.phone").value("514-638-4109"))
                                 .andExpect(jsonPath("$.email").value("ty-test@gmail.com"))
                                 .andExpect(jsonPath("$.password").value("test"));
                                 
@@ -91,9 +91,9 @@ public class TestUserController {
                             .andExpect(jsonPath("$.username").value("test-ty"))
                             .andExpect(jsonPath("$.firstName").value("test-ty-first-name"))
                             .andExpect(jsonPath("$.lastName").value("test-ty-last-name"))
-                            .andExpect(jsonPath("$.phone").value("514-638-410"))
-                            .andExpect(jsonPath("$.email").value("ty-test@gmail.com"))
-                            .andExpect(jsonPath("$.password").value("test"));
+                            .andExpect(jsonPath("$.phone").value("514-638-4109"))
+                            .andExpect(jsonPath("$.email").value("test-ty@gmail.com"))
+                            .andExpect(jsonPath("$.password").value("9F86D081884C7D659A2FEAA0C55AD015A3BF4F1B2B0B822CD15D6C15B0F00A08"));
        
     }
 
