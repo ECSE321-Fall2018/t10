@@ -8,6 +8,7 @@ public class UserDto {
 	private String firstName;
 	private String lastName;
 	
+	//Do not delete this empty dto constructor, it is necessary for unit tests
 	public UserDto() {
 	}
 	
