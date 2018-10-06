@@ -36,6 +36,16 @@ public class UsersController {
 	
 	private static final Logger logger = LogManager.getLogger(RiderzController.class);
 
+	/**
+	 * Handles the /users/addUser endpoint and creates a new user in the DB
+	 * @param username - String
+	 * @param password - String
+	 * @param email - String
+	 * @param phone - String
+	 * @param firstName - String
+	 * @param lastName - String
+	 * @return UserDto object if successful otherwise null
+	 */
 	@PostMapping("addUser")
 	public UserDto addUser(	@RequestParam String username,
 							@RequestParam String password,
@@ -53,7 +63,12 @@ public class UsersController {
 		}
 
 	}
-	
+
+	/**
+	 * Handles the /users/getUser endpoint, retrieves user based on username
+	 * @param username - String
+	 * @return UserDto if successful, otherwise null
+	 */
 	@GetMapping("getUser")
 	public UserDto getUser(	@RequestParam String username) {
 		if(sql.connect()){
@@ -64,7 +79,11 @@ public class UsersController {
 		sql.closeConnection();
 		return null;
 	}
-	
+
+	/**
+	 * Handles the /users/getAllUsers endpoint, retrieves all db users
+	 * @return List<UserDto>, list of UserDto objects otherwise null
+	 */
 	@GetMapping("getAllUsers")
 	public List<UserDto> getAllUser() {
 		if(sql.connect()){
@@ -78,17 +97,32 @@ public class UsersController {
 		return null;
 	}
 
+	/**
+	 * Handles /users/deleteUser endpoint, receives username and delete
+	 * user from DB if verified password is received
+	 * @param username - String
+	 * @param password - String
+	 * @return Boolean True if successful deletion, otherwise False
+	 */
 	//Note: Implemented basic authentication
 	//todo is to better security
 	@DeleteMapping("deleteUser")
-	public void deleteUser(@RequestParam String username, @RequestParam String password){
+	public boolean deleteUser(@RequestParam String username, @RequestParam String password){
 		if(sql.connect() && sql.verifyLogin(username,password)){
 			sql.deleteUser(username);
 			sql.closeConnection();
+			return true;
 		}
+		return false;
 	}
-	
 
+
+	/**
+	 * Handles the /users/login endpoint, verifies correct user credentials (username with password)
+	 * @param username - String
+	 * @param password - String
+	 * @return Boolean True if successful login, otherwise False
+	 */
 	@PostMapping("login")
 	public boolean verifyLogin( @RequestParam String username, @RequestParam String password) {
 		if(sql.connect()){
@@ -99,6 +133,11 @@ public class UsersController {
 		return false;						
 	}
 
+	/**
+	 * Handles the /users/getPhone endpoint, retrieves user phone number
+	 * @param username - String
+	 * @return String of the user phone number, otherwise null
+	 */
 	@GetMapping("getPhone")
 	public String getPhone( @RequestParam String username ){
 		if(sql.connect()){
@@ -110,6 +149,12 @@ public class UsersController {
 		return null;
 	}
 
+	/**
+	 * Handles the /users/setPhone endpoint, changes user phone number
+	 * @param username - String
+	 * @param phone - String
+	 * @return Boolean true if number was changed, otherwise false
+	 */
 	@PutMapping("setPhone")
 	public boolean setPhone( @RequestParam String username,@RequestParam String phone){
 		if(sql.connect()){
@@ -120,6 +165,11 @@ public class UsersController {
 		return false;
 	}
 
+	/**
+	 * Handles the users/getEmail endpoint, retrieves userEmail
+	 * @param username - String
+	 * @return String if email exists, otherwise null
+	 */
 	@GetMapping("getEmail")
 	public String getEmail( @RequestParam String username ){
 		if(sql.connect()){
@@ -130,6 +180,13 @@ public class UsersController {
 		return null;
 	}
 
+
+	/**
+	 * Handles the users/setEmail endpoint, sets a new email to user
+	 * @param username - String
+	 * @param email - String
+	 * @return Boolean true if email has been changed, otherwise false
+	 */
 	@PutMapping("setEmail")
 	public boolean setEmail(@RequestParam String username,@RequestParam String email ){
 		if(sql.connect()){
@@ -140,6 +197,13 @@ public class UsersController {
 		return false;
 	}
 
+	/**
+	 * Handles the users/setPassword endpoint, verifies the user credentials and then changes password
+	 * @param username - String
+	 * @param password - String
+	 * @param newPassword - String
+	 * @return Boolean true if password was changed, otherwise false
+	 */
 	//Successfully changes password but can implement email verification later
 	@PutMapping("setPassword")
 	public boolean setPassword(@RequestParam String username,@RequestParam String password, @RequestParam String newPassword){
