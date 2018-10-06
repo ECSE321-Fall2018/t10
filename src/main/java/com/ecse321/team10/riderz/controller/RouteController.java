@@ -1,8 +1,6 @@
 package com.ecse321.team10.riderz.controller;
 
 
-import org.springframework.web.bind.annotation.RestController;
-
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,9 +9,12 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ecse321.team10.riderz.dto.ItineraryDto;
 import com.ecse321.team10.riderz.dto.LocationDto;
@@ -62,7 +63,7 @@ public class RouteController {
 	 * @param seatsLeft          - An integer representing the number of seats left
 	 * @return The created itinerary
 	 */
-	@PostMapping("/insertItinerary/{tripID}/{startingLongitude}/{startingLatitude}/{startingTime}/{endingLongitude}/{endingLatitude}/{endingTime}/{seatsLeft}")
+	@PostMapping(path = "/insertItinerary/{tripID}/{startingLongitude}/{startingLatitude}/{startingTime}/{endingLongitude}/{endingLatitude}/{endingTime}/{seatsLeft}")
 	public ItineraryDto insertItinerary(@PathVariable("tripID") int tripID,
 										@PathVariable("startingLongitude") double startingLongitude,
 										@PathVariable("startingLatitude") double startingLatitude,
@@ -99,7 +100,7 @@ public class RouteController {
 	 * @param seatsLeft          - An integer representing the number of seats left
 	 * @return The updated itinerary
 	 */
-	@PostMapping("/updateItinerary/{tripID}/{startingLongitude}/{startingLatitude}/{startingTime}/{endingLongitude}/{endingLatitude}/{endingTime}/{seatsLeft}")
+	@PutMapping("/updateItinerary/{tripID}/{startingLongitude}/{startingLatitude}/{startingTime}/{endingLongitude}/{endingLatitude}/{endingTime}/{seatsLeft}")
 	public ItineraryDto updateItinerary(@PathVariable("tripID") int tripID,
 										@PathVariable("startingLongitude") double startingLongitude,
 										@PathVariable("startingLatitude") double startingLatitude,
@@ -129,7 +130,7 @@ public class RouteController {
 	 * @param tripID     - An integer uniquely identifying a trip
 	 * @return A string to indicate if the itinerary was deleted successfully or not.
 	 */
-	@PostMapping("/deleteItinerary/{tripID}")
+	@DeleteMapping("/deleteItinerary/{tripID}")
 	public String deleteItinerary(@PathVariable("tripID") int tripID) {
 		
 		int deleteTripID = tripID;
@@ -194,7 +195,7 @@ public class RouteController {
 	 * @param tripID   - An integer uniquely identifying a trip
 	 * @return A string indicating if the number of seats was incremented successfully for the tripID
 	 */
-	@PostMapping("/incrementSeatsLeft/{tripID}")
+	@PutMapping("/incrementSeatsLeft/{tripID}")
 	public String incrementSeatsLeft(@PathVariable("tripID")int tripID) {
 		
 		sql.connect();
@@ -212,7 +213,7 @@ public class RouteController {
 	 * @param tripID - An integer uniquely identifying a trip
 	 * @return A string indicating if the number of seats was incremented successfully for the tripID
 	 */
-	@PostMapping("/decrementSeatsLeft/{tripID}")
+	@PutMapping("/decrementSeatsLeft/{tripID}")
 	public String decrementSeatsLeft(@PathVariable("tripID")int tripID) {
 		
 		sql.connect();
@@ -294,7 +295,7 @@ public class RouteController {
 	 * @param latitude  -   A String representing the latitude.
 	 * @return A String representing if the location was successfully updated or not.
 	 */
-	@PostMapping("/updateLocation/{operator}/{longitude}/{latitude}")
+	@PutMapping("/updateLocation/{operator}/{longitude}/{latitude}")
 	public String updateLocation(@PathVariable("operator") String operator,
 								 @PathVariable("longitude") double longitude,
 								 @PathVariable("latitude") double latitude) {
@@ -315,7 +316,7 @@ public class RouteController {
 	 * @param operator  -	A String representing the name of the operator.
 	 * @return A String representing if the location was successfully deleted or not.
 	 */
-	@PostMapping("/deleteLocation/{operator}")
+	@DeleteMapping("/deleteLocation/{operator}")
 	public String deleteLocation(@PathVariable("operator") String operator) {
 		
 		sql.connect();
@@ -353,7 +354,7 @@ public class RouteController {
 	 * @param tripID    - An integer uniquely identifying a trip.
 	 * @return A String representing if the Reservation was successfully deleted or not.
 	 */
-	@PostMapping("/deleteReservation/{operator}/{tripID}")
+	@DeleteMapping("/deleteReservation/{operator}/{tripID}")
 	public String deleteReservation(@PathVariable("operator") String operator,
 									@PathVariable("tripID") int tripID) {
 		sql.connect();
