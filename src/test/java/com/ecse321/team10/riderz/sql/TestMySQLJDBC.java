@@ -21,6 +21,7 @@ public class TestMySQLJDBC {
 	@Before
 	public void setup() {
 		sql.connect();
+		sql.purgeDatabase();
 	}
 	
 	@After
