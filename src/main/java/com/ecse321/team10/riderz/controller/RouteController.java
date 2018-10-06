@@ -1,7 +1,6 @@
 package com.ecse321.team10.riderz.controller;
 
-//import org.apache.logging.log4j.LogManager;
-//import org.apache.logging.log4j.Logger;
+
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
@@ -10,24 +9,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-//import org.apache.logging.log4j.LogManager;
-//import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.RequestParam;
-//import org.springframework.web.bind.annotation.RestController;
 
 import com.ecse321.team10.riderz.dto.ItineraryDto;
 import com.ecse321.team10.riderz.dto.LocationDto;
 import com.ecse321.team10.riderz.dto.ReservationDto;
-//import com.ecse321.team10.riderz.dto.UserDto;
 import com.ecse321.team10.riderz.model.Itinerary;
 import com.ecse321.team10.riderz.model.Location;
 import com.ecse321.team10.riderz.model.Reservation;
-//import com.ecse321.team10.riderz.model.User;
 import com.ecse321.team10.riderz.sql.MySQLJDBC;
 
 /**
@@ -56,12 +48,6 @@ public class RouteController {
 		return modelMapper.map(itinerary, ItineraryDto.class);
 	}
 	
-	//private static final Logger logger = LogManager.getLogger(RiderzController.class);
-	
-	//For Testing purpose:
-	//localhost:8088/insertItinerary/36/15.33534/12.44412/2019-01-01 01:00:00.000/40.33245/34.33214/2019-01-01 01:30:00.000/3
-	
-	//localhost:8088/insertItinerary/35/45.419980/-73.883442/2019-01-01 02:00:00.000/45.456180/-73.862320/2019-01-01 02:30:00.000/3
 	/**
 	 * Insert an itinerary
 	 * 
@@ -92,15 +78,12 @@ public class RouteController {
 		sql.connect();
 		if (sql.insertItinerary(itinerary)) {
 			sql.closeConnection();
-			//logger.info("starting time: " + startingTimeStamp + " and ending time: " + endingTimeStamp);
 			return intineraryConvertToDto(itinerary);
 		}
 		sql.closeConnection();
 		return null;
 	}
 	
-	//For Testing purpose:
-	//localhost:8088/updateItinerary/36/25.1111/26.3114/2019-01-01 02:00:00.000/40.33245/34.33214/2019-01-01 02:30:05.000/1
 	
 	/**
 	 * Update an itinerary
@@ -139,9 +122,6 @@ public class RouteController {
 		
 	}
 	
-	//For Testing purpose:
-	//localhost:8088/deleteItinerary/36
-	
 	/**
 	 * Delete an itinerary
 	 * 
@@ -161,8 +141,6 @@ public class RouteController {
 		return "Itinerary does not exist.";	
 	}
 	
-	//For Testing purpose:
-	//localhost:8088/getItineraryByTripID/36
 	/**
 	 * Obtain the Itinerary information base on the tripID
 	 * 
@@ -183,16 +161,6 @@ public class RouteController {
 		return null;
 	}
 	
-	
-	//For Testing purpose:
-	// *** Delete old stuff in DB ***
-	//localhost:8088/insertItinerary/35/45.419980/-73.883442/2019-01-01 02:00:00.000/45.456180/-73.862320/2019-01-01 02:30:00.000/2
-	//localhost:8088/getItineraryNearDestination/45.456181/-73.862321/0.500000/2019-01-01 03:30:00.000
-	//localhost:8088/getItineraryNearDestination/45.456181/-73.862321/0.160000/2050-02-02 02:30:00.000
-	//localhost:8088/getItineraryNearDestination/10.456181/-10.862321/500000000.160000/2019-01-02 03:30:00.000
-	
-	//localhost:8088/insertItinerary/36/15.33534/12.44412/2019-01-01 01:00:00.000/45.456580/-73.869320/2019-01-01 01:30:00.000/3
-	//localhost:8088/getItineraryNearDestination/45.45688/-73.869920/1000.00000/2019-01-01 04:30:00.000
 	/**
 	 * Obtains all the Itineraries fitting search criteria based on a spherical distance
 	 * algorithm. Low search radius is recommended for accurate results.
@@ -219,10 +187,6 @@ public class RouteController {
 		return itineraryList;
 	}
 	
-	
-	
-	//localhost:8088/incrementSeatsLeft/35
-	//localhost:8088/getItineraryByTripID/35
 	/**
 	 * Increment by 1 the number of seats left in the itinerary given by the tripID
 	 * 
@@ -241,9 +205,6 @@ public class RouteController {
 		return String.format("Itinerary %s does not exist.", tripID);
 	}
 	
-	
-	//localhost:8088/decrementSeatsLeft/35
-	//localhost:8088/getItineraryByTripID/35
 	/**
 	 * Decrements by 1 the number of seats left in the itinerary given by the tripID
 	 * 
@@ -262,10 +223,6 @@ public class RouteController {
 		return String.format("Itinerary %s does not exist.", tripID);
 	}
 	
-	
-	//For testing purpose:
-	//localhost:8088/insertLocation/MatTest/45.41991240/-75.983142
-	//localhost:8088/insertLocation/abc/45.41995000/-75.983400
 	/**
 	 * Insert a Location object into the database. Note the operator must already exist.
 	 * 
@@ -290,10 +247,6 @@ public class RouteController {
 		return String.format("Location of %s could not be inserted into the database.", location.getOperator());
 	}
 	
-	
-	//For testing purpose:
-	//localhost:8088/getLocationNear/45.41991330/-75.983111/1000.0000
-	//localhost:8088/getLocationNear/46.41991330/-80.983111/1000000.0000
 	/**
 	 * Fetches entries from the database fitting search criteria based on a spherical distance
 	 * algorithm. Recommended to have a low maximum search radius to obtain more accurate results.
@@ -315,10 +268,6 @@ public class RouteController {
 		return locationList;
 	}
 		
-	//For testing purpose:
-	//localhost:8088/getLocationByUsername/MatTest
-	//localhost:8088/getLocationByUsername/mattest
-	//localhost:8088/getLocationByUsername/MatTestWrong
 	/**
 	 * Fetches the User's location from the database.
 	 * @param operator	-	A String representing an User's userName.
@@ -337,11 +286,6 @@ public class RouteController {
 		return null;
 	}
 	
-	// *************************** STEVEN FIXED BUG IN ANOTHER BRANCH : UNIT TESTING WILL NOT WORK TILL MERGE ON DEV ************************************
-	//For testing purpose:
-	//localhost:8088/updateLocation/MatTest/55.513513/-83.421255
-	//localhost:8088/updateLocation/abc/15.513513/-13.4242455
-	//localhost:8088/updateLocation/WrongName/15.513513/-13.4242455
 	/**
 	 * Updates a location entry within the database.
 	 * @param operator	-	A String representing the name of the operator.
@@ -382,15 +326,6 @@ public class RouteController {
 		return String.format("Location of %s does not exist", operator);
 	}
 	
-
-	//For testing purpose:
-	//localhost:8088/insertReservation/MatTest/36
-	//localhost:8088/insertReservation/MatTest/35
-	//localhost:8088/insertReservation/MatTest/35
-	//localhost:8088/insertReservation/Mattest/36
-	//localhost:8088/insertReservation/Mattest/35
-	//localhost:8088/insertReservation/WrongName/36
-	//localhost:8088/insertReservation/MatTest/1009
 	/**
 	 * Inserts a Reservation object into the database.The operator and the tripId must exist
 	 * @param opeartor	-	A String representing the name of the operator.
@@ -410,10 +345,6 @@ public class RouteController {
 		return "Reservation of " + operator + " is invalid for the tripID: " + tripID;
 	}
 	
-	
-	//For testing purpose:
-	//localhost:8088/deleteReservation/MatTest/36
-	//localhost:8088/deleteReservation/mattest/35
 	/**
 	 * Deletes an entry from the database.
 	 * 
@@ -434,10 +365,6 @@ public class RouteController {
 		return "Reservation of " + operator + " is invalid for the tripID: " + tripID;
 	}
 	
-	//For testing purpose:
-	//localhost:8088/insertReservation/MatTest/36
-	//localhost:8088/insertReservation/MatTest/35
-	//localhost:8088/getReservationByUsername/MatTest
 	/**
 	 * Fetches from the database all reservations for a specific User.
 	 * 

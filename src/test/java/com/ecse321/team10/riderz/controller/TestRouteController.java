@@ -6,9 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,11 +16,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.ecse321.team10.riderz.model.Itinerary;
 import com.ecse321.team10.riderz.model.User;
-//import com.ecse321.team10.riderz.model.User;
 import com.ecse321.team10.riderz.sql.MySQLJDBC;
 
 @RunWith(SpringRunner.class)
