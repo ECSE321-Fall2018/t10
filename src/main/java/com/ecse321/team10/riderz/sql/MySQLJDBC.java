@@ -1209,6 +1209,29 @@ public class MySQLJDBC {
 			return false;
 		}
 	}
+	
+	/**
+	 * Deletes the location of an user from the database.
+	 * @param operator	-	A String representing an User's username.
+	 * @return True if an entry was delete from the database. False otherwise.
+	 */
+	public boolean deleteLocation(String operator) {
+		String deleteLocation = "DELETE FROM location WHERE operator = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(deleteLocation);
+			ps.setString(1, operator);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				logger.info(String.format("Location of '%s' has been deleted from the database.", operator));
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+}
 
 	//=======================
 	// RESERVATION API
