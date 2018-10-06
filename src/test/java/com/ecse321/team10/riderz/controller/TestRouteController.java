@@ -94,7 +94,8 @@ public class TestRouteController {
 		
 		// Testing get Itineraries near destination (2 Itinerary)
 		this.mockMvc.perform(get("/getItineraryNearDestination/45.45688/-73.86992/1000000.00000/2019-01-02 04:30:00.000")).andDo(print()).andExpect(status().isOk())
-		.andExpect(content().string(containsString("{\"tripID\":"+ tripID +",\"startingLongitude\":45.41998,\"startingLatitude\":-73.883442,\"startingTime\":\"2019-01-01T07:00:00.000+0000\",\"endingLongitude\":45.45618,\"endingLatitude\":-73.86232,\"endingTime\":\"2019-01-01T07:30:00.000+0000\",\"seatsLeft\":3},{\"tripID\":"+ tripID2 +",\"startingLongitude\":15.33534,\"startingLatitude\":12.44412,\"startingTime\":\"2019-01-02T07:00:00.000+0000\",\"endingLongitude\":45.45658,\"endingLatitude\":-73.86932,\"endingTime\":\"2019-01-02T07:30:00.000+0000\",\"seatsLeft\":1}")));
+		.andExpect(content().string(containsString("{\"tripID\":"+ tripID +",\"startingLongitude\":45.41998,\"startingLatitude\":-73.883442,\"startingTime\":\"2019-01-01T07:00:00.000+0000\",\"endingLongitude\":45.45618,\"endingLatitude\":-73.86232,\"endingTime\":\"2019-01-01T07:30:00.000+0000\",\"seatsLeft\":3},"
+				+ "{\"tripID\":"+ tripID2 +",\"startingLongitude\":15.33534,\"startingLatitude\":12.44412,\"startingTime\":\"2019-01-02T07:00:00.000+0000\",\"endingLongitude\":45.45658,\"endingLatitude\":-73.86932,\"endingTime\":\"2019-01-02T07:30:00.000+0000\",\"seatsLeft\":1}")));
 		
 		// Testing increment seats left by tripID
 		this.mockMvc.perform(get("/incrementSeatsLeft/" + tripID)).andDo(print()).andExpect(status().isOk())
@@ -146,7 +147,8 @@ public class TestRouteController {
 		
 		// Testing get Itineraries near destination (2 Itinerary)
 		this.mockMvc.perform(get("/getItineraryNearDestination/45.45688/-73.86992/1000000.00000/2019-01-02 04:30:00.000")).andDo(print()).andExpect(status().isOk())
-		.andExpect(content().string(containsString("{\"tripID\":"+ tripID +",\"startingLongitude\":45.41998,\"startingLatitude\":-73.883442,\"startingTime\":\"2019-01-01T02:00:00.000+0000\",\"endingLongitude\":45.45618,\"endingLatitude\":-73.86232,\"endingTime\":\"2019-01-01T02:30:00.000+0000\",\"seatsLeft\":3},{\"tripID\":"+ tripID2 +",\"startingLongitude\":15.33534,\"startingLatitude\":12.44412,\"startingTime\":\"2019-01-02T02:00:00.000+0000\",\"endingLongitude\":45.45658,\"endingLatitude\":-73.86932,\"endingTime\":\"2019-01-02T02:30:00.000+0000\",\"seatsLeft\":1}")));
+		.andExpect(content().string(containsString("{\"tripID\":"+ tripID +",\"startingLongitude\":45.41998,\"startingLatitude\":-73.883442,\"startingTime\":\"2019-01-01T02:00:00.000+0000\",\"endingLongitude\":45.45618,\"endingLatitude\":-73.86232,\"endingTime\":\"2019-01-01T02:30:00.000+0000\",\"seatsLeft\":3},"
+				+ "{\"tripID\":"+ tripID2 +",\"startingLongitude\":15.33534,\"startingLatitude\":12.44412,\"startingTime\":\"2019-01-02T02:00:00.000+0000\",\"endingLongitude\":45.45658,\"endingLatitude\":-73.86932,\"endingTime\":\"2019-01-02T02:30:00.000+0000\",\"seatsLeft\":1}")));
 		
 		// Testing increment seats left by tripID
 		this.mockMvc.perform(get("/incrementSeatsLeft/" + tripID)).andDo(print()).andExpect(status().isOk())
@@ -210,11 +212,8 @@ public class TestRouteController {
 		
 		this.mockMvc.perform(get("/insertReservation/unitTest-Sav/"+ tripID2)).andDo(print()).andExpect(status().isOk())
 		.andExpect(content().string(containsString("Reservation of unitTest-Sav has been inserted for the tripID: " + tripID2)));
-		/*
+		
 		// Testing get reservations by user name
-		this.mockMvc.perform(get("/getReservationByUsername/unitTest-Sav/")).andDo(print()).andExpect(status().isOk())
-		.andExpect(content().string(containsString("{\"operator\":\"unitTest-Sav\",\"tripID\":"+ tripID +"},{\"operator\":\"unitTest-Sav\",\"tripID\":"+tripID2+"}")));
-		*/
 		this.mockMvc.perform(get("/getReservationByUsername/unitTest-Sav/")).andDo(print()).andExpect(status().isOk())
 		.andExpect(content().string(containsString("{\"tripID\":"+tripID+",\"operator\":\"unitTest-Sav\"},{\"tripID\":"+tripID2+",\"operator\":\"unitTest-Sav\"}")));
 		
