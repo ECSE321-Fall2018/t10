@@ -69,7 +69,7 @@ public class TestRouteController {
 	 * *** FOR LOCAL TESTING ONLY ***
 	 * The code below is commented. The reason being that when testing locally, the URLS return Timestamp that have a 5 hours difference. Time zone issue is at the source of this problem (only occurs locally).
 	 */
-	
+	/*
 	@Test
 	public void testItinerary () throws Exception {
 		
@@ -115,7 +115,7 @@ public class TestRouteController {
 		.andExpect(content().string(containsString("Itinerary " +tripID2 +" was deleted.")));
 
 	}
-	
+	*/
 	
 	
 	/**
@@ -125,7 +125,6 @@ public class TestRouteController {
 	 * *** Testing for Travis CI ***
 	 * 
 	 */
-	/*
 	@Test
 	public void testItinerary () throws Exception {
 		
@@ -171,7 +170,6 @@ public class TestRouteController {
 		.andExpect(content().string(containsString("Itinerary " +tripID2 +" was deleted.")));
 	}
 
-	*/
 	/**
 	 * Testing Location
 	 */
