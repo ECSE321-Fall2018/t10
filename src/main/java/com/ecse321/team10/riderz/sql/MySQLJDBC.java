@@ -7,9 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+import java.util.Date;
 import java.security.MessageDigest;
 
 import javax.xml.bind.DatatypeConverter;
@@ -572,6 +572,32 @@ public class MySQLJDBC {
 										  rs.getInt("personsRated"), rs.getInt("tripsCompleted")));
 			}
 			rs.close();
+			logger.info("SELECT * FROM driver");
+			return driverList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	/**
+	 * Fetches all drivers above or equal to a rating.
+	 * @param rating	-	A double representing a minimum rating.
+	 * @return An ArrayList of Driver objects fitting the criteria. Null otherwise if an error occurred.
+	 */
+	public ArrayList<Driver> getAllDriversAboveRating(double rating) {
+		ArrayList<Driver> driverList = new ArrayList<Driver>();
+		PreparedStatement ps = null;
+		String getAllDriversAboveRating = "SELECT * FROM driver WHERE rating >= ?;";
+		try {
+			ps = c.prepareStatement(getAllDriversAboveRating);
+			ps.setDouble(1, rating);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				driverList.add(new Driver(rs.getString("operator"), rs.getDouble("rating"),
+										  rs.getInt("personsRated"), rs.getInt("tripsCompleted")));
+			}
+			ps.close();
 			logger.info("SELECT * FROM driver");
 			return driverList;
 		} catch (Exception e) {
@@ -1191,7 +1217,7 @@ public class MySQLJDBC {
 	 * @return True if an entry was updated. False otherwise.
 	 */
 	public boolean updateLocation(Location location) {
-		String updateLocation = "UPDATE location SET longitude = ? AND latitude = ? WHERE operator = ?;";
+		String updateLocation = "UPDATE location SET longitude = ?, latitude = ? WHERE operator = ?;";
 		PreparedStatement ps = null;
 		try {
 			ps = c.prepareStatement(updateLocation);
@@ -1209,7 +1235,7 @@ public class MySQLJDBC {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Deletes the location of an user from the database.
 	 * @param operator	-	A String representing an User's username.
@@ -1231,7 +1257,7 @@ public class MySQLJDBC {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
 			return false;
 		}
-}
+	}
 
 	//=======================
 	// RESERVATION API
@@ -1239,7 +1265,7 @@ public class MySQLJDBC {
 	/**
 	 * Inserts a Reservation object into the database.
 	 * @param reservation	-	A Reservation object to be inserted into the database.
-	 * @return True if an entry was inserted into the database.
+	 * @return True if an entry was inserted into the database. False otherwise.
 	 */
 	public boolean insertReservation(Reservation reservation) {
 		String insertReservation = "INSERT INTO reservation (operator, tripID) VALUES (?, ?);";
@@ -1308,5 +1334,54 @@ public class MySQLJDBC {
 			return null;
 		}
 	}
-	
+
+	//=======================
+	// Helper API
+	//=======================
+	/**
+	 * Converts a String into a java.util.Timestamp Object.
+	 * @param ts		-	A String representing a timestamp in yyyy-MM-dd hh:mm:ss.SSS format
+	 * @return A Timestamp object or null if an error occurred.
+	 */
+	public Timestamp convertStringToTimestamp(String ts) {
+		try {
+		    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+		    Date parsedDate = dateFormat.parse(ts);
+		    return new Timestamp(parsedDate.getTime());
+		} catch(Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+		    return null;
+		}
+	}
+
+	/**
+	 * Clears all tables within the database. For testing purposes only...
+	 * DO NOT USE IN ANY PUBLICLY AVAILABLE ACCESS POINTS!
+	 * @return True if truncation completed successfully. False if an error occurred.
+	 */
+	public boolean purgeDatabase() {
+		String purgeItinerary = "TRUNCATE TABLE itinerary;";
+		String purgeLocation = "TRUNCATE TABLE location;";
+		String purgeReservation = "TRUNCATE TABLE reservation;";
+		String purgeTrip = "TRUNCATE TABLE trip;";
+		String purgeCar = "TRUNCATE TABLE car;";
+		String purgeDriver = "TRUNCATE TABLE driver;";
+		String purgeUsers = "TRUNCATE TABLE users;";
+		try {
+			c.createStatement().executeUpdate("SET FOREIGN_KEY_CHECKS = 0;");
+			c.createStatement().executeUpdate(purgeCar);
+			c.createStatement().executeUpdate(purgeDriver);
+			c.createStatement().executeUpdate(purgeItinerary);
+			c.createStatement().executeUpdate(purgeLocation);
+			c.createStatement().executeUpdate(purgeReservation);
+			c.createStatement().executeUpdate(purgeTrip);
+			c.createStatement().executeUpdate(purgeUsers);
+			c.createStatement().executeUpdate("SET FOREIGN_KEY_CHECKS = 1;");
+			logger.info("Database has been truncated");
+			return true;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
 }
