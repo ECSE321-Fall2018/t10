@@ -99,13 +99,13 @@ public class TestUserController {
 
     @Test
     public void getAllUser() throws Exception{
-        this.mockMvc.perform(post("/users/login?username=test-ty&password=testing"))
-        .andExpect(status().isOk());
+        this.mockMvc.perform(get("/users/getAllUsers"))
+                            .andExpect(status().isOk());
     }
 
     @Test
     public void testLogin() throws Exception {
-        this.mockMvc.perform(get("/users/getAllUsers"))
+        this.mockMvc.perform(post("/users/login?username=test-ty&password=testing"))
                             .andExpect(status().isOk());
     }
 
@@ -120,7 +120,8 @@ public class TestUserController {
     public void testGetPhone() throws Exception {
         this.mockMvc.perform(get("/users/getPhone?username=test-ty"))
                             .andExpect(status().isOk())
-                            .andDo(print());
+                            .andDo(print())
+                            .andExpect(content().string(containsString("514-638-4109")));
     }
 
     @Test
@@ -128,13 +129,18 @@ public class TestUserController {
         this.mockMvc.perform(put("/users/setPhone?username=test-ty&phone=514-111-1111"))
                             .andExpect(status().isOk())
                             .andDo(print());
+        this.mockMvc.perform(get("/users/getPhone?username=test-ty"))
+                            .andExpect(status().isOk())
+                            .andDo(print())
+                            .andExpect(content().string(containsString("514-111-1111")));
     }
 
     @Test
     public void testGetEmail() throws Exception {
         this.mockMvc.perform(get("/users/getEmail?username=test-ty"))
                             .andExpect(status().isOk())
-                            .andDo(print());
+                            .andDo(print())
+                            .andExpect(content().string(containsString("test-ty@gmail.com")));
     }
 
     @Test
@@ -142,6 +148,10 @@ public class TestUserController {
         this.mockMvc.perform(put("/users/setEmail?username=test-ty&email=changed@gmail.com"))
                             .andExpect(status().isOk())
                             .andDo(print());
+        this.mockMvc.perform(get("/users/getEmail?username=test-ty"))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andExpect(content().string(containsString("changed@gmail.com")));
         
     }
 
