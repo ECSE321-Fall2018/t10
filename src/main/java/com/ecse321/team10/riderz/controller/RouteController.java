@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,7 +33,7 @@ import com.ecse321.team10.riderz.sql.MySQLJDBC;
 
 @RestController
 public class RouteController {
-	
+
 	@Autowired
 	private MySQLJDBC sql;
 	
@@ -53,17 +55,18 @@ public class RouteController {
 	/**
 	 * Insert an itinerary
 	 * 
-	 * @param tripID             - An integer uniquely identifying a trip
-	 * @param startingLongitude  - A double representing the starting longitude
-	 * @param startingLatitude   - A double representing the starting latitude
-	 * @param startingTime       - A String representing the starting time
-	 * @param endingLongitude    - A double representing the ending longitude
-	 * @param endingLatitude     - A double representing the ending latitude
-	 * @param endingTime         - A String representing the ending time
-	 * @param seatsLeft          - An integer representing the number of seats left
+	 * @param tripID            - An integer uniquely identifying a trip
+	 * @param startingLongitude - A double representing the starting longitude
+	 * @param startingLatitude  - A double representing the starting latitude
+	 * @param startingTime      - A String representing the starting time
+	 * @param endingLongitude  	- A double representing the ending longitude
+	 * @param endingLatitude    - A double representing the ending latitude
+	 * @param endingTime        - A String representing the ending time
+	 * @param seatsLeft         - An integer representing the number of seats left
+	 * @param operator 			- A String representing the username of the operator
 	 * @return The created itinerary
 	 */
-	@PostMapping(path = "/insertItinerary/{tripID}/{startingLongitude}/{startingLatitude}/{startingTime}/{endingLongitude}/{endingLatitude}/{endingTime}/{seatsLeft}")
+	@PostMapping(path = "/insertItinerary/{tripID}/{startingLongitude}/{startingLatitude}/{startingTime}/{endingLongitude}/{endingLatitude}/{endingTime}/{seatsLeft}/{operator}")
 	public ItineraryDto insertItinerary(@PathVariable("tripID") int tripID,
 										@PathVariable("startingLongitude") double startingLongitude,
 										@PathVariable("startingLatitude") double startingLatitude,
@@ -71,13 +74,18 @@ public class RouteController {
 										@PathVariable("endingLongitude") double endingLongitude,
 										@PathVariable("endingLatitude") double endingLatitude,
 										@PathVariable("endingTime") String endingTime,
-										@PathVariable("seatsLeft") int seatsLeft) {
+										@PathVariable("seatsLeft") int seatsLeft,
+										@PathVariable("operator") String operator) {
 		
-		Timestamp startingTimeStamp = stringtoTimeStamp(startingTime);
-		Timestamp endingTimeStamp = stringtoTimeStamp(endingTime);
+		Timestamp startingTimeStamp = sql.convertStringToTimestamp(startingTime);
+		Timestamp endingTimeStamp = sql.convertStringToTimestamp(endingTime);
 		
 		Itinerary itinerary = new Itinerary(tripID, startingLongitude, startingLatitude, startingTimeStamp, endingLongitude, endingLatitude, endingTimeStamp, seatsLeft);
 		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			return null;
+		}
 		if (sql.insertItinerary(itinerary)) {
 			sql.closeConnection();
 			return intineraryConvertToDto(itinerary);
@@ -90,17 +98,18 @@ public class RouteController {
 	/**
 	 * Update an itinerary
 	 * 
-	 * @param tripID             - An integer uniquely identifying a trip
-	 * @param startingLongitude  - A double representing the starting longitude
-	 * @param startingLatitude   - A double representing the starting latitude
-	 * @param startingTime       - A String representing the starting time
-	 * @param endingLongitude    - A double representing the ending longitude
-	 * @param endingLatitude     - A double representing the ending latitude
-	 * @param endingTime         - A String representing the ending time
-	 * @param seatsLeft          - An integer representing the number of seats left
+	 * @param tripID            - An integer uniquely identifying a trip
+	 * @param startingLongitude - A double representing the starting longitude
+	 * @param startingLatitude  - A double representing the starting latitude
+	 * @param startingTime      - A String representing the starting time
+	 * @param endingLongitude   - A double representing the ending longitude
+	 * @param endingLatitude    - A double representing the ending latitude
+	 * @param endingTime        - A String representing the ending time
+	 * @param seatsLeft         - An integer representing the number of seats left
+	 * @param operator 			- A String representing the username of the operator
 	 * @return The updated itinerary
 	 */
-	@PutMapping("/updateItinerary/{tripID}/{startingLongitude}/{startingLatitude}/{startingTime}/{endingLongitude}/{endingLatitude}/{endingTime}/{seatsLeft}")
+	@PutMapping("/updateItinerary/{tripID}/{startingLongitude}/{startingLatitude}/{startingTime}/{endingLongitude}/{endingLatitude}/{endingTime}/{seatsLeft}/{operator}")
 	public ItineraryDto updateItinerary(@PathVariable("tripID") int tripID,
 										@PathVariable("startingLongitude") double startingLongitude,
 										@PathVariable("startingLatitude") double startingLatitude,
@@ -108,13 +117,18 @@ public class RouteController {
 										@PathVariable("endingLongitude") double endingLongitude,
 										@PathVariable("endingLatitude") double endingLatitude,
 										@PathVariable("endingTime") String endingTime,
-										@PathVariable("seatsLeft") int seatsLeft) {
+										@PathVariable("seatsLeft") int seatsLeft,
+										@PathVariable("operator") String operator) {
 		
-		Timestamp startingTimeStamp = stringtoTimeStamp(startingTime);
-		Timestamp endingTimeStamp = stringtoTimeStamp(endingTime);
+		Timestamp startingTimeStamp = sql.convertStringToTimestamp(startingTime);
+		Timestamp endingTimeStamp = sql.convertStringToTimestamp(endingTime);
 		
 		Itinerary updatedItinerary = new Itinerary(tripID, startingLongitude, startingLatitude, startingTimeStamp, endingLongitude, endingLatitude, endingTimeStamp, seatsLeft);
 		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			return null;
+		}
 		if (sql.updateItinerary(updatedItinerary)) {
 			sql.closeConnection();
 			return intineraryConvertToDto(updatedItinerary);
@@ -127,14 +141,20 @@ public class RouteController {
 	/**
 	 * Delete an itinerary
 	 * 
-	 * @param tripID     - An integer uniquely identifying a trip
+	 * @param tripID    - An integer uniquely identifying a trip
+	 * @param operator 	- A String representing the username of the operator
 	 * @return A string to indicate if the itinerary was deleted successfully or not.
 	 */
-	@DeleteMapping("/deleteItinerary/{tripID}")
-	public String deleteItinerary(@PathVariable("tripID") int tripID) {
+	@DeleteMapping("/deleteItinerary/{tripID}/{operator}")
+	public String deleteItinerary(@PathVariable("tripID") int tripID,
+								  @PathVariable("operator") String operator) {
 		
 		int deleteTripID = tripID;
 		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			return null;
+		}
 		if (sql.deleteItinerary(deleteTripID)) {
 			sql.closeConnection();
 			return String.format("Itinerary %s was deleted.", deleteTripID);
@@ -146,14 +166,20 @@ public class RouteController {
 	/**
 	 * Obtain the Itinerary information base on the tripID
 	 * 
-	 * @param tripID     - An integer uniquely identifying a trip
+	 * @param tripID    - An integer uniquely identifying a trip
+	 * @param operator 	- A String representing the username of the operator
 	 * @return The Itinerary object if found, null otherwise.
 	 */
-	@GetMapping("/getItineraryByTripID/{tripID}")
-	public ItineraryDto getItineraryByTripID(@PathVariable("tripID") int tripID) {
+	@GetMapping("/getItineraryByTripID/{tripID}/{operator}")
+	public ItineraryDto getItineraryByTripID(@PathVariable("tripID") int tripID,
+											 @PathVariable("operator") String operator) {
 		Itinerary itinerary = null;
 		
 		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			return null;
+		}
 		itinerary = sql.getItineraryByTripID(tripID);
 		if (itinerary != null) {
 			sql.closeConnection();
@@ -173,15 +199,20 @@ public class RouteController {
 	 * @param arrivalTime       -   A String representing preferred arrival time
 	 * @return A List of Itinerary representing the itineraries found base on the criteria. Return Null if none was found.
 	 */
-	@GetMapping("/getItineraryNearDestination/{endingLongitude}/{endingLatitude}/{maximumDistance}/{arrivalTime}")
+	@GetMapping("/getItineraryNearDestination/{endingLongitude}/{endingLatitude}/{maximumDistance}/{arrivalTime}/{operator}")
 	public List<ItineraryDto> getItineraryNearDestination(	@PathVariable("endingLongitude") double endingLongitude,
 															@PathVariable("endingLatitude") double endingLatitude,
 															@PathVariable("maximumDistance") double maximumDistance,
-															@PathVariable("arrivalTime") String arrivalTime){
+															@PathVariable("arrivalTime") String arrivalTime,
+															@PathVariable("operator") String operator) {
 		
-		Timestamp arrivalTimeStamp = stringtoTimeStamp(arrivalTime);
+		Timestamp arrivalTimeStamp = sql.convertStringToTimestamp(arrivalTime);
 		
-		sql.connect();		
+		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			return null;
+		}
 		List<ItineraryDto> itineraryList = new ArrayList<ItineraryDto>();
 		for(Itinerary itinerary : sql.getItineraryNearDestination(endingLongitude, endingLatitude, maximumDistance, arrivalTimeStamp))
 			itineraryList.add(intineraryConvertToDto(itinerary));
@@ -192,13 +223,19 @@ public class RouteController {
 	/**
 	 * Increment by 1 the number of seats left in the itinerary given by the tripID
 	 * 
-	 * @param tripID   - An integer uniquely identifying a trip
+	 * @param tripID   	- An integer uniquely identifying a trip
+	 * @param operator 	- A String representing the operator of the driver
 	 * @return A string indicating if the number of seats was incremented successfully for the tripID
 	 */
-	@PutMapping("/incrementSeatsLeft/{tripID}")
-	public String incrementSeatsLeft(@PathVariable("tripID")int tripID) {
+	@PutMapping("/incrementSeatsLeft/{tripID}/{operator}")
+	public String incrementSeatsLeft(@PathVariable("tripID")int tripID,
+									 @PathVariable("operator") String operator) {
 		
 		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			return null;
+		}
 		if (sql.incrementSeatsLeft(tripID)) {
 			sql.closeConnection();
 			return String.format("The number of seats left in the itinerary %s was incremented.", tripID);
@@ -210,11 +247,13 @@ public class RouteController {
 	/**
 	 * Decrements by 1 the number of seats left in the itinerary given by the tripID
 	 * 
-	 * @param tripID - An integer uniquely identifying a trip
+	 * @param tripID 	- An integer uniquely identifying a trip
+	 * @param operator 	- A String representing the operator of the operator
 	 * @return A string indicating if the number of seats was incremented successfully for the tripID
 	 */
-	@PutMapping("/decrementSeatsLeft/{tripID}")
-	public String decrementSeatsLeft(@PathVariable("tripID")int tripID) {
+	@PutMapping("/decrementSeatsLeft/{tripID}/{operator}")
+	public String decrementSeatsLeft(@PathVariable("tripID")int tripID,
+									 @PathVariable("operator") String operator) {
 		
 		sql.connect();
 		if (sql.decrementSeatsLeft(tripID)) {
@@ -241,6 +280,10 @@ public class RouteController {
 		
 		Location location = new Location(operator, longitude, latitude);
 		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			return null;
+		}
 		if (sql.insertLocation(location)) {
 			sql.closeConnection();
 			return String.format("Location of %s has been inserted into the database.", location.getOperator());
@@ -258,11 +301,16 @@ public class RouteController {
 	 * @param maximumDistance	-	A double representing maximum search radius in meters.
 	 * @return A List of Location objects matching the search criteria. Null if an error occurred.
 	 */
-	@GetMapping("/getLocationNear/{longitude}/{latitude}/{maximumDistance}")
+	@GetMapping("/getLocationNear/{longitude}/{latitude}/{maximumDistance}/{operator}")
 	public List<LocationDto> getLocationNear(@PathVariable("longitude") double longitude,
 											 @PathVariable("latitude") double latittude,
-											 @PathVariable("maximumDistance") double maximumDistance){
-		sql.connect();		
+											 @PathVariable("maximumDistance") double maximumDistance,
+											 @PathVariable("operator") String operator){
+		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			return null;
+		}
 		List<LocationDto> locationList = new ArrayList<LocationDto>();
 		for(Location location : sql.getLocationNear(longitude, latittude, maximumDistance))
 			locationList.add(locationConvertToDto(location));
@@ -279,6 +327,10 @@ public class RouteController {
 	public Location getLocationByUsername(@PathVariable("operator") String operator) {
 		
 		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			return null;
+		}
 		Location location = sql.getLocationByUsername(operator);
 		if (location != null) {
 			sql.closeConnection();
@@ -302,6 +354,10 @@ public class RouteController {
 		
 		Location location = new Location(operator, longitude, latitude);
 		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			return null;
+		}
 		if (sql.updateLocation(location)) {
 			sql.closeConnection();
 			return String.format("Location of %s has been updated.", operator);
@@ -320,6 +376,10 @@ public class RouteController {
 	public String deleteLocation(@PathVariable("operator") String operator) {
 		
 		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			return null;
+		}
 		if (sql.deleteLocation(operator)) {
 			sql.closeConnection();
 			return String.format("Location of %s has been deleted.", operator);
@@ -338,6 +398,10 @@ public class RouteController {
 	public String insertReservation(@PathVariable("operator") String operator,
 									@PathVariable("tripID") int tripID) {
 		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			return null;
+		}
 		Reservation reservation = new Reservation(operator, tripID);
 		if (sql.insertReservation(reservation)) {
 			sql.closeConnection();
@@ -358,6 +422,10 @@ public class RouteController {
 	public String deleteReservation(@PathVariable("operator") String operator,
 									@PathVariable("tripID") int tripID) {
 		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			return null;
+		}
 		Reservation reservation = new Reservation(operator, tripID);
 		if (sql.deleteReservation(reservation)) {
 			sql.closeConnection();
@@ -376,28 +444,15 @@ public class RouteController {
 	@GetMapping("/getReservationByUsername/{operator}")
 	public List<ReservationDto> getReservationByUsername(@PathVariable("operator") String operator) {
 		
-		sql.connect();		
+		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			return null;
+		}
 		List<ReservationDto> reservationList = new ArrayList<ReservationDto>();
 		for(Reservation reservation : sql.getReservationByUsername(operator))
 			reservationList.add(reservationConvertToDto(reservation));
 		sql.closeConnection();
 		return reservationList;
 	}
-
-	/**
-	 * Helper Method: convert a string to a timeStamp
-	 * 
-	 * @param timeString - A time represented in a string
-	 * @return timeStamp - A time represented by a timeStamp
-	 */
-	private Timestamp stringtoTimeStamp (String timeString) {
-		try {
-		    SimpleDateFormat dateLayout = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-		    Date date = dateLayout.parse(timeString);
-		    Timestamp timeStamp = new java.sql.Timestamp(date.getTime());
-		    return timeStamp;
-		} catch(Exception e) {
-			return null;
-		}
-	}			
 }

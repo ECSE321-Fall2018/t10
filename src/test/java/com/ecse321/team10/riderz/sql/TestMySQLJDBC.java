@@ -438,4 +438,17 @@ public class TestMySQLJDBC {
 		assertEquals(true, sql.deleteUser(testUser1.getUsername()));
 		assertEquals(true, sql.deleteUser(testUser2.getUsername()));
 	}
+
+	//=======================
+	//  Authentication Tests
+	//=======================
+	@Test
+	public void testAuthentication() {
+		User testUser = new User("user15", "password15", "user15@gmail.com", "1234567890", "first", "last");
+		assertEquals(true, sql.insertUser(testUser));
+		assertEquals(true, sql.insertAuthentication(testUser.getUsername()));
+		assertEquals(true, sql.verifyAuthentication(testUser.getUsername()));
+		assertEquals(true, sql.deleteAuthentication(testUser.getUsername()));
+		assertEquals(true, sql.deleteUser(testUser.getUsername()));
+	}
 }
