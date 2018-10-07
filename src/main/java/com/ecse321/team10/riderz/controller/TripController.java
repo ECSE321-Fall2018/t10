@@ -7,14 +7,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@RequestMapping("/trip")
+@RestController
+@RequestMapping("trip")
 
 public class TripController {
 
@@ -87,4 +86,39 @@ public class TripController {
         logger.info(trips);
         return trips;
     }
+
+    @RequestMapping(value = "insertTrip", method = RequestMethod.PUT)
+    public boolean insertTrip( @RequestParam String operator) {
+        if (sql.connect()) {
+            boolean r = sql.insertTrip(operator);
+            sql.closeConnection();
+            return r;
+        }
+        logger.info("Failed to establish communication with SQL database");
+        return false;
+    }
+
+    @RequestMapping(value = "deleteTrip", method = RequestMethod.PUT)
+    public boolean deleteTrip( @RequestParam int tripID,
+                               @RequestParam String operator) {
+        if (sql.connect()) {
+            boolean r = sql.deleteTrip(tripID, operator);
+            sql.closeConnection();
+            return r;
+        }
+        logger.info("Failed to establish communication with SQL database");
+        return false;
+    }
+
+    @RequestMapping(value = "deleteAllTrips", method = RequestMethod.PUT)
+    public boolean deleteAllTrips( @RequestParam String operator) {
+        if (sql.connect()) {
+            boolean r = sql.deleteAllTrips(operator);
+            sql.closeConnection();
+            return r;
+        }
+        logger.info("Failed to establish communication with SQL database");
+        return false;
+    }
+
 }
