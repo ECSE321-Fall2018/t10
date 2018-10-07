@@ -48,7 +48,9 @@ public class TestUserController {
     @Before
     public void setup(){
         if(sql.connect()){
+        	sql.purgeDatabase();
             sql.insertUser(user);
+            sql.insertAuthentication(user.getUsername());
             sql.closeConnection();
         }
         logger.info("*****************TestUserController START*****************");
@@ -57,7 +59,8 @@ public class TestUserController {
     @After
     public void tearDown(){
         if(sql.connect()){
-            sql.deleteUser("test-ty");
+        	sql.deleteAuthentication(user.getUsername());
+            sql.deleteUser(user.getUsername());
             sql.closeConnection();
             logger.info("*****************TestUserController END*****************");
         }
@@ -66,18 +69,19 @@ public class TestUserController {
 
     @Test
     public void testAddAndDeleteUser() throws Exception {
-        this.mockMvc.perform(delete("/users/deleteUser?username=test-ty&password=test"))
+    	User user = new User("test-ty2", "test", "test-ty2@gmail.com", "514-638-4109", "test-ty2-first-name", "test-ty2-last-name");
+        this.mockMvc.perform(delete("/users/deleteUser?username=test-ty2&password=test"))
                                 .andExpect(status().isOk())
                                 .andDo(print());
-        this.mockMvc.perform(post("/users/addUser?username=test-ty&firstName=test-ty-first-name&lastName=test-ty-last-name&phone=514-638-4109&email=ty-test@gmail.com&password=test"))
+        this.mockMvc.perform(post("/users/addUser?username=test-ty2&firstName=test-ty2-first-name&lastName=test-ty2-last-name&phone=514-638-4109&email=test-ty2@gmail.com&password=test"))
                                 .andExpect(status().isOk())
                                 .andDo(print())
-                                .andExpect(jsonPath("$.username").value("test-ty"))
-                                .andExpect(jsonPath("$.firstName").value("test-ty-first-name"))
-                                .andExpect(jsonPath("$.lastName").value("test-ty-last-name"))
-                                .andExpect(jsonPath("$.phone").value("514-638-4109"))
-                                .andExpect(jsonPath("$.email").value("ty-test@gmail.com"))
-                                .andExpect(jsonPath("$.password").value("test"));
+                                .andExpect(jsonPath("$.username").value(user.getUsername()))
+                                .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
+                                .andExpect(jsonPath("$.lastName").value(user.getLastName()))
+                                .andExpect(jsonPath("$.phone").value(user.getPhone()))
+                                .andExpect(jsonPath("$.email").value(user.getEmail()))
+                                .andExpect(jsonPath("$.password").value(user.getPassword()));
                                 
     }
 
@@ -99,13 +103,7 @@ public class TestUserController {
 
     @Test
     public void getAllUser() throws Exception{
-        this.mockMvc.perform(get("/users/getAllUsers"))
-                            .andExpect(status().isOk());
-    }
-
-    @Test
-    public void testLogin() throws Exception {
-        this.mockMvc.perform(post("/users/login?username=test-ty&password=testing"))
+        this.mockMvc.perform(get("/users/getAllUsers?username=test-ty"))
                             .andExpect(status().isOk());
     }
 
