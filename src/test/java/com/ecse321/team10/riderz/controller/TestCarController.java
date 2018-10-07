@@ -57,6 +57,9 @@ public class TestCarController {
     @After
     public void tearDown() {
         sql.connect();
+        sql.deleteAuthentication("abc");
+        sql.deleteAuthentication("Tyrone");
+        sql.deleteAuthentication("Ryan");
         sql.deleteCar("abc");
         sql.deleteCar("Tyrone");
         sql.deleteCar("Ryan");
