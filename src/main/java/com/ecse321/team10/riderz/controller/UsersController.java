@@ -34,7 +34,7 @@ public class UsersController {
 		return modelMapper.map(user, UserDto.class);
 	}
 	
-	private static final Logger logger = LogManager.getLogger(RiderzController.class);
+	private static final Logger logger = LogManager.getLogger(UsersController.class);
 
 	/**
 	 * Handles the /users/addUser endpoint and creates a new user in the DB
