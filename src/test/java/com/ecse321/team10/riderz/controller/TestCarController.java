@@ -48,6 +48,9 @@ public class TestCarController {
         sql.insertUser(user1);
         sql.insertUser(user2);
         sql.insertUser(user3);
+        sql.insertAuthentication(user1.getUsername());
+        sql.insertAuthentication(user2.getUsername());
+        sql.insertAuthentication(user3.getUsername());
         sql.closeConnection();
     }
 
