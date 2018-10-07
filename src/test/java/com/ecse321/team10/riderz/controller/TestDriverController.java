@@ -103,6 +103,25 @@ public class TestDriverController {
 	}
 	
 	@Test
+	public void testGetAllDriversWithFilter() throws Exception {
+		 sql.connect();
+		 sql.addRating("unitTest-mei", 4.0);
+		 sql.closeConnection();
+		 this.mockMvc.perform(get("/driver/all/rating?cutoff=3.0")).andDo(print()).andExpect(status().isOk())
+	     .andExpect(content().string(containsString("{\"operator\":\"unitTest-mei\",\"rating\":4.0,\"personsRated\":1,\"tripsCompleted\":0}")));
+	
+		 this.mockMvc.perform(get("/driver/all/personsRated?cutoff=1")).andDo(print()).andExpect(status().isOk())
+	     .andExpect(content().string(containsString("{\"operator\":\"unitTest-mei\",\"rating\":4.0,\"personsRated\":1,\"tripsCompleted\":0}")));
+	
+		 sql.connect();
+		 sql.incrementTripsCompleted("unitTest-mei");
+		 sql.closeConnection();
+		 this.mockMvc.perform(get("/driver/all/tripsCompleted?cutoff=1")).andDo(print()).andExpect(status().isOk())
+	     .andExpect(content().string(containsString("{\"operator\":\"unitTest-mei\",\"rating\":4.0,\"personsRated\":1,\"tripsCompleted\":1}")));
+	
+	}
+	
+	@Test
 	public void testNewAndDeleteDriver() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.put("/driver/delete?operator=unitTest-mei")).andDo(print()).andExpect(status().isOk())
          .andExpect(content().string(containsString("true")));
