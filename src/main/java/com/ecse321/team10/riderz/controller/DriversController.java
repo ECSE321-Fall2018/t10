@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -62,41 +63,11 @@ public class DriversController {
 		return null;
 	}
 	
-//	TODO: implement filtering feature
-//	@RequestMapping(value = "", method = RequestMethod.GET)
-//	public ArrayList<DriverDto> getDriversByFilter(@RequestParam String filter) {
-//		try {
-//			ArrayList<Driver> drivers;
-//			sql.connect();
-//			
-//			if(filter.equalsIgnoreCase("rating")) {
-//				//create & call jdbc method
-//				drivers = (ArrayList<Driver>) null; //replace
-//			}else if(filter.equalsIgnoreCase("personsRated")) {
-//				drivers = (ArrayList<Driver>) null; //replace
-//			}else if(filter.equalsIgnoreCase("tripsCompleted")) {
-//				drivers = (ArrayList<Driver>) null; //replace
-//			}
-//			
-//			if(!drivers.isEmpty()) {
-//				sql.closeConnection();
-//				logger.info("Fetched driver with filter: "+ filter);
-//				ArrayList<DriverDto> driversDto = drivers.forEach(); //convert to dto
-//				return driversDto;
-//			}
-//			sql.closeConnection();
-//			logger.info("No driver with filter: "+ filter + "was found.");
-//			return null; 
-//		} catch (Exception e) {
-//			logger.error(e.getClass().getName() + ": " + e.getMessage());
-//			return null;
-//		}
-//	}
-	
 	/**
 	 * Fetches all Drivers from the database.
-	 * @return An ArrayList of DriverDto object(s) if an one or more Drivers were 
-	 * found in the database. Null otherwise.
+	 * @return An ArrayList of DriverDto object(s) if one or more Drivers were 
+	 * found in the database, an empty ArrayList if no Drivers were found, and null 
+	 * in case of an error or exception.
 	 */
 	@RequestMapping(value = "all", method = RequestMethod.GET)
 	public ArrayList<DriverDto> getAllDrivers() {
@@ -107,17 +78,58 @@ public class DriversController {
 			sql.closeConnection();
 			if(drivers.isEmpty()) {
 				logger.info("No drivers were found.");
-				return null;
 			} else {
 				logger.info("Fetched all drivers");
 				for (Driver driver: drivers) {
 					driversDto.add(convertToDto(driver));
 				}
-				return driversDto;
 			}
+			return driversDto;
 		}
 		sql.closeConnection();
 		return null;
+	}
+	
+	/**
+	 * Fetches all Drivers with a specific parameter above or equal a certain cutoff value.
+	 * Filters Drivers according to their rating, the amount of people who have rated them,
+	 * and the amount of trips they have completed.
+	 * @return An ArrayList of DriverDto object(s) if one or more Drivers meeting the
+	 * filtering specifications were found in the database, an empty ArrayList if no 
+	 * Drivers were found, and null in case of an error or exception.
+	 */
+	@RequestMapping(value = "all/{filter}", method = RequestMethod.GET)
+	public ArrayList<DriverDto> getDriversByFilter(@PathVariable("filter") String filter, @RequestParam double cutoff) {
+		ArrayList<Driver> drivers = new ArrayList<Driver>();;
+		ArrayList<DriverDto> driversDto = new ArrayList<DriverDto>();
+		sql.connect();
+		
+		if(filter.equalsIgnoreCase("rating")) {
+			drivers = sql.getAllDriversAboveRating(cutoff);
+		}else if(filter.equalsIgnoreCase("personsRated")) {
+			drivers = sql.getAllDriversAbovePersonsRated((int) cutoff);
+		}else if(filter.equalsIgnoreCase("tripsCompleted")) {
+			drivers = sql.getAllDriversAboveTripsCompleted((int) cutoff);
+		}else {
+			logger.info("Wrong filter name. Available filter names are 'rating'"
+					+ "'personsRated' and 'tripsCompleted'");
+			return null; 
+		}
+	
+		if(drivers != null) {
+			sql.closeConnection();
+			if(drivers.isEmpty()) {
+				logger.info("No driver with filter: "+ filter + " was found.");
+			}else {
+				logger.info("Fetched driver with filter: "+ filter);
+				for (Driver driver: drivers) {
+					driversDto.add(convertToDto(driver));
+				}
+			}
+			return driversDto;
+		}		
+		sql.closeConnection();
+		return null; 
 	}
 	
 	/**
@@ -152,7 +164,7 @@ public class DriversController {
 		boolean addedRating = sql.addRating(operator, rating);
 		if(addedRating) {
 			sql.closeConnection();
-			logger.info("Updated driver" + operator + " successfully with rating of " + rating);
+			logger.info("Updated driver " + operator + " successfully with rating of " + rating);
 			return true;
 		}
 		sql.closeConnection();
