@@ -2,6 +2,7 @@ package com.ecse321.team10.riderz.controller;
 
 import com.ecse321.team10.riderz.dto.CarDto;
 import com.ecse321.team10.riderz.model.Car;
+import com.ecse321.team10.riderz.model.User;
 import com.ecse321.team10.riderz.sql.MySQLJDBC;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,6 +55,11 @@ public class CarController {
 		if (areValidCarParameters(make, model, licensePlate)){
 			Car car = new Car(operator, make, model, year, numberOfSeats, fuelEfficiency, licensePlate);
 			sql.connect();
+			if (!sql.verifyAuthentication(operator)) {
+				sql.closeConnection();
+				logger.info("Operator is not authenticated");
+				return null;
+			}
 			if(sql.insertCar(car)) {
 				sql.closeConnection();
 				logger.info("Successfully added a new car for operator" + operator);
@@ -77,6 +83,11 @@ public class CarController {
 	@DeleteMapping("")
 	public boolean deleteCar(@RequestParam String operator) {
 		sql.connect();
+		if (!sql.verifyAuthentication(operator)) {
+			sql.closeConnection();
+			logger.info("Operator is not authenticated");
+			return false;
+		}
 		if (operator != null){
 			sql.deleteCar(operator);
 			sql.closeConnection();
@@ -114,6 +125,11 @@ public class CarController {
 		if (areValidCarParameters(make, model, licensePlate)){
 			Car car = new Car(operator, make, model, year, numberOfSeats, fuelEfficiency, licensePlate);
 			sql.connect();
+			if (!sql.verifyAuthentication(operator)) {
+				sql.closeConnection();
+				logger.info("Operator is not authenticated");
+				return null;
+			}
 			if(sql.updateCar(car)) {
 				sql.closeConnection();
 				logger.info("Updated the car information which belongs to: " + operator);

@@ -48,12 +48,18 @@ public class TestCarController {
         sql.insertUser(user1);
         sql.insertUser(user2);
         sql.insertUser(user3);
+        sql.insertAuthentication(user1.getUsername());
+        sql.insertAuthentication(user2.getUsername());
+        sql.insertAuthentication(user3.getUsername());
         sql.closeConnection();
     }
 
     @After
     public void tearDown() {
         sql.connect();
+        sql.deleteAuthentication("abc");
+        sql.deleteAuthentication("Tyrone");
+        sql.deleteAuthentication("Ryan");
         sql.deleteCar("abc");
         sql.deleteCar("Tyrone");
         sql.deleteCar("Ryan");

@@ -2,10 +2,8 @@ package com.ecse321.team10.riderz.sql;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -1396,6 +1394,87 @@ public class MySQLJDBC {
 	}
 
 	//=======================
+	// Authentication API
+	//=======================
+	/**
+	 * Adds an user into the authentication list.
+	 * @param username		-	A String representing an User's username.
+	 * @return True if the user's authentication has been added. False otherwise.
+	 */
+	public boolean insertAuthentication(String username) {
+		String authenticateUser = "INSERT INTO session (username, sessionTime) VALUES (?, ?);";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(authenticateUser);
+			ps.setString(1, username);
+			ps.setLong(2, (System.currentTimeMillis() / 1000L));
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				logger.info(String.format("'%s' authentication has been added.", username));
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 * Deletes an user from the authentication list.
+	 * @param username		-	A String representing an User's username.
+	 * @return True if the user's authentication has been deleted. False otherwise.
+	 */
+	public boolean deleteAuthentication(String username) {
+		String deleteAuthentication = "DELETE FROM session WHERE username = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(deleteAuthentication);
+			ps.setString(1, username);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				logger.info(String.format("'%s' authentication has been revoked.", username));
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 * Verifies if an user is authenticated.
+	 * @param username		-	A String representing an User's username.
+	 * @return True if an User is successfully authenticated. False otherwise.
+	 */
+	public boolean verifyAuthentication(String username) {
+		String verifyAuthentication = "SELECT * FROM session WHERE username = ? AND sessionTime <= ? + 3600;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(verifyAuthentication);
+			ps.setString(1, username);
+			ps.setLong(2, (System.currentTimeMillis() / 1000L));
+			ResultSet rs = ps.executeQuery();
+			int rows = 0;
+			if (rs.last()) {
+				rows = rs.getRow();
+			}
+			if (rows == 0) {
+				logger.info(username + " failed to authentication themself");
+				ps.close();
+				return false;
+			}
+			logger.info(username + " successfully authenticated themself");
+			ps.close();
+			return true;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	//=======================
 	// Helper API
 	//=======================
 	/**
@@ -1427,6 +1506,7 @@ public class MySQLJDBC {
 		String purgeCar = "TRUNCATE TABLE car;";
 		String purgeDriver = "TRUNCATE TABLE driver;";
 		String purgeUsers = "TRUNCATE TABLE users;";
+		String purgeSession = "TRUNCATE TABLE session;";
 		try {
 			c.createStatement().executeUpdate("SET FOREIGN_KEY_CHECKS = 0;");
 			c.createStatement().executeUpdate(purgeCar);
@@ -1434,6 +1514,7 @@ public class MySQLJDBC {
 			c.createStatement().executeUpdate(purgeItinerary);
 			c.createStatement().executeUpdate(purgeLocation);
 			c.createStatement().executeUpdate(purgeReservation);
+			c.createStatement().executeUpdate(purgeSession);
 			c.createStatement().executeUpdate(purgeTrip);
 			c.createStatement().executeUpdate(purgeUsers);
 			c.createStatement().executeUpdate("SET FOREIGN_KEY_CHECKS = 1;");
