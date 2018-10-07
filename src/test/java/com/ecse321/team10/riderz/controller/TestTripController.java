@@ -1,10 +1,13 @@
 package com.ecse321.team10.riderz.controller;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +26,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.ecse321.team10.riderz.model.User;
 import com.ecse321.team10.riderz.sql.MySQLJDBC;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -64,6 +69,7 @@ public class TestTripController {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().string(containsString("true")));
+        sql.deleteAllTrips("testTripController");
         sql.deleteUser("testTripController");
     }
 
@@ -76,6 +82,7 @@ public class TestTripController {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().string(containsString("true")));
+        sql.deleteAllTrips("testTripController");
         sql.deleteUser("testTripController");
     }
 
@@ -88,6 +95,65 @@ public class TestTripController {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().string(containsString("true")));
+        sql.deleteUser("testTripController");
+    }
+
+    @Test
+    public void testGetTripsByUsername() throws Exception {
+        sql.insertUser(new User("testTripController", "1234", "test@test.com", "5149998888", "first", "last"));
+        sql.insertTrip("testTripController");
+        sql.insertTrip("testTripController");
+
+        MvcResult result = this.mockMvc.perform(get("/trip/username?operator=testTripController"))
+                .andDo(print())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+
+        logger.info(content);
+
+        String expectedResult = "[{\"tripID\":1,\"operator\":\"testTripController\"},{\"tripID\":2,\"operator\":\"testTripController\"}]";
+
+        assertEquals(content, expectedResult);
+        sql.deleteAllTrips("testTripController");
+        sql.deleteUser("testTripController");
+    }
+
+    @Test
+    public void testGetLastTripByUsername() throws Exception{
+        sql.insertUser(new User("testTripController", "1234", "test@test.com", "5149998888", "first", "last"));
+        sql.insertTrip("testTripController");
+        sql.insertTrip("testTripController");
+
+        this.mockMvc.perform(get("/trip/last/?operator=testTripController"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.operator").value("testTripController"))
+                .andExpect(jsonPath("tripID").value("2"));
+        sql.deleteAllTrips("testTripController");
+        sql.deleteUser("testTripController");
+    }
+
+    @Test
+    public void testGetAllTrips() throws Exception{
+        sql.insertUser(new User("testTripController", "1234", "test@test.com", "5149998888", "first", "last"));
+        sql.insertUser(new User("testTripController1", "1234", "test@test.com", "5149998888", "first", "last"));
+        sql.insertTrip("testTripController");
+        sql.insertTrip("testTripController");
+        sql.insertTrip("testTripController1");
+
+        MvcResult result = this.mockMvc.perform(get("/trip/all"))
+                .andDo(print())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+
+        logger.info(content);
+
+        String expectedResult = "[{\"tripID\":1,\"operator\":\"testTripController\"},{\"tripID\":2,\"operator\":\"testTripController\"},{\"tripID\":3,\"operator\":\"testTripController1\"}]";
+
+        assertEquals(content, expectedResult);
+        sql.deleteAllTrips("testTripController");
         sql.deleteUser("testTripController");
     }
 }
