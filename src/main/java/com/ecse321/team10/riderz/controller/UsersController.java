@@ -34,7 +34,7 @@ public class UsersController {
 		return modelMapper.map(user, UserDto.class);
 	}
 	
-	private static final Logger logger = LogManager.getLogger(RiderzController.class);
+	private static final Logger logger = LogManager.getLogger(UsersController.class);
 
 	/**
 	 * Handles the /users/addUser endpoint and creates a new user in the DB
@@ -71,7 +71,7 @@ public class UsersController {
 	 */
 	@GetMapping("getUser")
 	public UserDto getUser(	@RequestParam String username) {
-		if(sql.connect()){
+		if(sql.connect() && sql.verifyAuthentication(username)){
 			User user = sql.getUserByUsername(username);
 			sql.closeConnection();
 			return convertToDto(user);
@@ -82,11 +82,12 @@ public class UsersController {
 
 	/**
 	 * Handles the /users/getAllUsers endpoint, retrieves all db users
+	 * @param username - String
 	 * @return List<UserDto>, list of UserDto objects otherwise null
 	 */
 	@GetMapping("getAllUsers")
-	public List<UserDto> getAllUser() {
-		if(sql.connect()){
+	public List<UserDto> getAllUser(@RequestParam String username) {
+		if(sql.connect() && sql.verifyAuthentication(username)){
 			List<UserDto> users = new ArrayList<UserDto>();
 			for(User user : sql.getAllUsers()){
 				users.add(convertToDto(user));
@@ -116,23 +117,6 @@ public class UsersController {
 		return false;
 	}
 
-
-	/**
-	 * Handles the /users/login endpoint, verifies correct user credentials (username with password)
-	 * @param username - String
-	 * @param password - String
-	 * @return Boolean True if successful login, otherwise False
-	 */
-	@PostMapping("login")
-	public boolean verifyLogin( @RequestParam String username, @RequestParam String password) {
-		if(sql.connect()){
-			boolean login=sql.verifyLogin(username,password);
-			sql.closeConnection();
-			return login;
-		}
-		return false;						
-	}
-
 	/**
 	 * Handles the /users/getPhone endpoint, retrieves user phone number
 	 * @param username - String
@@ -140,8 +124,7 @@ public class UsersController {
 	 */
 	@GetMapping("getPhone")
 	public String getPhone( @RequestParam String username ){
-		if(sql.connect()){
-			
+		if (sql.connect() && sql.verifyAuthentication(username)) {
 			String phone = sql.getPhone(username);
 			sql.closeConnection();
 			return phone;
@@ -156,8 +139,9 @@ public class UsersController {
 	 * @return Boolean true if number was changed, otherwise false
 	 */
 	@PutMapping("setPhone")
-	public boolean setPhone( @RequestParam String username,@RequestParam String phone){
-		if(sql.connect()){
+	public boolean setPhone( @RequestParam String username,
+							 @RequestParam String phone){
+		if (sql.connect() && sql.verifyAuthentication(username)) {
 			boolean numberChanged = sql.setPhone(username, phone);
 			sql.closeConnection();
 			return numberChanged;
@@ -172,7 +156,7 @@ public class UsersController {
 	 */
 	@GetMapping("getEmail")
 	public String getEmail( @RequestParam String username ){
-		if(sql.connect()){
+		if (sql.connect() && sql.verifyAuthentication(username)) {
 			String email = sql.getEmail(username);
 			sql.closeConnection();
 			return email;
@@ -188,8 +172,9 @@ public class UsersController {
 	 * @return Boolean true if email has been changed, otherwise false
 	 */
 	@PutMapping("setEmail")
-	public boolean setEmail(@RequestParam String username,@RequestParam String email ){
-		if(sql.connect()){
+	public boolean setEmail( @RequestParam String username,
+							 @RequestParam String email){
+		if (sql.connect() && sql.verifyAuthentication(username)) {
 			boolean emailChanged = sql.setEmail(username,email);
 			sql.closeConnection();
 			return emailChanged;
@@ -206,8 +191,10 @@ public class UsersController {
 	 */
 	//Successfully changes password but can implement email verification later
 	@PutMapping("setPassword")
-	public boolean setPassword(@RequestParam String username,@RequestParam String password, @RequestParam String newPassword){
-		if(sql.connect() && sql.verifyLogin(username,password)){
+	public boolean setPassword(@RequestParam String username,
+							   @RequestParam String password,
+							   @RequestParam String newPassword) {
+		if (sql.connect() && sql.verifyAuthentication(username)) {
 			boolean changedPass= sql.setPassword(username,newPassword);
 			sql.closeConnection();
 			return changedPass;
