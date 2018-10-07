@@ -14,6 +14,7 @@ import com.ecse321.team10.riderz.model.Location;
 import com.ecse321.team10.riderz.model.Reservation;
 import com.ecse321.team10.riderz.model.Trip;
 import com.ecse321.team10.riderz.model.User;
+import com.ecse321.team10.riderz.model.Driver;
 /**
  * Test Class for the MySQLJDBC class
  * 
@@ -173,6 +174,56 @@ public class TestMySQLJDBC {
 		assertEquals(true, sql.deleteCar("heqiantestTrip"));
 		assertEquals(true, sql.deleteUser("heqiantestTrip"));
 
+	}
+
+	//==================
+	//  Driver Tests
+	//==================
+	@Test
+	public void testInsertDeleteGetDriver() {
+		User testUser10 = new User("user10", "password10", "user10@gmail.com", "1234567890", "user10FirstName", "user10LastName");
+		assertEquals(true, sql.insertUser(testUser10));
+		assertEquals(true, sql.insertDriver(testUser10.getUsername()));
+		Driver driver = sql.getDriverByUsername(testUser10.getUsername());
+		assertEquals(testUser10.getUsername(), driver.getOperator());
+		assertEquals(0.0, driver.getRating(), 0.0);
+		assertEquals(0, driver.getTripsCompleted());
+		assertEquals(true, sql.deleteDriver(testUser10.getUsername()));
+		assertEquals(true, sql.deleteUser(testUser10.getUsername()));
+	}
+
+	@Test
+	public void testGetAllDrivers() {
+		User testUser11 = new User("user11", "password11", "user11@gmail.com", "1234567890", "user12FirstName", "user12LastName");
+		assertEquals(true, sql.insertUser(testUser11));
+		assertEquals(true, sql.insertDriver(testUser11.getUsername()));
+		User testUser12 = new User("user12", "password12", "user12@gmail.com", "1234567890", "user12FirstName", "user12LastName");
+		assertEquals(true, sql.insertUser(testUser12));
+		assertEquals(true, sql.insertDriver(testUser12.getUsername()));
+		ArrayList<Driver> allDrivers = sql.getAllDrivers();
+		assertEquals(2, allDrivers.size());
+		assertEquals(true, sql.deleteDriver(testUser11.getUsername()));
+		assertEquals(true, sql.deleteUser(testUser11.getUsername()));
+		assertEquals(true, sql.deleteDriver(testUser12.getUsername()));
+		assertEquals(true, sql.deleteUser(testUser12.getUsername()));
+	}
+
+	@Test
+	public void testGetAllDriversWithFilters() {
+		User testUser13 = new User("user13", "password13", "user13@gmail.com", "1234567890", "user13FirstName", "user13LastName");
+		assertEquals(true, sql.insertUser(testUser13));
+		assertEquals(true, sql.insertDriver(testUser13.getUsername()));
+		assertEquals(true, sql.incrementPersonsRated(testUser13.getUsername()));
+		assertEquals(true, sql.incrementTripsCompleted(testUser13.getUsername()));
+		assertEquals(true, sql.addRating(testUser13.getUsername(), 3.0));
+		assertEquals(1, sql.getAllDriversAboveTripsCompleted(1).size());
+		assertEquals(1, sql.getAllDriversAboveRating(1.5).size());
+		assertEquals(1, sql.getAllDriversAbovePersonsRated(2).size());
+		assertEquals(0, sql.getAllDriversAboveTripsCompleted(2).size());
+		assertEquals(0, sql.getAllDriversAboveRating(2.0).size());
+		assertEquals(0, sql.getAllDriversAbovePersonsRated(3).size());
+		assertEquals(true, sql.deleteDriver(testUser13.getUsername()));
+		assertEquals(true, sql.deleteUser(testUser13.getUsername()));
 	}
 
 	//==================

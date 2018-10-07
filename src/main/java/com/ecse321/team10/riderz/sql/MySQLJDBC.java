@@ -213,7 +213,11 @@ public class MySQLJDBC {
 							  rs.getString("licensePlate"));
 			}
             ps.close();
-            logger.info(String.format("Car '%s' has been returned from the database.", car.getOperator()));
+            if (car != null) {
+            	logger.info(String.format("Car '%s' has been returned from the database.", car.getOperator()));
+            } else {
+            	logger.info(operator + " does not have a car");
+            }
             return car;
         } catch (Exception e) {
         	logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -297,7 +301,11 @@ public class MySQLJDBC {
 								rs.getString("firstName"), rs.getString("lastName"));
 			}
 			ps.close();
-			logger.info(String.format("User '%s' has been returned from the database.", user.getUsername()));
+			if (user != null) {
+				logger.info(String.format("User '%s' has been returned from the database.", user.getUsername()));
+			} else {
+				logger.info(username + " was not found in the database");
+			}
 			return user;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -598,7 +606,7 @@ public class MySQLJDBC {
 										  rs.getInt("personsRated"), rs.getInt("tripsCompleted")));
 			}
 			ps.close();
-			logger.info("SELECT * FROM driver");
+			logger.info("Returned drivers with rating above " + rating);
 			return driverList;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -686,6 +694,32 @@ public class MySQLJDBC {
 	}
 
 	/**
+	 * Fetches all drivers above or equal to a number of persons rated.
+	 * @param rating	-	An integer representing the minimum number of persons rated.
+	 * @return An ArrayList of Driver objects fitting the criteria. Null otherwise if an error occurred.
+	 */
+	public ArrayList<Driver> getAllDriversAbovePersonsRated(int personsRated) {
+		ArrayList<Driver> driverList = new ArrayList<Driver>();
+		PreparedStatement ps = null;
+		String getAllDriversAboveRating = "SELECT * FROM driver WHERE personsRated >= ?;";
+		try {
+			ps = c.prepareStatement(getAllDriversAboveRating);
+			ps.setInt(1, personsRated);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				driverList.add(new Driver(rs.getString("operator"), rs.getDouble("rating"),
+										  rs.getInt("personsRated"), rs.getInt("tripsCompleted")));
+			}
+			ps.close();
+			logger.info("Returned drivers with persons rated above " + personsRated);
+			return driverList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	/**
 	 * Increments by 1 the number of people who have rated the driver.
 	 * @param operator	-	A String representing an User's username.
 	 * @return True if an entry was updated. False otherwise.
@@ -755,6 +789,32 @@ public class MySQLJDBC {
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
 			return false;
+		}
+	}
+
+	/**
+	 * Fetches all drivers above or equal to a number of persons rated.
+	 * @param rating	-	An integer representing the minimum number of persons rated.
+	 * @return An ArrayList of Driver objects fitting the criteria. Null otherwise if an error occurred.
+	 */
+	public ArrayList<Driver> getAllDriversAboveTripsCompleted(int tripsCompleted) {
+		ArrayList<Driver> driverList = new ArrayList<Driver>();
+		PreparedStatement ps = null;
+		String getAllDriversAboveRating = "SELECT * FROM driver WHERE tripsCompleted >= ?;";
+		try {
+			ps = c.prepareStatement(getAllDriversAboveRating);
+			ps.setInt(1, tripsCompleted);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				driverList.add(new Driver(rs.getString("operator"), rs.getDouble("rating"),
+										  rs.getInt("personsRated"), rs.getInt("tripsCompleted")));
+			}
+			ps.close();
+			logger.info("Returned drivers with trips completed above " + tripsCompleted);
+			return driverList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
 		}
 	}
 
