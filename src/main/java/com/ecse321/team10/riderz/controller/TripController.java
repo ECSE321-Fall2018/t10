@@ -25,7 +25,7 @@ public class TripController {
 
     private TripDto convertToDto(Trip trip) { return modelMapper.map(trip, TripDto.class); }
 
-    private static final Logger logger = LogManager.getLogger(RiderzController.class);
+    private static final Logger logger = LogManager.getLogger(TripController.class);
 
     /**
      * Fetches all the trips associated with the User
