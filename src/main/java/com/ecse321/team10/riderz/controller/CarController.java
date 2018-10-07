@@ -152,11 +152,6 @@ public class CarController {
 	public CarDto getCar(@RequestParam String operator) {
 		sql.connect();
 		if (operator != null){
-			if (!sql.verifyAuthentication(operator)) {
-				sql.closeConnection();
-				logger.info("Operator is not authenticated");
-				return null;
-			}
 			Car car = sql.getCarByOperator(operator);
 			sql.closeConnection();
 			logger.info("Successfully retrieved the car of operator: " + operator);
