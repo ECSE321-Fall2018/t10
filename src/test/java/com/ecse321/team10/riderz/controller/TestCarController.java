@@ -45,6 +45,7 @@ public class TestCarController {
         User user2 = new User("Tyrone", "dfasdfew", "tyrone@mail.com", "1234445555", "Tyrone", "WWW");
         User user3 = new User("Ryan", "hello", "ryan.servera@mail.ca", "12451235", "Ryan", "Servera");
         sql.connect();
+        sql.purgeDatabase();
         sql.insertUser(user1);
         sql.insertUser(user2);
         sql.insertUser(user3);
@@ -54,12 +55,9 @@ public class TestCarController {
     @After
     public void tearDown() {
         sql.connect();
-        sql.deleteCar("abc");
-        sql.deleteCar("Tyrone");
-        sql.deleteCar("Ryan");
-        sql.deleteUser("abc");
-        sql.deleteUser("Tyrone");
-        sql.deleteUser("Ryan");
+        sql.purgeDatabase();
+
+        logger.info(sql.deleteUser("Ryan"));
         sql.closeConnection();
     }
 
