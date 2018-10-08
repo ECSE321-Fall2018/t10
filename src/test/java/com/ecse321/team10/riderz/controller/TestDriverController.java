@@ -6,8 +6,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +28,27 @@ import com.ecse321.team10.riderz.sql.MySQLJDBC;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class TestDriverController {
+    private static final Logger logger = LogManager.getLogger(TestTripController.class);
+
 	@Autowired
     private MockMvc mockMvc;
 	MySQLJDBC sql = new MySQLJDBC();
+	
+	@BeforeClass
+    public static void setupClass() {
+        logger.info("************** Starting Driver Controller Tests **************");
+    }
+
+    @AfterClass
+    public static void teardownClass() {
+        logger.info("************** Ending Driver Controller Tests **************");
+    }
 	
 	@Before
 	public void setup() {
 		User user = new User("unitTest-mei", "uNiTtEsTmEi", "mei.q@mail.ca", "1234445555", "Mei", "Test");
 		sql.connect();
+		sql.purgeDatabase();
 		sql.insertUser(user);
 		sql.insertDriver("unitTest-mei");
 		sql.closeConnection();
