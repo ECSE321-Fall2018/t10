@@ -2,14 +2,12 @@ package com.ecse321.team10.riderz.sql;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.Timestamp;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
+import java.util.Date;
 import java.security.MessageDigest;
 
 import javax.xml.bind.DatatypeConverter;
@@ -145,7 +143,7 @@ public class MySQLJDBC {
 	 * @return True if an entry has been updated. False otherwise.
 	 */
 	public boolean updateCar(Car car) {
-		String updateCar = "UPDATE car SET make = ?, model = ?, year = ?, numOfSeats = ?, " +
+		String updateCar = "UPDATE car SET make = ?, model = ?, year = ?, numOfSeats = ?, " + 
 					   	   "fuelEfficiency = ?, licensePlate = ? WHERE operator = ?;";
 		PreparedStatement ps = null;
 		try {
@@ -213,7 +211,11 @@ public class MySQLJDBC {
 							  rs.getString("licensePlate"));
 			}
             ps.close();
-            logger.info(String.format("Car '%s' has been returned from the database.", car.getOperator()));
+            if (car != null) {
+            	logger.info(String.format("Car '%s' has been returned from the database.", car.getOperator()));
+            } else {
+            	logger.info(operator + " does not have a car");
+            }
             return car;
         } catch (Exception e) {
         	logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -297,7 +299,11 @@ public class MySQLJDBC {
 								rs.getString("firstName"), rs.getString("lastName"));
 			}
 			ps.close();
-			logger.info(String.format("User '%s' has been returned from the database.", user.getUsername()));
+			if (user != null) {
+				logger.info(String.format("User '%s' has been returned from the database.", user.getUsername()));
+			} else {
+				logger.info(username + " was not found in the database");
+			}
 			return user;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -581,6 +587,32 @@ public class MySQLJDBC {
 	}
 
 	/**
+	 * Fetches all drivers above or equal to a rating.
+	 * @param rating	-	A double representing a minimum rating.
+	 * @return An ArrayList of Driver objects fitting the criteria. Null otherwise if an error occurred.
+	 */
+	public ArrayList<Driver> getAllDriversAboveRating(double rating) {
+		ArrayList<Driver> driverList = new ArrayList<Driver>();
+		PreparedStatement ps = null;
+		String getAllDriversAboveRating = "SELECT * FROM driver WHERE rating >= ?;";
+		try {
+			ps = c.prepareStatement(getAllDriversAboveRating);
+			ps.setDouble(1, rating);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				driverList.add(new Driver(rs.getString("operator"), rs.getDouble("rating"),
+										  rs.getInt("personsRated"), rs.getInt("tripsCompleted")));
+			}
+			ps.close();
+			logger.info("Returned drivers with rating above " + rating);
+			return driverList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	/**
 	 * Obtains a driver's rating.
 	 * @param operator	-	A String representing an User's username.
 	 * @return A double if the driver was found. 0.0 otherwise.
@@ -660,6 +692,32 @@ public class MySQLJDBC {
 	}
 
 	/**
+	 * Fetches all drivers above or equal to a number of persons rated.
+	 * @param rating	-	An integer representing the minimum number of persons rated.
+	 * @return An ArrayList of Driver objects fitting the criteria. Null otherwise if an error occurred.
+	 */
+	public ArrayList<Driver> getAllDriversAbovePersonsRated(int personsRated) {
+		ArrayList<Driver> driverList = new ArrayList<Driver>();
+		PreparedStatement ps = null;
+		String getAllDriversAboveRating = "SELECT * FROM driver WHERE personsRated >= ?;";
+		try {
+			ps = c.prepareStatement(getAllDriversAboveRating);
+			ps.setInt(1, personsRated);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				driverList.add(new Driver(rs.getString("operator"), rs.getDouble("rating"),
+										  rs.getInt("personsRated"), rs.getInt("tripsCompleted")));
+			}
+			ps.close();
+			logger.info("Returned drivers with persons rated above " + personsRated);
+			return driverList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	/**
 	 * Increments by 1 the number of people who have rated the driver.
 	 * @param operator	-	A String representing an User's username.
 	 * @return True if an entry was updated. False otherwise.
@@ -729,6 +787,32 @@ public class MySQLJDBC {
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
 			return false;
+		}
+	}
+
+	/**
+	 * Fetches all drivers above or equal to a number of persons rated.
+	 * @param rating	-	An integer representing the minimum number of persons rated.
+	 * @return An ArrayList of Driver objects fitting the criteria. Null otherwise if an error occurred.
+	 */
+	public ArrayList<Driver> getAllDriversAboveTripsCompleted(int tripsCompleted) {
+		ArrayList<Driver> driverList = new ArrayList<Driver>();
+		PreparedStatement ps = null;
+		String getAllDriversAboveRating = "SELECT * FROM driver WHERE tripsCompleted >= ?;";
+		try {
+			ps = c.prepareStatement(getAllDriversAboveRating);
+			ps.setInt(1, tripsCompleted);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				driverList.add(new Driver(rs.getString("operator"), rs.getDouble("rating"),
+										  rs.getInt("personsRated"), rs.getInt("tripsCompleted")));
+			}
+			ps.close();
+			logger.info("Returned drivers with trips completed above " + tripsCompleted);
+			return driverList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
 		}
 	}
 
@@ -1191,7 +1275,7 @@ public class MySQLJDBC {
 	 * @return True if an entry was updated. False otherwise.
 	 */
 	public boolean updateLocation(Location location) {
-		String updateLocation = "UPDATE location SET longitude = ? AND latitude = ? WHERE operator = ?;";
+		String updateLocation = "UPDATE location SET longitude = ?, latitude = ? WHERE operator = ?;";
 		PreparedStatement ps = null;
 		try {
 			ps = c.prepareStatement(updateLocation);
@@ -1210,13 +1294,36 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Deletes the location of an user from the database.
+	 * @param operator	-	A String representing an User's username.
+	 * @return True if an entry was delete from the database. False otherwise.
+	 */
+	public boolean deleteLocation(String operator) {
+		String deleteLocation = "DELETE FROM location WHERE operator = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(deleteLocation);
+			ps.setString(1, operator);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				logger.info(String.format("Location of '%s' has been deleted from the database.", operator));
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
 	//=======================
 	// RESERVATION API
 	//=======================
 	/**
 	 * Inserts a Reservation object into the database.
 	 * @param reservation	-	A Reservation object to be inserted into the database.
-	 * @return True if an entry was inserted into the database.
+	 * @return True if an entry was inserted into the database. False otherwise.
 	 */
 	public boolean insertReservation(Reservation reservation) {
 		String insertReservation = "INSERT INTO reservation (operator, tripID) VALUES (?, ?);";
@@ -1285,5 +1392,137 @@ public class MySQLJDBC {
 			return null;
 		}
 	}
-	
+
+	//=======================
+	// Authentication API
+	//=======================
+	/**
+	 * Adds an user into the authentication list.
+	 * @param username		-	A String representing an User's username.
+	 * @return True if the user's authentication has been added. False otherwise.
+	 */
+	public boolean insertAuthentication(String username) {
+		String authenticateUser = "INSERT INTO session (username, sessionTime) VALUES (?, ?);";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(authenticateUser);
+			ps.setString(1, username);
+			ps.setLong(2, (System.currentTimeMillis() / 1000L));
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				logger.info(String.format("'%s' authentication has been added.", username));
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 * Deletes an user from the authentication list.
+	 * @param username		-	A String representing an User's username.
+	 * @return True if the user's authentication has been deleted. False otherwise.
+	 */
+	public boolean deleteAuthentication(String username) {
+		String deleteAuthentication = "DELETE FROM session WHERE username = ?;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(deleteAuthentication);
+			ps.setString(1, username);
+			if (ps.executeUpdate() == 1) {
+				ps.close();
+				logger.info(String.format("'%s' authentication has been revoked.", username));
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	/**
+	 * Verifies if an user is authenticated.
+	 * @param username		-	A String representing an User's username.
+	 * @return True if an User is successfully authenticated. False otherwise.
+	 */
+	public boolean verifyAuthentication(String username) {
+		String verifyAuthentication = "SELECT * FROM session WHERE username = ? AND sessionTime <= ? + 3600;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(verifyAuthentication);
+			ps.setString(1, username);
+			ps.setLong(2, (System.currentTimeMillis() / 1000L));
+			ResultSet rs = ps.executeQuery();
+			int rows = 0;
+			if (rs.last()) {
+				rows = rs.getRow();
+			}
+			if (rows == 0) {
+				logger.info(username + " failed to authentication themself");
+				ps.close();
+				return false;
+			}
+			logger.info(username + " successfully authenticated themself");
+			ps.close();
+			return true;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
+
+	//=======================
+	// Helper API
+	//=======================
+	/**
+	 * Converts a String into a java.util.Timestamp Object.
+	 * @param ts		-	A String representing a timestamp in yyyy-MM-dd hh:mm:ss.SSS format
+	 * @return A Timestamp object or null if an error occurred.
+	 */
+	public Timestamp convertStringToTimestamp(String ts) {
+		try {
+		    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+		    Date parsedDate = dateFormat.parse(ts);
+		    return new Timestamp(parsedDate.getTime());
+		} catch(Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+		    return null;
+		}
+	}
+
+	/**
+	 * Clears all tables within the database. For testing purposes only...
+	 * DO NOT USE IN ANY PUBLICLY AVAILABLE ACCESS POINTS!
+	 * @return True if truncation completed successfully. False if an error occurred.
+	 */
+	public boolean purgeDatabase() {
+		String purgeItinerary = "TRUNCATE TABLE itinerary;";
+		String purgeLocation = "TRUNCATE TABLE location;";
+		String purgeReservation = "TRUNCATE TABLE reservation;";
+		String purgeTrip = "TRUNCATE TABLE trip;";
+		String purgeCar = "TRUNCATE TABLE car;";
+		String purgeDriver = "TRUNCATE TABLE driver;";
+		String purgeUsers = "TRUNCATE TABLE users;";
+		String purgeSession = "TRUNCATE TABLE session;";
+		try {
+			c.createStatement().executeUpdate("SET FOREIGN_KEY_CHECKS = 0;");
+			c.createStatement().executeUpdate(purgeCar);
+			c.createStatement().executeUpdate(purgeDriver);
+			c.createStatement().executeUpdate(purgeItinerary);
+			c.createStatement().executeUpdate(purgeLocation);
+			c.createStatement().executeUpdate(purgeReservation);
+			c.createStatement().executeUpdate(purgeSession);
+			c.createStatement().executeUpdate(purgeTrip);
+			c.createStatement().executeUpdate(purgeUsers);
+			c.createStatement().executeUpdate("SET FOREIGN_KEY_CHECKS = 1;");
+			logger.info("Database has been truncated");
+			return true;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return false;
+		}
+	}
 }
