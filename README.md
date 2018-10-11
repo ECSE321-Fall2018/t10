@@ -1,8 +1,10 @@
 # Team 10 ECSE-321
 
-## Car Pooling service app
+## Riderz - Car Pooling service app
 
 ### Description
+
+This project is for our ECSE 321 - Intro to Software Development course. For the purpose of this purpose, we have to build an application that is capable of the providing a car pooling service. Drivers going to a location can pick up a passenger who will pay a small fee.
 
 ### Technologies
 Build System:               Maven
@@ -19,22 +21,15 @@ Hosting:                    Tomcat8
 * Steven Li
 * Tyrone Wong
 
+## Backend
+- Completed
+
+## Android
+- WIP
+
 ## Backlog
-* Backlog <br/>
-	* Create backend using Spring (critical) (WIP) <br/>
-		* Vehicle make, year, number of seats <br/>
-		* Accounts <br/>
-		* Starting point and Destination point (address) <br/>
-		* Range of dates <br/>
-		* Price (offer) <br/>
-	* Create database using MySQL and hibernate (critical)(Completed) <br/>
-	* Create authentication process (low) <br/>
-		* Posting add user page <br/>
-		* Posting login page <br/>
-	* Create unit tests (high) (WIP)<br/>
+- Refer to the issues and projects tab for the backlog.
 
 ## Worflow
 
 Work on feature branches, merge into dev when done, then merge to master using pull requests
-
-***Please don't commit the node-modules folder eventually, this will mess up the insights graph...
