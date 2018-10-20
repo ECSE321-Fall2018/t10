@@ -1,4 +1,9 @@
-language: java
-
-before_install:
-  - chmod +x mvnw
+matrix:
+    include:
+        - language: java
+          jdk: oraclejdk8
+          before_script:
+            - cd backend
+          before_install:
+            - chmod +x backend/mvnw
+          
