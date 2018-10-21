@@ -20,8 +20,7 @@ matrix:
             - cd android_passengers
             - android-update-sdk --components=sys-img-$ABI-$API --accept-licenses='android-sdk-license-[0-9a-f]{8}'
           before_install:
-            - echo yes | sdkmanager "platforms;android-28"
-            - echo yes | sdkmanager "build-tools;android-28.0.2"
+            - mkdir "$ANDROID_HOME/licenses" || true
             - chmod +x android_passengers/gradlew
           android:
             components:
@@ -29,7 +28,9 @@ matrix:
               - platform-tools
               - android-$ANDROID_API_LEVEL
               - android-$EMULATOR_API_LEVEL
+              - android-28
               - build-tools-$ANDROID_BUILD_TOOLS_VERSION
+              - build-tools-28.0.2
               - extra-android-m2repository
             licenses:
               - 'android-sdk-preview-license-.+'
@@ -50,8 +51,7 @@ matrix:
             - cd android_drivers
             - android-update-sdk --components=sys-img-$ABI-$API --accept-licenses='android-sdk-license-[0-9a-f]{8}'
           before_install:
-            - echo yes | sdkmanager "platforms;android-28"
-            - echo yes | sdkmanager "build-tools;android-28.0.2"
+            - mkdir "$ANDROID_HOME/licenses" || true
             - chmod +x android_drivers/gradlew
           android:
             components:
@@ -59,7 +59,9 @@ matrix:
               - platform-tools
               - android-$ANDROID_API_LEVEL
               - android-$EMULATOR_API_LEVEL
+              - android-28
               - build-tools-$ANDROID_BUILD_TOOLS_VERSION
+              - build-tools-28.0.2
               - extra-android-m2repository
             licenses:
               - 'android-sdk-preview-license-.+'
