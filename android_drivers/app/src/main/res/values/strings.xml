@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Riderz Drivers</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="login_button">LOGIN</string>
+    <string name="register_button">REGISTER</string>
+</resources>
