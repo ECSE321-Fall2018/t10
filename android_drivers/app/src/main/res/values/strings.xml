@@ -4,4 +4,7 @@
     <string name="password_hint">Password</string>
     <string name="login_button">LOGIN</string>
     <string name="register_button">REGISTER</string>
+    <string name="forgot_button">FORGOT PASSWORD</string>
+    <string name="title_activity_reset_password_verification">Sign in</string>
+
 </resources>
