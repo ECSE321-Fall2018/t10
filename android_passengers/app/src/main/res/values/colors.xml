@@ -6,4 +6,7 @@
     <color name="loginColorHint">#ffffff</color>
     <color name="loginColor">#ffffff</color>
     <color name="loginButton">#ffffff</color>
+    <color name="red">#ffff0000</color>
+    <color name="black">#00000000</color>
+    <color name="white">#ffffffff</color>
 </resources>
