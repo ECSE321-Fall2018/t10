@@ -83,7 +83,7 @@
             app:layout_constraintTop_toBottomOf="@+id/loginPassword">
 
             <Button
-                android:id="@+id/reset"
+                android:id="@+id/resetOuter"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
@@ -106,7 +106,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/reset" />
+                app:layout_constraintTop_toBottomOf="@+id/resetOuter" />
 
             <Button
                 android:id="@+id/register"

@@ -42,7 +42,7 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
 
     @Override
     public void mapButtons() {
-        Button resetButton = findViewById(R.id.reset);
+        Button resetButton = findViewById(R.id.resetOuter);
         Button loginButton = findViewById(R.id.login);
         Button registerButton = findViewById(R.id.register);
 

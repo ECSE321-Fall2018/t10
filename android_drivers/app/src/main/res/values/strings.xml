@@ -15,4 +15,10 @@
     <!-- ResetPasswordVerification components -->
     <string name="title_activity_reset_password_verification">Verify Your Credentials</string>
     <string name="confirm_button">VERIFY</string>
+
+    <!-- ResetPassword components -->
+    <string name="title_activity_reset_password">Reset Password</string>
+    <string name="reset_button">RESET PASSWORD</string>
+    <string name="new_password_hint">New Password</string>
+    <string name="confirm_new_password_hint">Confirm New Password</string>
 </resources>

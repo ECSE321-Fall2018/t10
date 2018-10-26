@@ -1,5 +1,6 @@
 package riderz.team10.ecse321.com.riderzdrivers;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -59,6 +60,13 @@ public class ResetPasswordVerification extends AppCompatActivity implements Http
                     // Clear error message
                     msg = "";
                     success = false;
+                    final EditText username = findViewById(R.id.resetUsername);
+                    // Launch reset password verification activity when on click event gets triggered
+                    Intent intent = new Intent(ResetPasswordVerification.this,
+                            ResetPassword.class);
+                    intent.putExtra("username", username.getText().toString());
+                    ResetPasswordVerification.this.startActivity(intent);
+                    finish();
                 }
                 // Display error message
                 errorMsg.setText(msg);
@@ -95,7 +103,6 @@ public class ResetPasswordVerification extends AppCompatActivity implements Http
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         // Null was returned
                         if (responseBody.length == 0) {
-                            Log.e(TAG.verifyTag, "User: " + usernameText + " does not exist");
                             success = false;
                             msg = "Combination does not exist";
                             return;
