@@ -1,11 +1,11 @@
 matrix:
     include:
-        - language: java
-          jdk: oraclejdk8
-          before_script:
-            - cd backend
-          before_install:
-            - chmod +x backend/mvnw
+        # - language: java
+        #  jdk: oraclejdk8
+        #  before_script:
+        #    - cd backend
+        #  before_install:
+        #    - chmod +x backend/mvnw
           
         - language: android
           sudo: false
