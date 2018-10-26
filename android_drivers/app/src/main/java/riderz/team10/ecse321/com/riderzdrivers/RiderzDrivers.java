@@ -1,7 +1,9 @@
 package riderz.team10.ecse321.com.riderzdrivers;
 
 import cz.msebera.android.httpclient.Header;
+import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
 import riderz.team10.ecse321.com.riderzdrivers.constants.URL;
+import riderz.team10.ecse321.com.riderzdrivers.http.HttpRequestClient;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -14,15 +16,16 @@ import android.widget.TextView;
 
 import com.loopj.android.http.*;
 
-public class RiderzDrivers extends AppCompatActivity {
-    // loginError is to be accessed within nested functions, required global access
+/**
+ * Main activity. Performs login functionalities.
+ */
+public class RiderzDrivers extends AppCompatActivity implements HttpRequestClient {
+    // loginError is to be accessed within nested functions, required to give global access
     protected TextView errorMsg;
 
-    // TAG for Logcat, only valid for this class
-    private static final String TAG = "LoginScreen";
-
-    // Used for synchronous calls to REST APIs
+    // Used for transmit information from synchronous HTTP requests to the login REST API
     protected boolean success;
+    protected String msg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,11 @@ public class RiderzDrivers extends AppCompatActivity {
         errorMsg.setVisibility(View.INVISIBLE);
 
         // Obtain mapping to each of the buttons
+        mapButtons();
+    }
+
+    @Override
+    public void mapButtons() {
         Button resetButton = findViewById(R.id.reset);
         Button loginButton = findViewById(R.id.login);
         Button registerButton = findViewById(R.id.register);
@@ -53,15 +61,16 @@ public class RiderzDrivers extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                verifyLoginCredentials();
+                syncHttpRequest();
                 if (success) {
-                    Intent intent = new Intent(RiderzDrivers.this,
-                            ResetPasswordVerification.class);
-                    RiderzDrivers.this.startActivity(intent);
-                    errorMsg.setText("Successful login");
-                } else {
-                    errorMsg.setText("Combination does not exist");
+                    // TODO: Link to main ListView
+                    // TODO: Add login credentials to cache
+                    // Clear error message
+                    msg = "";
+                    success = false;
                 }
+                // Display error message
+                errorMsg.setText(msg);
                 errorMsg.setVisibility(View.VISIBLE);
             }
         });
@@ -75,43 +84,44 @@ public class RiderzDrivers extends AppCompatActivity {
         });
     }
 
-    /**
-     * This method instantiates a new synchronous HTTP client and post requests the login API.
-     * @return True if the user credentials are valid
-     */
-    private boolean verifyLoginCredentials() {
+    @Override
+    public void syncHttpRequest() {
         // URL to target
         final String loginUrl = URL.baseUrl + "login";
 
         // Obtains values from EditText elements
-        final EditText username = findViewById(R.id.username);
-        final EditText password = findViewById(R.id.password);
+        final EditText username = findViewById(R.id.loginUsername);
+        final EditText password = findViewById(R.id.loginPassword);
         final String usernameText = username.getText().toString();
         final String passwordText = password.getText().toString();
 
-        // Instantiate http request parameters and fill with appropriate parameters
+        // Instantiate RequestParams object
+        // Add username and password strings
         final RequestParams params = new RequestParams();
         params.add("username", usernameText);
         params.add("password", passwordText);
 
+        // Instantiate a new Runnable object which will handle http requests asynchronously
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                // Instantiate new synchronous http client, set timeout to 5 seconds and post request
+                // Instantiate new synchronous http client, set timeout to 5 seconds and
+                // perform post request
                 SyncHttpClient client = new SyncHttpClient();
-                client.setTimeout(5000);
+                client.setTimeout(1500);
                 client.post(loginUrl, params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         String responseString = new String(responseBody);
                         switch (responseString) {
                             case "User session has been established!":
-                                Log.d(TAG, "User: " + usernameText + " successfully authenticated");
+                                Log.d(TAG.loginTag, "User: " + usernameText + " successfully authenticated");
                                 success = true;
                                 break;
                             default:
-                                Log.d(TAG, "User: " + usernameText + " failed to authenticate");
+                                Log.d(TAG.loginTag, "User: " + usernameText + " failed to authenticate");
                                 success = false;
+                                msg = "This combination does not exist!";
                                 break;
                         }
                     }
@@ -120,19 +130,19 @@ public class RiderzDrivers extends AppCompatActivity {
                     public void onFailure(int statusCode, Header[] headers,
                         byte[] responseBody, Throwable error) {
                             success = false;
-                            Log.e(TAG, "Server error");
+                            msg = "Could not contact server";
+                            Log.e(TAG.loginTag, "Server error - could not contact server");
                         }
                     });
             }
         });
         t.start();
 
-        // Await until thread t has finished its execution
+        // Await until thread t has finished its execution before proceeding
         try {
             t.join();
         } catch (InterruptedException e) {
-            Log.e(TAG, "Thread exception in login thread");
+            Log.e(TAG.loginTag, "Thread exception in login thread");
         }
-        return success;
     }
 }

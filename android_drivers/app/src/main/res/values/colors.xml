@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Action bar color -->
     <color name="colorPrimary">#0277bd</color>
     <color name="colorPrimaryDark">#01579b</color>
-    <color name="colorAccent">#ffffff</color>
-    <color name="loginColorHint">#ffffff</color>
-    <color name="loginColor">#ffffff</color>
-    <color name="loginButton">#ffffff</color>
-    <color name="errorColor">#ee0000</color>
+
+    <!-- Accents -->
+    <color name="darkAccent">#000000</color>
+    <color name="lightAccent">#ffffff</color>
+
+    <!-- Global colors -->
+    <color name="errorColor">#ff0000</color>
+    <color name="buttonTextColor">#ffffff</color>
+
+    <!-- Login colors -->
+    <color name="loginHintColor">#ffffff</color>
+    <color name="loginTextColor">#ffffff</color>
+
+    <!-- Verification colors -->
 </resources>

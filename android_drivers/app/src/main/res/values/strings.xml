@@ -1,10 +1,18 @@
 <resources>
     <string name="app_name">Riderz Drivers</string>
+
+    <!-- Global components -->
+    <string name="default_error_text">No errors</string>
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
+    <string name="email_hint">Email</string>
+
+    <!-- RiderzDrivers components -->
     <string name="login_button">LOGIN</string>
     <string name="register_button">REGISTER</string>
     <string name="forgot_button">FORGOT PASSWORD</string>
-    <string name="title_activity_reset_password_verification">Sign in</string>
 
+    <!-- ResetPasswordVerification components -->
+    <string name="title_activity_reset_password_verification">Verify Your Credentials</string>
+    <string name="confirm_button">VERIFY</string>
 </resources>
