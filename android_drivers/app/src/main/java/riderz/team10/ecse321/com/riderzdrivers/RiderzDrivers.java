@@ -79,7 +79,9 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: Complete
+                Intent intent = new Intent(RiderzDrivers.this,
+                        DriverTripForm.class);
+                RiderzDrivers.this.startActivity(intent);
             }
         });
     }

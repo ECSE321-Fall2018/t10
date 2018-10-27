@@ -20,4 +20,5 @@
     <string name="endlocation_hint">Enter End Address</string>
     <string name="newtrip_button">Create Trip</string>
     <string name="addTrip">Add New Trip</string>
+    <string name="starttime_hint">Enter Start Time</string>
 </resources>
