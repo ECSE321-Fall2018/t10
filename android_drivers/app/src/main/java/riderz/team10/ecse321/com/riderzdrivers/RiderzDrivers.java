@@ -118,6 +118,10 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
             @Override
             public void onClick(View v) {
                 //TODO: Complete
+                Intent intent = new Intent(RiderzDrivers.this,
+                        SignUpDriver.class);
+                RiderzDrivers.this.startActivity(intent);
+
             }
         });
     }
@@ -125,7 +129,7 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
     @Override
     public void syncHttpRequest() {
         // URL to target
-        final String loginUrl = URL.baseUrl + "login";
+        final String loginUrl = URL.baseUrl + URL.loginUrl;
 
         // Obtains values from EditText elements
         final String usernameText = username.getText().toString();
