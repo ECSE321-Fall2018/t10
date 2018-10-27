@@ -26,18 +26,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsPassengerActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private Geocoder geocoder;
-    private GeoLocation geoLocation;
     private Button confirmationButton;
 
 
 
-    private LatLng startLocation;
-    private LatLng stopLocation;
-
-
-    private String startAddress;
-    private String stopAddress;
+    private LatLng markerLocation;
 
     private final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
 
@@ -57,7 +50,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         confirmationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(), "Latitude: " +  startLocation.latitude + "\nLongitude: "  + startLocation.longitude,Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Latitude: " +  markerLocation.latitude + "\nLongitude: "  + markerLocation.longitude,Toast.LENGTH_LONG).show();
             }
         });
 
@@ -82,10 +75,10 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
             if (resultCode == RESULT_OK) {
 
                 Place place = PlaceAutocomplete.getPlace(this, data);
-                startLocation = place.getLatLng();
+                markerLocation = place.getLatLng();
 
-                double startLatitude = startLocation.latitude;
-                double startLongitude = startLocation.longitude;
+                double startLatitude = markerLocation.latitude;
+                double startLongitude = markerLocation.longitude;
 
                 LatLng start = new LatLng(startLatitude, startLongitude);
                 mMap.addMarker(new MarkerOptions().position(start).title("Marker at start Address"));
@@ -128,9 +121,6 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
-        geoLocation = new GeoLocation();
-        geocoder = new Geocoder(this);
         mMap = googleMap;
     }
 }
