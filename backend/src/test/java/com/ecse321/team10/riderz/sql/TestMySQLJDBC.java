@@ -327,15 +327,14 @@ public class TestMySQLJDBC {
 
 		assertEquals(true, sql.insertItinerary(itinerary));
 
-		ArrayList<Itinerary> a = sql.getItineraryNearDestination(13.243, -14.8752, 10000, arrivalTime);
-		System.out.println(a.toString());
+		ArrayList<Itinerary> a = sql.getItineraryNearDestination(12.555, -14.352, 13.243, -14.8752, 10000, arrivalTime);
 		assertEquals(true, a.size() != 0);
 
-		a = sql.getItineraryNearDestination(13.200, -14.8752, 50, arrivalTime);
+		a = sql.getItineraryNearDestination(12.555, -14.352, 13.200, -14.8752, 50, arrivalTime);
 		assertEquals(true, a.size() == 0);
 
 		arrivalTime = sql.convertStringToTimestamp("2018-03-20 20:00:00.000");
-		a = sql.getItineraryNearDestination(13.243, -14.8752, 5000, arrivalTime);
+		a = sql.getItineraryNearDestination(12.555, -14.352, 13.243, -14.8752, 5000, arrivalTime);
 		assertEquals(true, a.size() == 0);
 
 		assertEquals(true, sql.deleteItinerary(tripID));

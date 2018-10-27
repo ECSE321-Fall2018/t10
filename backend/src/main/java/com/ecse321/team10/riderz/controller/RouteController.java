@@ -199,8 +199,10 @@ public class RouteController {
 	 * @param arrivalTime       -   A String representing preferred arrival time
 	 * @return A List of Itinerary representing the itineraries found base on the criteria. Return Null if none was found.
 	 */
-	@GetMapping("/getItineraryNearDestination/{endingLongitude}/{endingLatitude}/{maximumDistance}/{arrivalTime}/{operator}")
-	public List<ItineraryDto> getItineraryNearDestination(	@PathVariable("endingLongitude") double endingLongitude,
+	@GetMapping("/getItineraryNearDestination/{startingLongitude}/{startingLatitude}/{endingLongitude}/{endingLatitude}/{maximumDistance}/{arrivalTime}/{operator}")
+	public List<ItineraryDto> getItineraryNearDestination(	@PathVariable("startingLongitude") double startingLongitude,
+															@PathVariable("startingLatitude") double startingLatitude,
+															@PathVariable("endingLongitude") double endingLongitude,
 															@PathVariable("endingLatitude") double endingLatitude,
 															@PathVariable("maximumDistance") double maximumDistance,
 															@PathVariable("arrivalTime") String arrivalTime,
@@ -214,7 +216,7 @@ public class RouteController {
 			return null;
 		}
 		List<ItineraryDto> itineraryList = new ArrayList<ItineraryDto>();
-		for(Itinerary itinerary : sql.getItineraryNearDestination(endingLongitude, endingLatitude, maximumDistance, arrivalTimeStamp))
+		for(Itinerary itinerary : sql.getItineraryNearDestination(startingLongitude, startingLatitude, endingLongitude, endingLatitude, maximumDistance, arrivalTimeStamp))
 			itineraryList.add(intineraryConvertToDto(itinerary));
 		sql.closeConnection();
 		return itineraryList;

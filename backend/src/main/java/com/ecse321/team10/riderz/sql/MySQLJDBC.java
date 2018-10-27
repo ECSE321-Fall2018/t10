@@ -34,9 +34,9 @@ import com.ecse321.team10.riderz.model.Reservation;
 public class MySQLJDBC {
 	private static final Logger logger = LogManager.getLogger(MySQLJDBC.class);
 
-	private static final String connection = "jdbc:mysql://35.237.200.65:3306/dev";
-	private static final String username = "dev";
-	private static final String password = "ecse321LoGiNdEv";
+	private static final String connection = "jdbc:mysql://35.237.200.65:3306/production";
+	private static final String username = "admin";
+	private static final String password = "ecse321LoGiNaDmIn";
 
 	private static Connection c;
 
@@ -1088,29 +1088,39 @@ public class MySQLJDBC {
 	/**
 	 * Fetches entries from the database fitting search criteria based on a spherical distance
 	 * algorithm. Recommended to have a low maximum search radius to obtain more accurate results.
+	 * @param startingLongitude	-	A double representing source longitude.
+	 * @param startingLatitude	-	A double representing starting latitude.
 	 * @param endingLongitude	-	A double representing destination longitude.
 	 * @param endingLatitude	-	A double representing destination latitude.
 	 * @param maximumDistance	-	A double representing maximum search radius in meters.
 	 * @param arrivalTime		-	A java.sql.Timestamp representing preferred arrival time
 	 * @return An ArrayList of Itinerary objects matching the search criteria. Null if an error occurred.
 	 */
-	public ArrayList<Itinerary> getItineraryNearDestination(double endingLongitude,
-					double endingLatitude, double maximumDistance, Timestamp arrivalTime) {
+	public ArrayList<Itinerary> getItineraryNearDestination(double startingLongitude,
+					double startingLatitude, double endingLongitude, double endingLatitude, double maximumDistance, 
+					Timestamp arrivalTime) {
 		ArrayList<Itinerary> itineraryList = new ArrayList<Itinerary>();
 		double radiusOfEarth = 6371000.0;
-		String getItineraryNearDestination = "SELECT * FROM itinerary WHERE SQRT(" +
-						   "POWER((2 * PI() * ? * (ABS(endingLongitude - ?) / 360.0)), 2) + " +
-						   "POWER((2 * PI() * ? * (ABS(endingLatitude - ?) / 360.0)), 2)) <= ? " +
-						   "AND endingTime > NOW() AND endingTime <= ?;";
+		String getItineraryNearDestination = "SELECT * FROM itinerary WHERE " + 
+				"SQRT(POWER((2 * PI() * ? * (ABS(startingLongitude - ?) / 360.0)), 2) + " + 
+				"POWER((2 * PI() *  ? * (ABS(startingLatitude - ?) / 360.0)), 2)) <= ? AND " + 
+				"SQRT(POWER((2 * PI() * ? * (ABS(endingLongitude - ?) / 360.0)), 2) + " + 
+				"POWER((2 * PI() * ? * (ABS(endingLatitude - ?) / 360.0)), 2)) <= ?" + 
+				"AND endingTime > NOW() AND endingTime <= ?;";
 		PreparedStatement ps = null;
 		try {
 			ps = c.prepareStatement(getItineraryNearDestination);
 			ps.setDouble(1, radiusOfEarth);
-			ps.setDouble(2, endingLongitude);
+			ps.setDouble(2, startingLongitude);
 			ps.setDouble(3, radiusOfEarth);
-			ps.setDouble(4, endingLatitude);
+			ps.setDouble(4, startingLatitude);
 			ps.setDouble(5, maximumDistance);
-			ps.setTimestamp(6, arrivalTime);
+			ps.setDouble(6, radiusOfEarth);
+			ps.setDouble(7, endingLongitude);
+			ps.setDouble(8, radiusOfEarth);
+			ps.setDouble(9, endingLatitude);
+			ps.setDouble(10, maximumDistance);
+			ps.setTimestamp(11, arrivalTime);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				itineraryList.add(new Itinerary(rs.getInt("tripID"),
