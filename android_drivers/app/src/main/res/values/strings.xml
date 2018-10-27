@@ -15,4 +15,5 @@
     <!-- ResetPasswordVerification components -->
     <string name="title_activity_reset_password_verification">Verify Your Credentials</string>
     <string name="confirm_button">VERIFY</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
