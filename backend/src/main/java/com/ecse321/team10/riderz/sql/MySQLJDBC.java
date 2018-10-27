@@ -34,9 +34,9 @@ import com.ecse321.team10.riderz.model.Reservation;
 public class MySQLJDBC {
 	private static final Logger logger = LogManager.getLogger(MySQLJDBC.class);
 
-	private static final String connection = "jdbc:mysql://35.237.200.65:3306/production";
-	private static final String username = "admin";
-	private static final String password = "ecse321LoGiNaDmIn";
+	private static final String connection = "jdbc:mysql://35.237.200.65:3306/dev";
+	private static final String username = "dev";
+	private static final String password = "ecse321LoGiNdEv";
 
 	private static Connection c;
 
@@ -1078,6 +1078,39 @@ public class MySQLJDBC {
 			}
 			rs.close();
 			logger.info(String.format("Itinerary '%s' has been returned from the database.", tripID));
+			return itinerary;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+	
+	/**
+	 * Fetches all itineraries offered by an user.
+	 * @param operator 		-	A String representing an username.
+	 * @return An ArrayList of Itinerary objects matching the search criteria. Null if an error occurred.
+	 */
+	public ArrayList<Itinerary> getItineraryByUsername(String operator) {
+		ArrayList<Itinerary> itinerary = new ArrayList<>();
+		String getItineraryByUsername = "SELECT * FROM itinerary WHERE itinerary.tripID IN " + 
+										"(SELECT trip.tripID FROM trip WHERE operator = ?);";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(getItineraryByUsername);
+			ps.setString(1, operator);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				itinerary.add(new Itinerary(rs.getInt("tripID"),
+						  rs.getDouble("startingLongitude"),
+						  rs.getDouble("startingLatitude"),
+						  rs.getTimestamp("startingTime"),
+						  rs.getDouble("endingLongitude"),
+						  rs.getDouble("endingLatitude"),
+						  rs.getTimestamp("endingTime"),
+						  rs.getInt("seatsLeft")));
+			}
+			rs.close();
+			logger.info(String.format("All itineraries have been returned from the database for user %s", operator));
 			return itinerary;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());

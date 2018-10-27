@@ -223,6 +223,21 @@ public class RouteController {
 	}
 	
 	/**
+	 * Obtains all itinerary fitting search criteria.
+	 * @param operator 			- A String representing an user. 
+	 * @return A List of Itinerary representing the itineraries found based on the search criteria.
+	 */
+	public List<ItineraryDto> getItineraryByUsername(  @PathVariable("operator") String operator) {
+		sql.connect();
+		List<ItineraryDto> itineraryList = new ArrayList<ItineraryDto>();
+		for(Itinerary itinerary : sql.getItineraryByUsername(operator)) {
+			itineraryList.add(intineraryConvertToDto(itinerary));
+		}
+		sql.closeConnection();
+		return itineraryList;
+	}
+	
+	/**
 	 * Increment by 1 the number of seats left in the itinerary given by the tripID
 	 * 
 	 * @param tripID   	- An integer uniquely identifying a trip
@@ -305,7 +320,7 @@ public class RouteController {
 	 */
 	@GetMapping("/getLocationNear/{longitude}/{latitude}/{maximumDistance}/{operator}")
 	public List<LocationDto> getLocationNear(@PathVariable("longitude") double longitude,
-											 @PathVariable("latitude") double latittude,
+											 @PathVariable("latitude") double latitude,
 											 @PathVariable("maximumDistance") double maximumDistance,
 											 @PathVariable("operator") String operator){
 		sql.connect();
@@ -314,7 +329,7 @@ public class RouteController {
 			return null;
 		}
 		List<LocationDto> locationList = new ArrayList<LocationDto>();
-		for(Location location : sql.getLocationNear(longitude, latittude, maximumDistance))
+		for(Location location : sql.getLocationNear(longitude, latitude, maximumDistance))
 			locationList.add(locationConvertToDto(location));
 		sql.closeConnection();
 		return locationList;
