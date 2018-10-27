@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 public class DriverTripForm extends AppCompatActivity {
 
@@ -23,6 +24,9 @@ public class DriverTripForm extends AppCompatActivity {
     //keys are "startAddress" and "endAddress"
     //values are what we get from form
     public void newTrip(View view) {
+        final TextView startLoc = (TextView) findViewById(R.id.startlocation_form);
+        final TextView endLoc   = (TextView) findViewById(R.id.endlocation_form);
+
 
         //add check if the fields are empty, return a warning
 

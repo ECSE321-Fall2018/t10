@@ -20,6 +20,7 @@
     <string name="endlocation_hint">Enter End Address</string>
     <string name="newtrip_button">Create Trip</string>
     <string name="addTrip">Add New Trip</string>
-    <string name="starttime_hint">Enter Start Time</string>
+    <string name="starttime_hint">hh:mm:ss</string>
     <string name="numberseats_hint">Enter Number of Seats</string>
+    <string name="startdate_hint">DD/MM/YYYY</string>
 </resources>
