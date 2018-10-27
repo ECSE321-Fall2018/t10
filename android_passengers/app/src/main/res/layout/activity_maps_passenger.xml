@@ -19,14 +19,15 @@
         app:layout_constraintStart_toEndOf="@+id/map"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
+        <TextView
             android:id="@+id/search_text"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginTop="5dp"
-            android:ems="14"
-            android:hint="Search Google Maps"
-            android:inputType="textPersonName"
+            android:paddingLeft="15dp"
+            android:ems="18"
+            android:gravity="center_vertical"
+            android:hint="@string/search_hint"
             android:paddingStart="15dp"
             android:paddingEnd="15dp"
             android:singleLine="true"
@@ -40,11 +41,9 @@
             android:layout_height="35dp"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
             android:background="@mipmap/ic_search"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/search_text"
             app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
@@ -63,17 +62,18 @@
         tools:context=".MapsPassengerActivity" />
 
     <Button
+        android:id="@+id/confirmation_button"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_margin="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:text="Confirm"
+        android:text="@string/confirmation"
         android:background="@color/searchBar"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/map"
-        app:layout_constraintStart_toEndOf="@+id/map" />
+        app:layout_constraintStart_toEndOf="@+id/map"/>
 
 </android.support.constraint.ConstraintLayout>
 

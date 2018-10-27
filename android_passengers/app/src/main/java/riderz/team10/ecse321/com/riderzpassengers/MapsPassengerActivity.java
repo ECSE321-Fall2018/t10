@@ -2,17 +2,12 @@ package riderz.team10.ecse321.com.riderzpassengers;
 
 import android.content.Intent;
 import android.location.Geocoder;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,6 +28,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
     private GoogleMap mMap;
     private Geocoder geocoder;
     private GeoLocation geoLocation;
+    private Button confirmationButton;
 
 
 
@@ -54,8 +50,16 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        EditText searchText = (EditText) findViewById(R.id.search_text);
+        TextView searchText = (TextView) findViewById(R.id.search_text);
         ImageView searchIcon = (ImageView) findViewById(R.id.search_image);
+        confirmationButton = (Button) findViewById(R.id.confirmation_button);
+
+        confirmationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(), "Latitude: " +  startLocation.latitude + "\nLongitude: "  + startLocation.longitude,Toast.LENGTH_LONG).show();
+            }
+        });
 
         searchText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,40 +74,6 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                 createAutoCompleteIntent();
             }
         });
-
-//        searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-//                if (i == EditorInfo.IME_ACTION_DONE
-//                        || i == EditorInfo.IME_ACTION_SEARCH
-//                        || keyEvent.getAction() == KeyEvent.ACTION_DOWN
-//                        || keyEvent.getAction() == KeyEvent.KEYCODE_ENTER){
-//
-//                    EditText searchText = (EditText) findViewById(R.id.search);
-//                    startAddress = searchText.getText().toString();
-//                    startLocation = geoLocation.getLocationFromAddress(startAddress, geocoder);
-//
-//                    Log.e("Debug", "Address: " + startAddress);
-//
-//                    if (startLocation.equals(null)) {
-//                        Toast.makeText(getApplicationContext(),"The Address Was Invalid",Toast.LENGTH_LONG).show();
-//                        return false;
-//                    }
-//
-//                    double startLatitude = startLocation.latitude;
-//                    double startLongitude = startLocation.longitude;
-//
-//                    Log.e("Debug", "Latitude: " + startLatitude);
-//                    Log.e( "Debug", "Longitude: " +startLongitude);
-//
-//                    LatLng start = new LatLng(startLatitude, startLongitude);
-//                    mMap.addMarker(new MarkerOptions().position(start).title("Marker at start Address"));
-//                    mMap.moveCamera(CameraUpdateFactory.newLatLng(start));
-//                }
-//
-//                return false;
-//            }
-//        });
     }
 
     @Override
@@ -121,7 +91,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                 mMap.addMarker(new MarkerOptions().position(start).title("Marker at start Address"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(start, 15));
 
-//                Button confirmationButton = (Button) findViewById(R.id)
+                confirmationButton.setVisibility(View.VISIBLE);
 
                 Log.i("debug", "Place: " + place.getName());
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
@@ -147,11 +117,6 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         }
     }
 
-//    EditText searchText = (EditText) findViewById(R.id.search);
-//                    startAddress = searchText.getText().toString();
-//                    startLocation = geoLocation.getLocationFromAddress(startAddress, geocoder);
-//
-//                    Log.e("Debug", "Address: " + startAddress);
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -167,11 +132,5 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         geoLocation = new GeoLocation();
         geocoder = new Geocoder(this);
         mMap = googleMap;
-
-//        double stopLatitude = stopLocation.latitude;
-//        double stopLongitude = stopLocation.longitude;
-//        Log.e("Debug", "Latitude: " + stopLatitude);
-//        Log.e( "Debug", "Longitude: " +stopLongitude);
-
     }
 }
