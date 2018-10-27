@@ -15,10 +15,11 @@
     <!-- ResetPasswordVerification components -->
     <string name="title_activity_reset_password_verification">Verify Your Credentials</string>
     <string name="confirm_button">VERIFY</string>
-    <string name="title_activity_driver_trip_form">DriverTripForm</string>
+    <string name="title_activity_driver_trip_form">Driver Trip Form</string>
     <string name="startlocation_hint">Enter Start Address</string>
     <string name="endlocation_hint">Enter End Address</string>
     <string name="newtrip_button">Create Trip</string>
     <string name="addTrip">Add New Trip</string>
     <string name="starttime_hint">Enter Start Time</string>
+    <string name="numberseats_hint">Enter Number of Seats</string>
 </resources>

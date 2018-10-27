@@ -4,38 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".driverTripForm"
+    tools:context=".DriverTripForm"
     tools:layout_editor_absoluteY="25dp">
-
-    <TextView
-        android:id="@+id/driverformtitle"
-        android:layout_width="238dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="18dp"
-        android:text="Driver Trip Form"
-        android:textColor="@color/darkAccent"
-        android:textSize="32sp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/startlocation"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/startlocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="34dp"
         android:text="Enter start location here:"
         android:textColor="@color/darkAccent"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/startlocation_form"
         app:layout_constraintStart_toStartOf="@+id/startlocation_form"
-        app:layout_constraintTop_toBottomOf="@+id/driverformtitle" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/startlocation_form"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="18dp"
+        android:layout_marginBottom="29dp"
         android:hint="@string/startlocation_hint"
         app:layout_constraintBottom_toTopOf="@+id/endlocation"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,7 +45,7 @@
         android:id="@+id/endlocation_form"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="33dp"
         android:hint="@string/endlocation_hint"
         app:layout_constraintBottom_toTopOf="@+id/starttime"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,31 +60,54 @@
         android:textColor="@color/darkAccent"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/starttime_form"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/starttime_form"
         app:layout_constraintTop_toBottomOf="@+id/endlocation_form" />
 
     <EditText
         android:id="@+id/starttime_form"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="18dp"
+        android:layout_marginBottom="28dp"
         android:hint="@string/starttime_hint"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toTopOf="@+id/numberseats"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/starttime" />
+
+    <TextView
+        android:id="@+id/numberseats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter number of seats:"
+        android:textColor="@color/darkAccent"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/numberseats_form"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/starttime_form" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_gravity="end"
-        android:layout_marginBottom="216dp"
-        android:layout_marginStart="9dp"
+        android:layout_marginBottom="98dp"
         android:onClick="newTrip"
         android:text="@string/newtrip_button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/starttime"
-        app:layout_constraintTop_toBottomOf="@+id/starttime_form" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/numberseats_form" />
+
+    <EditText
+        android:id="@+id/numberseats_form"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:ems="10"
+        android:hint="@string/numberseats_hint"
+        android:inputType="number"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintStart_toStartOf="@+id/numberseats"
+        app:layout_constraintTop_toBottomOf="@+id/numberseats" />
 
 </android.support.constraint.ConstraintLayout>
