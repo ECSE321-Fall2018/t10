@@ -6,4 +6,6 @@
     <color name="loginColorHint">#ffffff</color>
     <color name="loginColor">#ffffff</color>
     <color name="loginButton">#ffffff</color>
+    <color name="searchBar">#ffffff</color>
+    <color name="searchBarAccent">#757575</color>
 </resources>
