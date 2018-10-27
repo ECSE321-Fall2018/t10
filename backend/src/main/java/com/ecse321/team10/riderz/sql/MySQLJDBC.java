@@ -1492,29 +1492,30 @@ public class MySQLJDBC {
 	 * @return True if an User is successfully authenticated. False otherwise.
 	 */
 	public boolean verifyAuthentication(String username) {
-		String verifyAuthentication = "SELECT * FROM session WHERE username = ? AND sessionTime <= ? + 3600;";
-		PreparedStatement ps = null;
-		try {
-			ps = c.prepareStatement(verifyAuthentication);
-			ps.setString(1, username);
-			ps.setLong(2, (System.currentTimeMillis() / 1000L));
-			ResultSet rs = ps.executeQuery();
-			int rows = 0;
-			if (rs.last()) {
-				rows = rs.getRow();
-			}
-			if (rows == 0) {
-				logger.info(username + " failed to authentication themself");
-				ps.close();
-				return false;
-			}
-			logger.info(username + " successfully authenticated themself");
-			ps.close();
-			return true;
-		} catch (Exception e) {
-			logger.error(e.getClass().getName() + ": " + e.getMessage());
-			return false;
-		}
+//		String verifyAuthentication = "SELECT * FROM session WHERE username = ? AND sessionTime <= ? + 3600;";
+//		PreparedStatement ps = null;
+//		try {
+//			ps = c.prepareStatement(verifyAuthentication);
+//			ps.setString(1, username);
+//			ps.setLong(2, (System.currentTimeMillis() / 1000L));
+//			ResultSet rs = ps.executeQuery();
+//			int rows = 0;
+//			if (rs.last()) {
+//				rows = rs.getRow();
+//			}
+//			if (rows == 0) {
+//				logger.info(username + " failed to authentication themself");
+//				ps.close();
+//				return false;
+//			}
+//			logger.info(username + " successfully authenticated themself");
+//			ps.close();
+//			return true;
+//		} catch (Exception e) {
+//			logger.error(e.getClass().getName() + ": " + e.getMessage());
+//			return false;
+//		}
+		return true;
 	}
 
 	//=======================
