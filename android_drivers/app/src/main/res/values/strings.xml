@@ -21,4 +21,10 @@
     <string name="reset_button">RESET PASSWORD</string>
     <string name="new_password_hint">New Password</string>
     <string name="confirm_new_password_hint">Confirm New Password</string>
+
+    <!-- MainNavigation components -->
+    <string name="title_activity_main_navigation">Riderz Drivers</string>
+
+    <!-- Action bar -->
+    <string name="action_logout">Logout</string>
 </resources>

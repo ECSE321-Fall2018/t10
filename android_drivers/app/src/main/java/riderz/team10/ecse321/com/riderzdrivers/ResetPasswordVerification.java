@@ -75,7 +75,6 @@ public class ResetPasswordVerification extends AppCompatActivity implements Http
         });
     }
 
-
     @Override
     public void syncHttpRequest() {
         // URL to target
@@ -94,8 +93,7 @@ public class ResetPasswordVerification extends AppCompatActivity implements Http
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                // Instantiate new synchronous http client, set timeout to 5 seconds and
-                // perform post request
+                // Instantiate new synchronous http client, set timeout and perform get request
                 SyncHttpClient client = new SyncHttpClient();
                 client.setTimeout(HTTP.maxTimeout);
                 client.get(resetUrl, params, new AsyncHttpResponseHandler() {
