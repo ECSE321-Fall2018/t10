@@ -28,7 +28,13 @@
             android:name=".ResetPasswordVerification"
             android:label="@string/title_activity_reset_password_verification"
             android:screenOrientation="portrait" />
-        <activity android:name=".ResetPassword"></activity>
+        <activity android:name=".ResetPassword" />
+        <activity
+            android:name=".DriverTripForm"
+            android:label="@string/title_activity_driver_trip_form"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".testact" />
+        <activity android:name=".driverTripForm"></activity>
     </application>
 
 </manifest>
