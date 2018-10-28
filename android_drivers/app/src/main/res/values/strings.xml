@@ -30,12 +30,21 @@
     <!-- EditTrip components -->
     <string name="title_activity_edit_trip">Modify Trips</string>
 
-    <!-- EditTrip template -->
+    <!-- EditTrip template components -->
     <string name="title_activity_edit_trip_template">Modify Trip</string>
     <string name="starting_address_hint">Starting Address</string>
     <string name="starting_time_hint">YYYY-MM-DD HH:MM:SS</string>
     <string name="ending_address_hint">Ending Address</string>
     <string name="ending_time_hint">YYYY-MM-DD HH:MM:SS</string>
+
+    <!-- PastTrip components -->
+    <string name="title_activity_past_trip">Past Trips</string>
+
+    <!-- Settings components -->
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- About components -->
+    <string name="title_activity_about">About</string>
 
     <!-- Action bar -->
     <string name="action_logout">Logout</string>

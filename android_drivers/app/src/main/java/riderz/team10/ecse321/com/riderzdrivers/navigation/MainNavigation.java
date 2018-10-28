@@ -31,7 +31,9 @@ import riderz.team10.ecse321.com.riderzdrivers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
 import riderz.team10.ecse321.com.riderzdrivers.constants.URL;
 import riderz.team10.ecse321.com.riderzdrivers.http.HttpRequestClient;
+import riderz.team10.ecse321.com.riderzdrivers.settings.MainSetting;
 import riderz.team10.ecse321.com.riderzdrivers.trip.EditTrip;
+import riderz.team10.ecse321.com.riderzdrivers.trip.PastTrip;
 
 public class MainNavigation extends AppCompatActivity implements HttpRequestClient {
     // Used to track if back button was pressed twice
@@ -92,7 +94,6 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
                             "View Your Profile", "Settings", "About", "Log Out"};
         LinearLayout layout = findViewById(R.id.mainNavLayout);
         createTextViews(layout, textArr);
-        Log.e(TAG.mainNavTag, Arrays.toString(generatedId.toArray()));
     }
 
     /**
@@ -150,15 +151,14 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
             }
         });
 
-        // Mapped to viewing past trips
+        // Mapped to viewing past trips Activity
         (findViewById(generatedId.get(2))).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(MainNavigation.this, .class);
-//                MainNavigation.this.startActivity(intent);
-                // TODO: map to activity for viewing past trips
-                Log.e(TAG.mainNavTag, "Past Trips");
+                Intent intent = new Intent(MainNavigation.this, PastTrip.class);
+                intent.putExtra("username", username);
+                MainNavigation.this.startActivity(intent);
              }
         });
 
@@ -174,19 +174,18 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
             }
         });
 
-        // Mapped to viewing user profile
+        // Mapped to viewing Settings Activity
         (findViewById(generatedId.get(4))).setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(MainNavigation.this, .class);
-//                MainNavigation.this.startActivity(intent);
-                // TODO: map to activity for navigating to settings
-                Log.e(TAG.mainNavTag, "Settings");
+                Intent intent = new Intent(MainNavigation.this, MainSetting.class);
+                intent.putExtra("username", username);
+                MainNavigation.this.startActivity(intent);
             }
         });
 
-        // Mapped to viewing About
+        // Mapped to viewing About Activity
         (findViewById(generatedId.get(5))).setOnClickListener(new View.OnClickListener(){
 
             @Override

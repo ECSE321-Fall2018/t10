@@ -7,4 +7,5 @@ public class TAG {
     public static final String mainNavTag = "MainNavigationActivity";
     public static final String editTripTag = "EditTripActivity";
     public static final String editTripTemplateTag = "EditTripTempActivity";
+    public static final String pastTripTag = "PastTripActivity";
 }

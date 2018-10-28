@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.loopj.android.http.*;
 
@@ -181,5 +182,8 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
     }
 
     @Override
-    public void onBackPressed() { /* Do nothing back button is disabled for this screen */ }
+    public void onBackPressed() {
+        // Do nothing back button is disabled for this screen
+        Toast.makeText(getApplicationContext(), "Back button is disabled", Toast.LENGTH_SHORT).show();
+    }
 }
