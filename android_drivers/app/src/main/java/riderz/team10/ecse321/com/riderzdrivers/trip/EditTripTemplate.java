@@ -14,11 +14,9 @@ import android.widget.TimePicker;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.SyncHttpClient;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Locale;
 

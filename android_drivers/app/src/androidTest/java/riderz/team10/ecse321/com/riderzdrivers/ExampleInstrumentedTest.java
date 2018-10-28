@@ -23,4 +23,5 @@ public class ExampleInstrumentedTest {
 
         assertEquals("riderz.team10.ecse321.com.riderzdrivers", appContext.getPackageName());
     }
+
 }

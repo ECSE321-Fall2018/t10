@@ -9,7 +9,6 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import cz.msebera.android.httpclient.Header;
+import riderz.team10.ecse321.com.riderzdrivers.About;
 import riderz.team10.ecse321.com.riderzdrivers.R;
 import riderz.team10.ecse321.com.riderzdrivers.RiderzDrivers;
 import riderz.team10.ecse321.com.riderzdrivers.constants.HTTP;
@@ -186,15 +186,13 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
             }
         });
 
-        // Mapped to viewing about
+        // Mapped to viewing About
         (findViewById(generatedId.get(5))).setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(MainNavigation.this, .class);
-//                MainNavigation.this.startActivity(intent);
-                // TODO: map to activity for viewing about
-                Log.e(TAG.mainNavTag, "About");
+                Intent intent = new Intent(MainNavigation.this, About.class);
+                MainNavigation.this.startActivity(intent);
             }
         });
 
