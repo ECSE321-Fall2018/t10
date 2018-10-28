@@ -31,6 +31,7 @@ import riderz.team10.ecse321.com.riderzdrivers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
 import riderz.team10.ecse321.com.riderzdrivers.constants.URL;
 import riderz.team10.ecse321.com.riderzdrivers.http.HttpRequestClient;
+import riderz.team10.ecse321.com.riderzdrivers.trip.EditTrip;
 
 public class MainNavigation extends AppCompatActivity implements HttpRequestClient {
     // Used to track if back button was pressed twice
@@ -38,6 +39,10 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
 
     // Contains credentials for login
     private File file;
+
+    // Login credentials
+    private String username;
+    private String password;
 
     // Contains a list of generated IDs for TextViews
     final private ArrayList<Integer> generatedId = new ArrayList<>();
@@ -115,15 +120,6 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
             // Set font size to 14dp
             tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
 
-            tv.setOnHoverListener(new View.OnHoverListener() {
-
-                @Override
-                public boolean onHover(View v, MotionEvent event) {
-                    Log.e(TAG.mainNavTag, "Hovering");
-                    return true;
-                }
-            });
-
             // Add TextView to layout
             layout.addView(tv);
         }
@@ -148,10 +144,9 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
 
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(MainNavigation.this, .class);
-//                MainNavigation.this.startActivity(intent);
-                // TODO: map to activity for modifying existing trips
-                Log.e(TAG.mainNavTag, "Existing Trip");
+                Intent intent = new Intent(MainNavigation.this, EditTrip.class);
+                intent.putExtra("username", username);
+                MainNavigation.this.startActivity(intent);
             }
         });
 
@@ -215,8 +210,6 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
 
     @Override
     public void syncHttpRequest() {
-        String username = null;
-        String password = null;
         try {
             // Reads each line of the file using a BufferedReader object
             FileInputStream fis = new FileInputStream(file);

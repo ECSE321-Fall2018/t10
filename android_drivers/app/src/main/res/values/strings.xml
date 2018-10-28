@@ -25,6 +25,12 @@
     <!-- MainNavigation components -->
     <string name="title_activity_main_navigation">Riderz Drivers</string>
 
+    <!-- EditTrip components -->
+    <string name="title_activity_edit_trip">Modify Trips</string>
+
+    <!-- EditTrip template -->
+    <string name="title_activity_edit_trip_template">Modify Trip</string>
+
     <!-- Action bar -->
     <string name="action_logout">Logout</string>
 </resources>

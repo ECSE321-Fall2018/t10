@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,9 +20,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".RiderzDrivers"
-            android:screenOrientation="portrait"
-            android:label="@string/app_name">
-        </activity>
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ResetPasswordVerification"
             android:label="@string/title_activity_reset_password_verification"
@@ -33,13 +33,21 @@
         <activity
             android:name=".navigation.MainNavigation"
             android:label="@string/title_activity_main_navigation"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".trip.EditTrip"
+            android:label="@string/title_activity_edit_trip"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".trip.EditTripTemplate"
+            android:label="@string/title_activity_edit_trip_template"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
