@@ -15,6 +15,7 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
 import cz.msebera.android.httpclient.Header;
+import riderz.team10.ecse321.com.riderzdrivers.assets.template.activity.AppCompatActivityBack;
 import riderz.team10.ecse321.com.riderzdrivers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
 import riderz.team10.ecse321.com.riderzdrivers.constants.URL;
@@ -24,7 +25,7 @@ import riderz.team10.ecse321.com.riderzdrivers.http.HttpRequestClient;
  * Reset password verification activity. Verifies that user's email address and username match
  * whatever is provided within the database.
  */
-public class ResetPasswordVerification extends AppCompatActivity implements HttpRequestClient {
+public class ResetPasswordVerification extends AppCompatActivityBack implements HttpRequestClient {
     // verifyError is to be accessed within nested functions, required to give global access
     protected TextView errorMsg;
 
@@ -36,9 +37,6 @@ public class ResetPasswordVerification extends AppCompatActivity implements Http
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password_verification);
-
-        // Enable back button on action bar
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Hide error message for now
         errorMsg = findViewById(R.id.verifyError);
@@ -133,19 +131,6 @@ public class ResetPasswordVerification extends AppCompatActivity implements Http
         } catch (InterruptedException e) {
             Log.e(TAG.verifyTag, "Thread exception in reset thread");
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        // Allows navigation back to previous screen
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-
-        return false;
     }
 }
 

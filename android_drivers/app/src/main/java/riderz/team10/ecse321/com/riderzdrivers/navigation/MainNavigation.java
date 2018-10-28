@@ -317,7 +317,7 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        // Allows navigation back to previous screen
+        // Perform logout for user
         if (id == R.id.action_logout) {
             logout();
             return true;

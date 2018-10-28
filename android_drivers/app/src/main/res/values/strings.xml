@@ -6,6 +6,8 @@
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
     <string name="email_hint">Email</string>
+    <string name="confirm_button_global">CONFIRM</string>
+    <string name="cancel_button_global">CANCEL</string>
 
     <!-- RiderzDrivers components -->
     <string name="login_button">LOGIN</string>
@@ -30,6 +32,10 @@
 
     <!-- EditTrip template -->
     <string name="title_activity_edit_trip_template">Modify Trip</string>
+    <string name="starting_address_hint">Starting Address</string>
+    <string name="starting_time_hint">YYYY-MM-DD HH:MM:SS</string>
+    <string name="ending_address_hint">Ending Address</string>
+    <string name="ending_time_hint">YYYY-MM-DD HH:MM:SS</string>
 
     <!-- Action bar -->
     <string name="action_logout">Logout</string>

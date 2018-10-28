@@ -1,10 +1,7 @@
 package riderz.team10.ecse321.com.riderzdrivers;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,12 +12,13 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
 import cz.msebera.android.httpclient.Header;
+import riderz.team10.ecse321.com.riderzdrivers.assets.template.activity.AppCompatActivityBack;
 import riderz.team10.ecse321.com.riderzdrivers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
 import riderz.team10.ecse321.com.riderzdrivers.constants.URL;
 import riderz.team10.ecse321.com.riderzdrivers.http.HttpRequestClient;
 
-public class ResetPassword extends AppCompatActivity implements HttpRequestClient {
+public class ResetPassword extends AppCompatActivityBack implements HttpRequestClient {
     // resetError is to be accessed within nested functions, required to give global access
     protected TextView errorMsg;
 
@@ -32,9 +30,6 @@ public class ResetPassword extends AppCompatActivity implements HttpRequestClien
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
-
-        // Enable back button on action bar
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Hide error message for now
         errorMsg = findViewById(R.id.resetError);
@@ -127,18 +122,5 @@ public class ResetPassword extends AppCompatActivity implements HttpRequestClien
         } catch (InterruptedException e) {
             Log.e(TAG.resetTag, "Thread exception in reset thread");
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        // Allows navigation back to previous page
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-
-        return false;
     }
 }

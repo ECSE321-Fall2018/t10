@@ -1,4 +1,4 @@
-package riderz.team10.ecse321.com.riderzdrivers.konvertor;
+package riderz.team10.ecse321.com.riderzdrivers.assets.konvertor;
 
 public class SQLCompliance {
     /**
