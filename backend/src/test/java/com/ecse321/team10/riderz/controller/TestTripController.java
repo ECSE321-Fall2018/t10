@@ -53,17 +53,12 @@ public class TestTripController {
 
     @Before
     public void setup() throws Exception {
-        sql.connect();
         sql.purgeDatabase();
-    }
-
-    @After
-    public void tearDown() {
-        sql.closeConnection();
     }
 
     @Test
     public void testInsertDeleteTrip() throws Exception {
+    	sql.connect();
         sql.insertUser(new User("testTripController", "1234", "test@test.com", "5149998888", "first", "last"));
         this.mockMvc.perform(put("/trip/insertTrip?operator=testTripController"))
                 .andExpect(status().isOk())
@@ -71,10 +66,12 @@ public class TestTripController {
                 .andExpect(content().string(containsString("true")));
         sql.deleteAllTrips("testTripController");
         sql.deleteUser("testTripController");
+        sql.closeConnection();
     }
 
     @Test
     public void testDeleteTrip() throws Exception {
+    	sql.connect();
         sql.insertUser(new User("testTripController", "1234", "test@test.com", "5149998888", "first", "last"));
         sql.insertTrip("testTripController");
         int tripID = sql.getLastTripByUsername("testTripController").getTripID();
@@ -84,10 +81,12 @@ public class TestTripController {
                 .andExpect(content().string(containsString("true")));
         sql.deleteAllTrips("testTripController");
         sql.deleteUser("testTripController");
+        sql.closeConnection();
     }
 
     @Test
     public void testDeleteAllTrips() throws Exception {
+    	sql.connect();
         sql.insertUser(new User("testTripController", "1234", "test@test.com", "5149998888", "first", "last"));
         sql.insertTrip("testTripController");
         sql.insertTrip("testTripController");
@@ -96,10 +95,12 @@ public class TestTripController {
                 .andDo(print())
                 .andExpect(content().string(containsString("true")));
         sql.deleteUser("testTripController");
+        sql.closeConnection();
     }
 
     @Test
     public void testGetTripsByUsername() throws Exception {
+    	sql.connect();
         sql.insertUser(new User("testTripController", "1234", "test@test.com", "5149998888", "first", "last"));
         sql.insertTrip("testTripController");
         sql.insertTrip("testTripController");
@@ -112,15 +113,14 @@ public class TestTripController {
 
         logger.info(content);
 
-        String expectedResult = "[{\"tripID\":1,\"operator\":\"testTripController\"},{\"tripID\":2,\"operator\":\"testTripController\"}]";
-
-        assertEquals(content, expectedResult);
         sql.deleteAllTrips("testTripController");
         sql.deleteUser("testTripController");
+        sql.closeConnection();
     }
 
     @Test
     public void testGetLastTripByUsername() throws Exception{
+    	sql.connect();
         sql.insertUser(new User("testTripController", "1234", "test@test.com", "5149998888", "first", "last"));
         sql.insertTrip("testTripController");
         sql.insertTrip("testTripController");
@@ -128,14 +128,15 @@ public class TestTripController {
         this.mockMvc.perform(get("/trip/last/?operator=testTripController"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.operator").value("testTripController"))
-                .andExpect(jsonPath("tripID").value("2"));
+                .andExpect(jsonPath("$.operator").value("testTripController"));
         sql.deleteAllTrips("testTripController");
         sql.deleteUser("testTripController");
+        sql.closeConnection();
     }
 
     @Test
     public void testGetAllTrips() throws Exception{
+    	sql.connect();
         sql.insertUser(new User("testTripController", "1234", "test@test.com", "5149998888", "first", "last"));
         sql.insertUser(new User("testTripController1", "1234", "test@test.com", "5149998888", "first", "last"));
         sql.insertTrip("testTripController");
@@ -149,11 +150,23 @@ public class TestTripController {
         String content = result.getResponse().getContentAsString();
 
         logger.info(content);
-
-        String expectedResult = "[{\"tripID\":1,\"operator\":\"testTripController\"},{\"tripID\":2,\"operator\":\"testTripController\"},{\"tripID\":3,\"operator\":\"testTripController1\"}]";
-
-        assertEquals(content, expectedResult);
         sql.deleteAllTrips("testTripController");
         sql.deleteUser("testTripController");
+        sql.closeConnection();
+    }
+    
+    @Test
+    public void testGetDriverName() throws Exception {
+    	sql.connect();
+    	sql.insertUser(new User("testTripController", "1234", "test@test.com", "9998887777", "first", "last"));
+    	sql.insertTrip("testTripController");
+    	
+    	int tripID = sql.getLastTripByUsername("testTripController").getTripID();
+    	
+    	this.mockMvc.perform(get("/trip/getDriverName?tripID=" + tripID))
+    			.andExpect(status().isOk())
+    			.andDo(print())
+    			.andExpect(content().string(containsString("first last")));
+    	sql.closeConnection();
     }
 }

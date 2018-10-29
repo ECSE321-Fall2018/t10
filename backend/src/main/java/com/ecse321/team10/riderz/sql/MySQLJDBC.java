@@ -960,6 +960,32 @@ public class MySQLJDBC {
 			return null;
 		}
 	}
+	
+	/**
+	 * Returns the driver's name based on a tripID.
+	 * @param tripID - An integer uniquely identifying a trip
+	 * @return A driver's name
+	 */
+	public String getDriverNameByTripID(int tripID) {
+		String getDriverNameByTripID = "SELECT CONCAT(firstName, ' ', lastName) AS name FROM users " +
+									   "WHERE username IN (SELECT operator FROM trip WHERE tripID = ?);";
+		PreparedStatement ps = null;
+		String name = null;
+		try {
+			ps = c.prepareStatement(getDriverNameByTripID);
+			ps.setInt(1, tripID);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				name = rs.getString("name");
+			}
+			logger.info("Name has been returned for trip " + tripID);
+			ps.close();
+			return name;
+		} catch (Exception e) {
+		logger.error(e.getClass().getName() + ": " + e.getMessage());
+		return null;
+		}
+	}
 
 	//=======================
 	// Itinerary API

@@ -170,10 +170,13 @@ public class TestMySQLJDBC {
 			assertEquals(true, sql.insertTrip("heqiantestTrip"));
 		}
 		Trip testTrip = sql.getLastTripByUsername("heqiantestTrip");
+		
+		Trip trip = sql.getLastTripByUsername("heqiantestTrip");
+		assertEquals(sql.getDriverNameByTripID(trip.getTripID()), "He Qian Wang");
+		
 		assertEquals(true, sql.deleteTrip(testTrip.getTripID(), testTrip.getOperator()));
 		assertEquals(true, sql.deleteCar("heqiantestTrip"));
 		assertEquals(true, sql.deleteUser("heqiantestTrip"));
-
 	}
 
 	//==================
@@ -470,7 +473,7 @@ public class TestMySQLJDBC {
 		assertEquals(true, sql.deleteUser(testUser1.getUsername()));
 		assertEquals(true, sql.deleteUser(testUser2.getUsername()));
 	}
-
+	
 	//=======================
 	//  Authentication Tests
 	//=======================
