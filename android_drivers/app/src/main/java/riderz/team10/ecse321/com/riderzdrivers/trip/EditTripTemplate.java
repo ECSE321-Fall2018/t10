@@ -211,9 +211,9 @@ public class EditTripTemplate extends AppCompatActivityBack implements HttpReque
             minute = tp.getCurrentMinute();
         }
         if (start) {
-            st.setText(String.format("%d-%d-%d %d:%d:00", year, month, day, hour, minute));
+            st.setText(String.format("%04d-%02d-%02d %02d:%02d:00", year, month, day, hour, minute));
         } else {
-            et.setText(String.format("%d-%d-%d %d:%d:00", year, month, day, hour, minute));
+            et.setText(String.format("%04d-%02d-%02d %02d:%02d:00", year, month, day, hour, minute));
             Timestamp start = Timestamp.valueOf(st.getText().toString());
             Timestamp end = Timestamp.valueOf(et.getText().toString());
             if (start.after(end)) {
