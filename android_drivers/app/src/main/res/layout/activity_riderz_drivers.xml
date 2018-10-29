@@ -83,33 +83,33 @@
             app:layout_constraintTop_toBottomOf="@+id/loginPassword">
 
             <Button
-                android:id="@+id/resetOuter"
+                android:id="@+id/forgotPasswordButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
                 android:text="@string/forgot_button"
                 android:textColor="@color/loginTextColor"
-                app:layout_constraintBottom_toTopOf="@+id/login"
+                app:layout_constraintBottom_toTopOf="@+id/loginButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-                android:id="@+id/login"
+                android:id="@+id/loginButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
                 android:text="@string/login_button"
                 android:textColor="@color/loginTextColor"
-                app:layout_constraintBottom_toTopOf="@+id/register"
+                app:layout_constraintBottom_toTopOf="@+id/loginRegisterButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/resetOuter" />
+                app:layout_constraintTop_toBottomOf="@+id/forgotPasswordButton" />
 
             <Button
-                android:id="@+id/register"
+                android:id="@+id/loginRegisterButton"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
                 android:background="@color/colorPrimary"
@@ -119,7 +119,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/login" />
+                app:layout_constraintTop_toBottomOf="@+id/loginButton" />
 
         </android.support.constraint.ConstraintLayout>
 

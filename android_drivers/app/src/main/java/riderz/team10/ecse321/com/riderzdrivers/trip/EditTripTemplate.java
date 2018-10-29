@@ -246,6 +246,13 @@ public class EditTripTemplate extends AppCompatActivityBack implements HttpReque
             return;
         }
 
+        // Verify time
+        if (Timestamp.valueOf(st.getText().toString()).after(Timestamp.valueOf(et.getText().toString()))) {
+            success = false;
+            msg = "End time cannot be before start time";
+            return;
+        }
+
         // Instantiate a new Runnable object which will handle http requests asynchronously
         // Then await until thread is finished to make the request synchronous.
         Thread t = new Thread(new Runnable() {
