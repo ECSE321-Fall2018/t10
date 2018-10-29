@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import cz.msebera.android.httpclient.Header;
 import riderz.team10.ecse321.com.riderzdrivers.R;
 import riderz.team10.ecse321.com.riderzdrivers.assets.geolocation.ReverseGeocoding;
-import riderz.team10.ecse321.com.riderzdrivers.assets.konvertor.Display;
-import riderz.team10.ecse321.com.riderzdrivers.assets.konvertor.SQLCompliance;
+import riderz.team10.ecse321.com.riderzdrivers.assets.convertor.Display;
+import riderz.team10.ecse321.com.riderzdrivers.assets.convertor.SQLCompliance;
 import riderz.team10.ecse321.com.riderzdrivers.assets.template.activity.AppCompatActivityBack;
 import riderz.team10.ecse321.com.riderzdrivers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
@@ -69,7 +69,6 @@ public class PastTrip extends AppCompatActivityBack implements HttpRequestClient
         try {
             for (int i = 0; i < json.length(); i++) {
                 JSONObject object = json.getJSONObject(i);
-                Log.e(TAG.pastTripTag, object.toString());
                 String text = "";
 
                 // Only display trips that have completed, i.e. time now > ending time

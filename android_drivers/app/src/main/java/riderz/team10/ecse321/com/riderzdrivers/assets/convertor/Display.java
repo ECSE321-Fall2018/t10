@@ -1,4 +1,4 @@
-package riderz.team10.ecse321.com.riderzdrivers.assets.konvertor;
+package riderz.team10.ecse321.com.riderzdrivers.assets.convertor;
 
 import android.content.res.Resources;
 import android.util.DisplayMetrics;

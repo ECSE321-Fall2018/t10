@@ -2,10 +2,6 @@ package riderz.team10.ecse321.com.riderzdrivers;
 
 import org.junit.Test;
 
-import riderz.team10.ecse321.com.riderzdrivers.assets.geolocation.Geocoding;
-import riderz.team10.ecse321.com.riderzdrivers.assets.geolocation.LatLng;
-import riderz.team10.ecse321.com.riderzdrivers.assets.konvertor.SQLCompliance;
-
 import static org.junit.Assert.*;
 
 /**

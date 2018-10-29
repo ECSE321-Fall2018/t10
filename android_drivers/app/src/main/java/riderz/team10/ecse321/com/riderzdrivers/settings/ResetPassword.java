@@ -1,4 +1,4 @@
-package riderz.team10.ecse321.com.riderzdrivers;
+package riderz.team10.ecse321.com.riderzdrivers.settings;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +12,7 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
 import cz.msebera.android.httpclient.Header;
+import riderz.team10.ecse321.com.riderzdrivers.R;
 import riderz.team10.ecse321.com.riderzdrivers.assets.template.activity.AppCompatActivityBack;
 import riderz.team10.ecse321.com.riderzdrivers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
@@ -22,7 +23,7 @@ public class ResetPassword extends AppCompatActivityBack implements HttpRequestC
     // resetError is to be accessed within nested functions, required to give global access
     protected TextView errorMsg;
 
-    // Used for transmit information from synchronous HTTP requests to the login REST API
+    // Used for transmit information from synchronous HTTP responses from the login REST API
     protected boolean success;
     protected String msg;
 

@@ -2,11 +2,9 @@ package riderz.team10.ecse321.com.riderzdrivers.trip;
 
 import android.content.Intent;
 import android.location.Address;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,14 +23,14 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 import riderz.team10.ecse321.com.riderzdrivers.R;
-import riderz.team10.ecse321.com.riderzdrivers.assets.konvertor.Display;
+import riderz.team10.ecse321.com.riderzdrivers.assets.convertor.Display;
 import riderz.team10.ecse321.com.riderzdrivers.assets.template.activity.AppCompatActivityBack;
 import riderz.team10.ecse321.com.riderzdrivers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
 import riderz.team10.ecse321.com.riderzdrivers.constants.URL;
 import riderz.team10.ecse321.com.riderzdrivers.http.HttpRequestClient;
 import riderz.team10.ecse321.com.riderzdrivers.assets.geolocation.ReverseGeocoding;
-import riderz.team10.ecse321.com.riderzdrivers.assets.konvertor.SQLCompliance;
+import riderz.team10.ecse321.com.riderzdrivers.assets.convertor.SQLCompliance;
 
 public class EditTrip extends AppCompatActivityBack implements HttpRequestClient {
     // Contains a list of generated IDs for TextViews

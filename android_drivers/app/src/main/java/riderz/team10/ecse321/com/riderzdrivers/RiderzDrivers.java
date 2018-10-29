@@ -6,6 +6,7 @@ import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
 import riderz.team10.ecse321.com.riderzdrivers.constants.URL;
 import riderz.team10.ecse321.com.riderzdrivers.http.HttpRequestClient;
 import riderz.team10.ecse321.com.riderzdrivers.navigation.MainNavigation;
+import riderz.team10.ecse321.com.riderzdrivers.settings.ResetPasswordVerification;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -165,7 +166,7 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
                     public void onFailure(int statusCode, Header[] headers,
                         byte[] responseBody, Throwable error) {
                             success = false;
-                            msg = "Could not contact server";
+                            msg = "Could not contact server\n Please try again in a minute";
                             Log.e(TAG.loginTag, "Server error - could not contact server");
                         }
                     });

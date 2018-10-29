@@ -8,4 +8,7 @@ public class TAG {
     public static final String editTripTag = "EditTripActivity";
     public static final String editTripTemplateTag = "EditTripTempActivity";
     public static final String pastTripTag = "PastTripActivity";
+    public static final String changeEmailTag = "ModifyEmailActivity";
+    public static final String changePhoneTag = "ModifyPhoneActivity";
+    public static final String changeCarTag = "ModifyCarActivity";
 }

@@ -15,7 +15,7 @@ import java.io.IOException;
 import riderz.team10.ecse321.com.riderzdrivers.assets.geolocation.Geocoding;
 import riderz.team10.ecse321.com.riderzdrivers.assets.geolocation.LatLng;
 import riderz.team10.ecse321.com.riderzdrivers.assets.geolocation.ReverseGeocoding;
-import riderz.team10.ecse321.com.riderzdrivers.assets.konvertor.Display;
+import riderz.team10.ecse321.com.riderzdrivers.assets.convertor.Display;
 
 import static org.junit.Assert.*;
 

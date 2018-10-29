@@ -22,11 +22,11 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ResetPasswordVerification"
+            android:name=".settings.ResetPasswordVerification"
             android:label="@string/title_activity_reset_password_verification"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ResetPassword"
+            android:name=".settings.ResetPassword"
             android:label="@string/title_activity_reset_password"
             android:screenOrientation="portrait" />
         <activity
@@ -58,6 +58,18 @@
         <activity
             android:name=".trip.PastTrip"
             android:label="@string/title_activity_past_trip"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".settings.ModifyEmail"
+            android:label="@string/title_activity_modify_email"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".settings.ModifyCar"
+            android:label="@string/title_activity_modify_car"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".settings.ModifyContactInfo"
+            android:label="@string/title_activity_modify_contact"
             android:screenOrientation="portrait" />
     </application>
 
