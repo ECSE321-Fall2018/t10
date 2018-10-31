@@ -66,20 +66,32 @@ public class SignUpDriver extends AppCompatActivity implements HttpRequestClient
 
         final String userSignUpUrl = URL.baseUrl + URL.userUrl + "addUser/";
         final String driverSignUpUrl = URL.baseUrl+URL.driverUrl + "new/";
+        final String carSignUpUrl = URL.baseUrl+URL.carUrl;
 
 
-
-
+        //User and Driver parameters
         final String firstName = getPlainText(R.id.firstName);
         final String lastName = getPlainText(R.id.lastName);
         final String username = getPlainText(R.id.userName);
         final String email = getPlainText(R.id.email);
         final String password = getPlainText(R.id.password);
         final String phone = getPlainText(R.id.phoneNumber);
+
+        //Car Parameters
+        final String carMake= getPlainText(R.id.carMake);
+        final String carModel= getPlainText(R.id.carModel);
+        final String carYear= getPlainText(R.id.carYear);
+        final String carSeats = getPlainText(R.id.carSeats);
+        final String fuelEfficiency= getPlainText(R.id.fuelEfficiency);
+        final String licensePlate = getPlainText(R.id.licensePlate);
+
+
+        //Driver signup requests create a user, driver and car in DB
         final RequestParams userParams = new RequestParams();
         final RequestParams driverParams = new RequestParams();
+        final RequestParams carParams = new RequestParams();
 
-
+        //Adding the user parameters to create a new user
         userParams.add("username", username );
         userParams.add("email", email);
         userParams.add("firstName",firstName);
@@ -87,7 +99,18 @@ public class SignUpDriver extends AppCompatActivity implements HttpRequestClient
         userParams.add("password",password);
         userParams.add("phone", phone);
 
+        //Linking the driver profile to the a user via the username
         driverParams.add("operator", username);
+
+        //Adding car parameters and linking car with the driver via username
+        carParams.add("operator",username);
+        carParams.add("make",carMake);
+        carParams.add("model",carModel);
+        carParams.add("year",carYear);
+        carParams.add("numberOfSeats",carSeats);
+        carParams.add("fuelEfficiency",fuelEfficiency);
+        carParams.add("licensePlate",licensePlate);
+
 
 
 
@@ -126,8 +149,29 @@ public class SignUpDriver extends AppCompatActivity implements HttpRequestClient
                         /*TODO*/
                     }
                 });
+
+
+
+                client.post(carSignUpUrl, carParams, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        Log.d("Debug","Successful creation of car in Driver Sign Up");
+                        /*TODO*/
+
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        Log.d("Debug","Sign Up driver process to create car failed");
+                        /*TODO*/
+
+                    }
+                });
             }
         });
+
+
+
         t.start();
 
         try {

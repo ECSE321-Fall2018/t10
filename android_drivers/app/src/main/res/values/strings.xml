@@ -80,4 +80,10 @@
     <string name="verify_password">Verify Password</string>
     <string name="password">Password</string>
     <string name="phone_number">Phone Number</string>
+    <string name="car_manufacturer">Car Manufacturer</string>
+    <string name="car_model">Car Model</string>
+    <string name="car_model_year">Car Model Year</string>
+    <string name="seats_available">Seats Available</string>
+    <string name="gaz_per_kilometer_l_km">Gaz per Kilometer (l/km)</string>
+    <string name="license_plate">License Plate #</string>
 </resources>
