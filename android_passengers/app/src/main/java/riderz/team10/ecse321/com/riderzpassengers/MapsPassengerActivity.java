@@ -1,13 +1,12 @@
 package riderz.team10.ecse321.com.riderzpassengers;
 
 import android.content.Intent;
-import android.inputmethodservice.ExtractEditText;
+import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +23,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.PolyUtil;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -44,7 +44,6 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
 
     private TextView searchTextStart;
     private TextView searchTextEnd;
-    private EditText response;
 
     private LatLng markerLocation;
     private Boolean isStarting;
@@ -70,7 +69,6 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         ImageView searchIconStart = (ImageView) findViewById(R.id.search_image_start);
         ImageView searchIconEnd = (ImageView) findViewById(R.id.search_image_end);
         confirmationButton = (Button) findViewById(R.id.confirmation_button);
-        response = (EditText) findViewById(R.id.response);
 
 
         confirmationButton.setOnClickListener(new View.OnClickListener() {
@@ -128,7 +126,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                 double longitude = markerLocation.longitude;
 
                 LatLng point = new LatLng(latitude, longitude);
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 15));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 15));
 
 
                 if(isStarting){
@@ -221,12 +219,26 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                                 JSONArray steps = object.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONArray("steps");
                                 ArrayList<String> points = new ArrayList<>();
 
-
-                                for(int i = 0; i < steps.length(); i++){
+                                int length = steps.length();
+                                for(int i = 0; i < length; i++){
                                     points.add(steps.getJSONObject(i).getJSONObject("polyline").getString("points"));
                                 }
 
-                                response.setText(points.toString());
+                                double lat = steps.getJSONObject(steps.length()/2).getJSONObject("start_location").getDouble("lat");
+                                double lng = steps.getJSONObject(steps.length()/2).getJSONObject("start_location").getDouble("lng");
+
+                                LatLng point = new LatLng(lat, lng);
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 14));
+
+                                for(int i = 0; i < length; i++){
+                                    PolylineOptions options = new PolylineOptions();
+                                    options.color(Color.BLUE);
+                                    options.width(10);
+                                    options.addAll(PolyUtil.decode(points.get(i)));
+
+                                    mMap.addPolyline(options);
+
+                                }
 
                             } catch (JSONException e) {
                                 Log.e("debug", "Failed to parse JSON object");
