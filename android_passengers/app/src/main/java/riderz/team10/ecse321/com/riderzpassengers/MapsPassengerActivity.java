@@ -1,12 +1,13 @@
 package riderz.team10.ecse321.com.riderzpassengers;
 
 import android.content.Intent;
-import android.location.Geocoder;
+import android.inputmethodservice.ExtractEditText;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,17 +21,38 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 public class MapsPassengerActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Button confirmationButton;
 
-
+    private TextView searchTextStart;
+    private TextView searchTextEnd;
+    private EditText response;
 
     private LatLng markerLocation;
+    private Boolean isStarting;
+    private String msg;
+
+    protected String origin;
+    protected String destination;
+    protected final String KEY = "AIzaSyARBA8OOAyllhaTKzyroPqIJW8I47b7Nv8" ;
 
     private final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
 
@@ -43,30 +65,54 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        TextView searchText = (TextView) findViewById(R.id.search_text);
-        ImageView searchIcon = (ImageView) findViewById(R.id.search_image);
+        searchTextStart = (TextView) findViewById(R.id.search_text_start);
+        searchTextEnd = (TextView) findViewById(R.id.search_text_end);
+        ImageView searchIconStart = (ImageView) findViewById(R.id.search_image_start);
+        ImageView searchIconEnd = (ImageView) findViewById(R.id.search_image_end);
         confirmationButton = (Button) findViewById(R.id.confirmation_button);
+        response = (EditText) findViewById(R.id.response);
+
 
         confirmationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                asyncHttpRequest();
                 Toast.makeText(getApplicationContext(), "Latitude: " +  markerLocation.latitude + "\nLongitude: "  + markerLocation.longitude,Toast.LENGTH_LONG).show();
             }
         });
 
-        searchText.setOnClickListener(new View.OnClickListener() {
+        searchTextStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isStarting = true;
                 createAutoCompleteIntent();
             }
         });
 
-        searchIcon.setOnClickListener(new View.OnClickListener() {
+        searchIconStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isStarting = true;
                 createAutoCompleteIntent();
             }
         });
+
+        searchTextEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isStarting = false;
+                createAutoCompleteIntent();
+            }
+        });
+
+        searchIconEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isStarting = false;
+                createAutoCompleteIntent();
+            }
+        });
+
     }
 
     @Override
@@ -77,30 +123,46 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                 Place place = PlaceAutocomplete.getPlace(this, data);
                 markerLocation = place.getLatLng();
 
-                double startLatitude = markerLocation.latitude;
-                double startLongitude = markerLocation.longitude;
 
-                LatLng start = new LatLng(startLatitude, startLongitude);
-                mMap.addMarker(new MarkerOptions().position(start).title("Marker at start Address"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(start, 15));
+                double latitude = markerLocation.latitude;
+                double longitude = markerLocation.longitude;
+
+                LatLng point = new LatLng(latitude, longitude);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 15));
+
+
+                if(isStarting){
+                    mMap.addMarker(new MarkerOptions().position(point)
+                            .title(place.getAddress().toString()));
+                    searchTextStart.setText(place.getAddress());
+                    origin = latitude + "," + longitude;
+                }
+                else {
+                    mMap.addMarker(new MarkerOptions().position(point)
+                            .title(place.getAddress().toString())
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    searchTextEnd.setText(place.getAddress());
+                    destination = latitude + "," + longitude;
+                }
 
                 confirmationButton.setVisibility(View.VISIBLE);
 
                 Log.i("debug", "Place: " + place.getName());
-            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
-                Status status = PlaceAutocomplete.getStatus(this, data);
-                Toast.makeText(getApplicationContext(),"The Address Was Invalid",Toast.LENGTH_LONG).show();
-                Log.i("debug", status.getStatusMessage());
-
-            } else if (resultCode == RESULT_CANCELED) {
-                // The user canceled the operation.
             }
+
+        } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+            Status status = PlaceAutocomplete.getStatus(this, data);
+            Toast.makeText(getApplicationContext(),"The Address Was Invalid",Toast.LENGTH_LONG).show();
+            Log.i("debug", status.getStatusMessage());
+
+        } else if (resultCode == RESULT_CANCELED) {
+            // The user canceled the operation.
         }
     }
 
     private void createAutoCompleteIntent(){
         try {
-            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
                             .build(this);
             startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
         } catch (GooglePlayServicesNotAvailableException e) {
@@ -122,5 +184,68 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+    }
+
+    private void asyncHttpRequest() {
+        // Add parameters
+        final RequestParams params = new RequestParams();
+        params.add("origin", origin);
+        params.add("destination", destination);
+        params.add("key", KEY);
+
+        Log.e("debug", origin);
+        Log.e("debug", destination);
+        Log.e("debug", KEY);
+
+        // Execute asynchronous http request on another thread other than main
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String getDirections = "https://maps.googleapis.com/maps/api/directions/json";
+                AsyncHttpClient client = new AsyncHttpClient();
+                client.setTimeout(2500);
+                client.get(getDirections, params, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        // Check that we obtained a valid response from the server
+                        if (responseBody.length == 0) {
+                            // Response is invalid
+                            Log.e("debug", "Failed to get directions");
+                            msg = "Failed to get directions";
+                        } else {
+                            // Response is valid
+                            msg = "";
+                            try {
+                                // Parse JSON object and set EditText where valid
+                                JSONObject object = new JSONObject(new String(responseBody));
+                                JSONArray steps = object.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONArray("steps");
+                                ArrayList<String> points = new ArrayList<>();
+
+
+                                for(int i = 0; i < steps.length(); i++){
+                                    points.add(steps.getJSONObject(i).getJSONObject("polyline").getString("points"));
+                                }
+
+                                response.setText(points.toString());
+
+                            } catch (JSONException e) {
+                                Log.e("debug", "Failed to parse JSON object");
+                            }
+                        }
+                        // Display error message
+                        //errorMsg.setText(msg);
+                        //errorMsg.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        // Most possible error is statusCode 500
+                        Log.e("debug", "Server error - Failed to contact server");
+                        //errorMsg.setText("Failed to contact server");
+                        //errorMsg.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        }).run();
     }
 }
