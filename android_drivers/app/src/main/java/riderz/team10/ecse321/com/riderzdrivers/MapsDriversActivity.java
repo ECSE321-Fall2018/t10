@@ -66,12 +66,12 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        searchTextStart = (TextView) findViewById(R.id.search_text_start);
-        searchTextEnd = (TextView) findViewById(R.id.search_text_end);
-        ImageView searchIconStart = (ImageView) findViewById(R.id.search_image_start);
-        ImageView searchIconEnd = (ImageView) findViewById(R.id.search_image_end);
-        confirmationButton = (Button) findViewById(R.id.confirmation_button);
-        response = (EditText) findViewById(R.id.driversMapsResponse);
+        searchTextStart = findViewById(R.id.search_text_start);
+        searchTextEnd = findViewById(R.id.search_text_end);
+        ImageView searchIconStart = findViewById(R.id.search_image_start);
+        ImageView searchIconEnd = findViewById(R.id.search_image_end);
+        confirmationButton = findViewById(R.id.confirmation_button);
+        response = findViewById(R.id.driversMapsResponse);
 
 
         confirmationButton.setOnClickListener(new View.OnClickListener() {
@@ -132,17 +132,42 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
 
 
                 if(isStarting){
+                    //clear map
+                    mMap.clear();
+
+                    //add starting marker
                     mMap.addMarker(new MarkerOptions().position(point)
                             .title(place.getAddress().toString()));
                     searchTextStart.setText(place.getAddress());
                     origin = latitude + "," + longitude;
+
+                    // Add destination if was previously added
+                    if(destination != null){
+                        String [] destinationArray = destination.split(",");
+                        LatLng destinationPoint = new LatLng(new Double(destinationArray[0]), new Double(destinationArray[1]));
+                        mMap.addMarker(new MarkerOptions().position(destinationPoint)
+                                .title(searchTextEnd.getText().toString())
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    }
                 }
                 else {
+                    // clear map
+                    mMap.clear();
+
+                    // Add destination marker
                     mMap.addMarker(new MarkerOptions().position(point)
                             .title(place.getAddress().toString())
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                     searchTextEnd.setText(place.getAddress());
                     destination = latitude + "," + longitude;
+
+                    // Add starting if was previously added
+                    if(origin != null){
+                        String [] originArray = origin.split(",");
+                        LatLng originPoint = new LatLng(new Double(originArray[0]), new Double(originArray[1]));
+                        mMap.addMarker(new MarkerOptions().position(originPoint)
+                                .title(searchTextStart.getText().toString()));
+                    }
                 }
 
                 confirmationButton.setVisibility(View.VISIBLE);
