@@ -4,6 +4,98 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DriverProfile">
+    tools:context=".DriverProfile"
+    tools:layout_editor_absoluteY="25dp">
+
+    <TextView
+        android:id="@+id/driverName"
+        android:layout_width="92dp"
+        android:layout_height="19dp"
+        android:layout_marginTop="52dp"
+        android:text="Driver's Name: "
+        android:textColor="@color/darkAccent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="1dp" />
+
+    <TextView
+        android:id="@+id/driverNameView"
+        android:layout_width="168dp"
+        android:layout_height="29dp"
+        android:text="@+id/driverNameView"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="151dp" />
+
+    <TextView
+        android:id="@+id/driverCarMake"
+        android:layout_width="92dp"
+        android:layout_height="19dp"
+        android:layout_marginTop="132dp"
+        android:text="Car Make: "
+        android:textColor="@color/darkAccent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <TextView
+        android:id="@+id/driverCarMakeView"
+        android:layout_width="168dp"
+        android:layout_height="29dp"
+        android:text="@+id/driverCarMakeView"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="71dp" />
+
+    <TextView
+        android:id="@+id/driverCarModel"
+        android:layout_width="92dp"
+        android:layout_height="19dp"
+        android:layout_marginTop="208dp"
+        android:text="Car Model: "
+        android:textColor="@color/darkAccent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <TextView
+        android:id="@+id/driverCarMakeModelView"
+        android:layout_width="168dp"
+        android:layout_height="29dp"
+        android:text="@+id/driverCarMakeModelView"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="227dp" />
+
+    <TextView
+        android:id="@+id/driverCarYear"
+        android:layout_width="92dp"
+        android:layout_height="19dp"
+        android:layout_marginTop="284dp"
+        android:text="Car Year: "
+        android:textColor="@color/darkAccent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="1dp" />
+
+    <TextView
+        android:id="@+id/driverCarYearView"
+        android:layout_width="168dp"
+        android:layout_height="29dp"
+        android:text="@+id/driverCarYearView"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="303dp" />
+
+    <TextView
+        android:id="@+id/driverCarLicensePlate"
+        android:layout_width="92dp"
+        android:layout_height="19dp"
+        android:layout_marginTop="284dp"
+        android:text="Car License Plate: "
+        android:textColor="@color/darkAccent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="1dp" />
+
+    <TextView
+        android:id="@+id/driverCarLicensePlateView"
+        android:layout_width="168dp"
+        android:layout_height="29dp"
+        android:text="@+id/driverCarLicensePlateView"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="303dp" />
+
 
 </android.support.constraint.ConstraintLayout>
