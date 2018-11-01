@@ -23,4 +23,5 @@
     <string name="starttime_hint">hh:mm:ss</string>
     <string name="numberseats_hint">Enter Number of Seats</string>
     <string name="startdate_hint">DD/MM/YYYY</string>
+    <string name="title_activity_driver_profile">DriverProfile</string>
 </resources>

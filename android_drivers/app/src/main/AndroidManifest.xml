@@ -31,8 +31,14 @@
         <activity android:name=".ResetPassword" />
         <activity
             android:name=".DriverTripForm"
-            android:label= "@string/title_activity_driver_trip_form"
-            android:screenOrientation="portrait"/>
+            android:label="@string/title_activity_driver_trip_form"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".http.DriverProfile"
+            android:label="@string/title_activity_driver_profile" />
+        <activity
+            android:name=".DriverProfile"
+            android:label="@string/title_activity_driver_profile"></activity>
     </application>
 
 </manifest>
