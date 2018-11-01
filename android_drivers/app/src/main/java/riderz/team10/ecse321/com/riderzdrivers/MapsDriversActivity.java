@@ -55,6 +55,8 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
 
     protected String origin;
     protected String destination;
+    protected double distance;
+    protected String duration;
     protected final String KEY = "AIzaSyARBA8OOAyllhaTKzyroPqIJW8I47b7Nv8" ;
 
     private final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
@@ -255,6 +257,7 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
 
                                 double lat = steps.getJSONObject(steps.length()/2).getJSONObject("start_location").getDouble("lat");
                                 double lng = steps.getJSONObject(steps.length()/2).getJSONObject("start_location").getDouble("lng");
+
                                 for(int i = 0; i < length; i++){
                                     PolylineOptions options = new PolylineOptions();
                                     options.color(Color.BLUE);
@@ -262,18 +265,23 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
                                     options.addAll(PolyUtil.decode(points.get(i)));
 
                                     mMap.addPolyline(options);
-
                                 }
-                                LatLng point = new LatLng(lat, lng);
-                                //***************************************************************************
-                                // Fetch origin and destination
+
+
+                                //LatLng point = new LatLng(lat, lng);
+
+                                // Obtain origin and destination
                                 String [] originArray = origin.split(",");
-                                LatLng originPoint = new LatLng(new Double(originArray[0]), new Double(originArray[1]));
+                                double originLatitude = new Double(originArray[0]);
+                                double originLongitude = new Double(originArray[1]);
+                                LatLng originPoint = new LatLng(originLatitude, originLongitude);
 
                                 String [] destinationArray = destination.split(",");
-                                LatLng destinationPoint = new LatLng(new Double(destinationArray[0]), new Double(destinationArray[1]));
+                                double destinationLatitude = new Double(destinationArray[0]);
+                                double destinationLongitude =  new Double(destinationArray[1]);
+                                LatLng destinationPoint = new LatLng(destinationLatitude, destinationLongitude);
 
-
+                                // Zoom on the two points (origin and destination)
                                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
                                 builder.include(originPoint);
                                 builder.include(destinationPoint);
@@ -287,14 +295,40 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
                                         mMap.animateCamera(zout);
                                     }
                                 });
-                                // midPoint = point in middle
-                                // Map the zoom level
-
-                                //***************************************************************************
-                               // mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 14));
 
 
-                                response.setText(points.toString());
+                                // mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 14));
+                                // response.setText(points.toString());// Obtain the Distance and Time between the origin and destination
+
+                                // Obtain Distance between origin and Destination
+
+                                /*
+                                distance = 1.5 * Math.sqrt(Math.pow(((originLatitude - destinationLatitude * 6371000 * 2 * Math.PI)/360),2) +
+                                                           Math.pow(((originLongitude - destinationLongitude * 6371000 * 2 * Math.PI)/360),2));
+                                */
+                                final int R = 6371000; // Radius of the earth (m)
+
+                                double latDistance = Math.toRadians(destinationLatitude - originLatitude);
+                                double lonDistance = Math.toRadians(destinationLongitude - originLongitude);
+                                double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                                        + Math.cos(Math.toRadians(originLatitude)) * Math.cos(Math.toRadians(originLongitude))
+                                        * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+                                double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                                distance = 1.7 * R * c ;
+
+
+                                double speed = 30000.0; // Default speed(30km/h)
+                                if (distance > 100000){
+                                    speed = 100000;
+                                }
+                                // Obtain time between origin and destination (ms)
+                                duration = String.valueOf((distance/speed)*3600 * 1000);
+
+
+                                Log.e("distance between two points", Double.toString(distance));
+                                Log.e("duration between two points", duration);
+
+
 
                             } catch (JSONException e) {
                                 Log.e("debug", "Failed to parse JSON object");
