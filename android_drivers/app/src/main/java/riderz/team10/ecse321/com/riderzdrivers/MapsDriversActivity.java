@@ -57,6 +57,7 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
     protected String destination;
     protected double distance;
     protected String duration;
+    protected double price;
     protected final String KEY = "AIzaSyARBA8OOAyllhaTKzyroPqIJW8I47b7Nv8" ;
 
     private final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
@@ -296,16 +297,10 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
                                     }
                                 });
 
-
                                 // mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 14));
-                                // response.setText(points.toString());// Obtain the Distance and Time between the origin and destination
+                                // response.setText(points.toString());
 
-                                // Obtain Distance between origin and Destination
-
-                                /*
-                                distance = 1.5 * Math.sqrt(Math.pow(((originLatitude - destinationLatitude * 6371000 * 2 * Math.PI)/360),2) +
-                                                           Math.pow(((originLongitude - destinationLongitude * 6371000 * 2 * Math.PI)/360),2));
-                                */
+                                // Calculate the distance between origin and destination (m)
                                 final int R = 6371000; // Radius of the earth (m)
 
                                 double latDistance = Math.toRadians(destinationLatitude - originLatitude);
@@ -314,21 +309,23 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
                                         + Math.cos(Math.toRadians(originLatitude)) * Math.cos(Math.toRadians(originLongitude))
                                         * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
                                 double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                                distance = 1.7 * R * c ;
+                                distance = 1.7 * R * c ; // In meters
 
 
                                 double speed = 30000.0; // Default speed(30km/h)
                                 if (distance > 100000){
                                     speed = 100000;
                                 }
-                                // Obtain time between origin and destination (ms)
-                                duration = String.valueOf((distance/speed)*3600 * 1000);
 
+                                // Calculate the time between origin and destination (ms)
+                                duration = String.valueOf((distance/speed)*3600 * 1000);
 
                                 Log.e("distance between two points", Double.toString(distance));
                                 Log.e("duration between two points", duration);
 
-
+                                // Price
+                                price = 2.5 + 0.75 * distance/1000;
+                                Log.e("Price between two points", Double.toString(price));
 
                             } catch (JSONException e) {
                                 Log.e("debug", "Failed to parse JSON object");
