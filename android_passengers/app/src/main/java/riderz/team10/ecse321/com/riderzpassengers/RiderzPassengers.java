@@ -5,8 +5,8 @@ import riderz.team10.ecse321.com.riderzpassengers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzpassengers.constants.TAG;
 import riderz.team10.ecse321.com.riderzpassengers.constants.URL;
 import riderz.team10.ecse321.com.riderzpassengers.http.HttpRequestClient;
-//import riderz.team10.ecse321.com.riderzpassengers.navigation.MainNavigation;
-//import riderz.team10.ecse321.com.riderzpassengers.settings.ResetPasswordVerification;
+import riderz.team10.ecse321.com.riderzpassengers.navigation.MainNavigation;
+import riderz.team10.ecse321.com.riderzpassengers.settings.ResetPasswordVerification;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -60,58 +60,58 @@ public class RiderzPassengers extends AppCompatActivity implements HttpRequestCl
         Button loginButton = findViewById(R.id.loginButton);
         Button registerButton = findViewById(R.id.loginRegisterButton);
 
-//        // Add event listener for reset button
-//        resetButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Launch reset password verification activity when on click event gets triggered
-//                Intent intent = new Intent(Riderzpassengers.this,
-//                        ResetPasswordVerification.class);
-//                Riderzpassengers.this.startActivity(intent);
-//            }
-//        });
+        // Add event listener for reset button
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Launch reset password verification activity when on click event gets triggered
+                Intent intent = new Intent(RiderzPassengers.this,
+                        ResetPasswordVerification.class);
+                RiderzPassengers.this.startActivity(intent);
+            }
+        });
 
-//        // Add event listener for login button
-//        loginButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                syncHttpRequest();
-//                if (success) {
-//                    // TODO: Link to main ListView
-//                    // TODO: Add login credentials to cache
-//                    // Clear error message
-//                    msg = "";
-//                    success = false;
-//                    File file = new File(getApplicationContext().getFilesDir(), "login.txt");
-//                    try {
-//                        // Create a new file and write login credentials
-//                        if (!file.exists()) {
-//                            file.createNewFile();
-//                        }
-//                        // Clears the file
-//                        PrintWriter writer = new PrintWriter(file);
-//                        writer.close();
-//
-//                        // Reinstantiate a PrintWriter object and write credentials into the file
-//                        writer = new PrintWriter(file);
-//                        writer.println(username.getText().toString());
-//                        writer.println(password.getText().toString());
-//                        writer.close();
-//                    } catch (IOException e) {
-//                        Log.e(TAG.loginTag, "Failed to create/modify file");
-//                    }
-//
-//                    // Kill off this activity and start new activity
-//                    // Take advantage of Android's asynchronous processing on finish();
-//                    Intent intent = new Intent(Riderzpassengers.this, MainNavigation.class);
-//                    finish();
-//                    startActivity(intent);
-//                }
-//                // Display error message
-//                errorMsg.setText(msg);
-//                errorMsg.setVisibility(View.VISIBLE);
-//            }
-//        });
+        // Add event listener for login button
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                syncHttpRequest();
+                if (success) {
+                    // TODO: Link to main ListView
+                    // TODO: Add login credentials to cache
+                    // Clear error message
+                    msg = "";
+                    success = false;
+                    File file = new File(getApplicationContext().getFilesDir(), "login.txt");
+                    try {
+                        // Create a new file and write login credentials
+                        if (!file.exists()) {
+                            file.createNewFile();
+                        }
+                        // Clears the file
+                        PrintWriter writer = new PrintWriter(file);
+                        writer.close();
+
+                        // Reinstantiate a PrintWriter object and write credentials into the file
+                        writer = new PrintWriter(file);
+                        writer.println(username.getText().toString());
+                        writer.println(password.getText().toString());
+                        writer.close();
+                    } catch (IOException e) {
+                        Log.e(TAG.loginTag, "Failed to create/modify file");
+                    }
+
+                    // Kill off this activity and start new activity
+                    // Take advantage of Android's asynchronous processing on finish();
+                    Intent intent = new Intent(RiderzPassengers.this, MainNavigation.class);
+                    finish();
+                    startActivity(intent);
+                }
+                // Display error message
+                errorMsg.setText(msg);
+                errorMsg.setVisibility(View.VISIBLE);
+            }
+        });
 
         // Add event listener for register button
         registerButton.setOnClickListener(new View.OnClickListener() {

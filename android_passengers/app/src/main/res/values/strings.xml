@@ -61,7 +61,7 @@
     <string name="action_logout">Logout</string>
 
 
-    <!-- SignUpPassengers components -->
+    <!-- SignUpPassenger components -->
     <string name="email">Email</string>
     <string name="phonenumber">PhoneNumber</string>
     <string name="username">Username</string>
@@ -71,4 +71,5 @@
     <string name="verify_password">Verify Password</string>
     <string name="password">Password</string>
     <string name="phone_number">Phone Number</string>
+
 </resources>

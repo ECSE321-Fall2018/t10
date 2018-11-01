@@ -124,7 +124,7 @@ public class SignUpDriver extends AppCompatActivity implements HttpRequestClient
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         Log.d("Debug","Successful creation of user in Driver Sign Up");
-                        Log.e("Debug",new String (responseBody));
+                  
                         /*TODO*/
                     }
 

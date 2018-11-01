@@ -86,7 +86,6 @@ public class SignUpPassengers extends AppCompatActivity implements HttpRequestCl
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         Log.d("Debug","Successful creation of user in User Sign Up");
-                        Log.e("Debug",new String (responseBody));
                         /*TODO*/
                     }
 
