@@ -1,4 +1,4 @@
-package riderz.team10.ecse321.com.riderzdrivers.locationFromAddress;
+package riderz.team10.ecse321.com.riderzdrivers;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -11,12 +11,9 @@ import java.util.List;
 
 public class GeoLocation {
     /*
-
     double latitude;
     double longitude;
-
     private double getLatitude(){
-
     }
     */
     public LatLng getLocationFromAddress(String locationAddress, Geocoder coder){

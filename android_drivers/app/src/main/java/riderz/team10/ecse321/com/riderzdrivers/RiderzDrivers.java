@@ -53,7 +53,7 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
 
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(RiderzDrivers.this, MapsActivity.class);
+                Intent intent = new Intent(RiderzDrivers.this, MapsDriversActivity.class);
                 intent.putExtra("startAddress", "20031 Lakeshore Drive, Baie-D'Urfe, QC");
                 intent.putExtra("stopAddress", "845 Sherbrooke St W, Montreal, QC");
                 RiderzDrivers.this.startActivity(intent);
