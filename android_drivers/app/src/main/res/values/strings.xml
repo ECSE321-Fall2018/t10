@@ -29,6 +29,7 @@
     <!-- GoogleMaps components -->
     <string name="title_activity_maps_drivers">Map</string>
     <string name="search_hint_start">Find Starting Location</string>
-    <string name="confirmation">Confirm</string>
+    <string name="confirmation">See Itinerary</string>
+    <string name="finalize">Finalize Trip</string>
     <string name="search_hint_end">Find Dropoff Location</string>
 </resources>

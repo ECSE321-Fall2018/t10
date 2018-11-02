@@ -47,8 +47,9 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
         Button loginButton = findViewById(R.id.login);
         Button registerButton = findViewById(R.id.register);
 
-        // ****************************** DONT COMMIT ******************************************
         /*
+        // ****************************** DO NOT COMMIT ******************************************
+
         Button button = findViewById(R.id.button);
 
         button.setOnClickListener(new View.OnClickListener(){
@@ -56,14 +57,13 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(RiderzDrivers.this, MapsDriversActivity.class);
-                intent.putExtra("startAddress", "20031 Lakeshore Drive, Baie-D'Urfe, QC");
-                intent.putExtra("stopAddress", "845 Sherbrooke St W, Montreal, QC");
+                intent.putExtra("username", "test-ty2");
                 RiderzDrivers.this.startActivity(intent);
             }
         });
-        */
-        // ************************************************************************************
 
+        // ************************************************************************************
+        */
 
         // Add event listener for reset button
         resetButton.setOnClickListener(new View.OnClickListener() {

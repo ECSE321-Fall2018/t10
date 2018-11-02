@@ -1,5 +1,6 @@
 package riderz.team10.ecse321.com.riderzdrivers;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -30,42 +31,34 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
     private JSONObject jsonRouteLast;
     private JSONObject jsonTrip;
     private String username;
+    protected String startingAddress;
+    protected String startingLatitude;
+    protected String startingLongitude;
+    protected String destinationAddress;
+    protected String destinationLatitude;
+    protected String destinationLongitude;
+    protected String duration;
+    protected double price;
 
     //to do link the main page to this page
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_trip_form);
+
+        // TODO UNCOMMENT *******************************************************
+        //username = getIntent().getStringExtra("username");
         username = "mei";
+        startingAddress = getIntent().getStringExtra("startingAddress");
+        startingLatitude = getIntent().getStringExtra("startingLatitude");
+        startingLongitude = getIntent().getStringExtra("startingLongitude");
+        destinationAddress = getIntent().getStringExtra("destinationAddress");
+        destinationLatitude = getIntent().getStringExtra("destinationLatitude");
+        destinationLongitude = getIntent().getStringExtra("destinationLongitude");
+        duration = getIntent().getStringExtra("tripTime");
+        price = Double.parseDouble(getIntent().getStringExtra("price"));
         mapButtons();
     }
-
-    /*//intent, pair of values
-    //intent.put extra
-    //start address and end address
-    //keys are "startAddress" and "endAddress"
-    public void newTrip(View view) {
-        final TextView startLoc = (TextView) findViewById(R.id.startlocation_form);
-        final TextView endLoc   = (TextView) findViewById(R.id.endlocation_form);
-        final TextView startTime   = (TextView) findViewById(R.id.endlocation_form);
-        final TextView startDate   = (TextView) findViewById(R.id.endlocation_form);
-        final TextView numberSeats   = (TextView) findViewById(R.id.endlocation_form);
-        //add check if the fields are empty, return a warning
-
-        *//*TO DO: link to Ryan's code
-        Intent intent = new Intent(DriverTripForm.this,
-                DriverTripForm.class);
-        intent.putExtra("startLocation", startLoc.toString());
-        intent.putExtra("endLocation", endLoc.toString());
-        intent.putExtra("startTime", startTime.toString());
-        intent.putExtra("startDate", startDate.toString());
-        intent.putExtra("numberSeats", numberSeats.toString());
-*//*
-
-//        Intent intent = new Intent();
-//        intent.putExtra();
-    }*/
-    //values are what we get from form
 
     public void mapButtons() {
 
@@ -94,7 +87,8 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
 
 //                long end = (Timestamp.valueOf("2017-08-10 05:25:00")).getTime() + (new Long(12321412)).longValue();
 
-                long end = (Timestamp.valueOf(startMoment)).getTime() + (new Long(12321412)).longValue();
+                long end = (Timestamp.valueOf(startMoment)).getTime() +
+                           (new Long(duration)).longValue();
 
 
                 Timestamp ts =  new Timestamp(end);
@@ -117,9 +111,14 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
                 //i receive startLong, startLat, endLong, endLat, time difference(ms)
                 //the start time is taken from driver
 
-                syncHttpRequestCreateRoute(tripID, "33.33333", "43.222222", startMoment,
-                        "35.333333", "32.2312312312", endTimeString, numberSeats.getText().toString());
+                syncHttpRequestCreateRoute(tripID, startingLongitude, startingLatitude, startMoment,
+                        destinationLongitude, destinationLatitude, endTimeString, numberSeats.getText().toString());
 
+                // TODO UNCOMMENT ONCE MERGE**********************************************************
+//                Intent nextIntent = new Intent(DriverTripForm.this, MainNavigation.class);
+//                finish();
+//                startActivity(nextIntent);
+                // TODO UNCOMMENT ONCE MERGE**********************************************************
                 /*TO DO: link to Ryan's code
                 Intent intent = new Intent(DriverTripForm.this,
                     DriverTripForm.class);

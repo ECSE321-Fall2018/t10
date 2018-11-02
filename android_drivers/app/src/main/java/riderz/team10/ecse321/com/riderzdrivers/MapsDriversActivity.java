@@ -44,6 +44,7 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
 
     private GoogleMap mMap;
     private Button confirmationButton;
+    private Button finalizeButton;
 
     private TextView searchTextStart;
     private TextView searchTextEnd;
@@ -53,6 +54,8 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
     private Boolean isStarting;
     private String msg;
 
+
+    protected String username;
     protected String origin;
     protected String destination;
     protected String originAddr;
@@ -73,21 +76,47 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        username = getIntent().getStringExtra("username");
+
         searchTextStart = findViewById(R.id.search_text_start);
         searchTextEnd = findViewById(R.id.search_text_end);
         ImageView searchIconStart = findViewById(R.id.search_image_start);
         ImageView searchIconEnd = findViewById(R.id.search_image_end);
         confirmationButton = findViewById(R.id.confirmation_button);
         response = findViewById(R.id.driversMapsResponse);
+        finalizeButton = findViewById(R.id.finalize_button);
 
 
         confirmationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 asyncHttpRequest();
+                finalizeButton.setVisibility(View.VISIBLE);
             }
         });
 
+        finalizeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String [] originArray = origin.split(",");
+                String [] destinationArray = destination.split(",");
+                Double timeDouble = Double.parseDouble(duration);
+                long time = timeDouble.longValue();
+                Intent intent = new Intent(MapsDriversActivity.this, DriverTripForm.class);
+                intent.putExtra("username", username);
+                intent.putExtra("startingAddress", originAddr);
+                intent.putExtra("startingLatitude", originArray[0]);
+                intent.putExtra("startingLongitude", originArray[1]);
+                intent.putExtra("destinationAddress", destinationAddr);
+                intent.putExtra("destinationLatitude", destinationArray[0]);
+                intent.putExtra("destinationLongitude", destinationArray[1]);
+                intent.putExtra("tripTime", "" + time);
+                intent.putExtra("price", "" + price);
+
+                startActivity(intent);
+            }
+        });
         searchTextStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -137,8 +166,10 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
                 LatLng point = new LatLng(latitude, longitude);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 15));
 
+                finalizeButton.setVisibility(View.GONE);
 
                 if(isStarting){
+
                     //clear map
                     mMap.clear();
 
@@ -185,7 +216,10 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
                     }
                 }
 
-                confirmationButton.setVisibility(View.VISIBLE);
+                if (origin !=null && destination != null){
+                    confirmationButton.setVisibility(View.VISIBLE);
+                }
+
 
                 Log.i("debug", "Place: " + place.getName());
             }

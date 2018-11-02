@@ -125,6 +125,20 @@
         app:layout_constraintEnd_toStartOf="@+id/map"
         app:layout_constraintStart_toEndOf="@+id/map"/>
 
+    <Button
+        android:id="@+id/finalize_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:text="@string/finalize"
+        android:background="@color/searchBar"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/map"
+        app:layout_constraintStart_toEndOf="@+id/map"/>
+
     <!-- android:visibility="gone" -->
     <EditText
         android:id="@+id/driversMapsResponse"
