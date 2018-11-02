@@ -72,11 +72,19 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
         Log.e("TAGGGGG", "ABC");
         Button newTrip = findViewById(R.id.new_trip_button);
 
+        Bundle bundle = this.getIntent().getExtras();
+        final String startLongitude = bundle.getString("startLongitude");
+        final String startLatitude = bundle.getString("startLatitude");
+        final String endLongitude = bundle.getString("endLongitude");
+        final String endLatitude = bundle.getString("endLatitude");
+        final String timeDifference = bundle.getString("timeDifference");
+
         // Add event listener for register button
         newTrip.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+
 //                final TextView startLoc = (TextView) findViewById(R.id.startlocation_form);
 //                final TextView endLoc   = (TextView) findViewById(R.id.endlocation_form);
                 final TextView startTime   = (TextView) findViewById(R.id.endlocation_form);
@@ -98,8 +106,8 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
                 //i receive startLong, startLat, endLong, endLat, time difference(ms)
                 //the start time is taken from driver
 
-//                syncHttpRequestCreateRoute(tripID, startLongitude, startLatitude, startTime,
-//                        endLongitude, endLatitude, endTime);
+                syncHttpRequestCreateRoute(tripID, startLongitude, startLatitude, startTime,
+                        endLongitude, endLatitude, endTime, numberSeats.toString());
 
                 /*TO DO: link to Ryan's code
                 Intent intent = new Intent(DriverTripForm.this,
@@ -119,6 +127,7 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
     public void syncHttpRequest(){
 
     }
+
     //create the trip
     public void syncHttpRequestCreate(){
         final RequestParams params = new RequestParams();
@@ -210,7 +219,7 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
     }
 
     public void syncHttpRequestCreateRoute(String tripID, String startLongitude, String startLatitude, String startTime,
-                                String endLongitude, String endLatitude, String endTime) {
+                                String endLongitude, String endLatitude, String endTime, String seatsLeft) {
 
         final RequestParams params = new RequestParams();
         params.add("tripID", tripID);
@@ -220,6 +229,7 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
         params.add("endLongitude", endLongitude);
         params.add("endLatitude", endLatitude);
         params.add("endTime", endTime);
+        params.add("seatsLeft", seatsLeft);
         params.add("operator", username);
 
 
