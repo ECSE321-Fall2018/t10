@@ -329,13 +329,9 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
 
                                 // Calculate the time between origin and destination (ms)
                                 duration = String.valueOf((distance/speed)*3600 * 1000);
-
-                                Log.e("distance between two points", Double.toString(distance));
-                                Log.e("duration between two points", duration);
-
+                                
                                 // Price
                                 price = 2.5 + 0.75 * distance/1000;
-                                Log.e("Price between two points", Double.toString(price));
 
                             } catch (JSONException e) {
                                 Log.e("debug", "Failed to parse JSON object");
