@@ -40,6 +40,7 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
         mapButtons();
     }
 
+
     @Override
     public void mapButtons() {
         Button resetButton = findViewById(R.id.reset);
@@ -47,6 +48,7 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
         Button registerButton = findViewById(R.id.register);
 
         // ****************************** DONT COMMIT ******************************************
+        /*
         Button button = findViewById(R.id.button);
 
         button.setOnClickListener(new View.OnClickListener(){
@@ -59,7 +61,9 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
                 RiderzDrivers.this.startActivity(intent);
             }
         });
+        */
         // ************************************************************************************
+
 
         // Add event listener for reset button
         resetButton.setOnClickListener(new View.OnClickListener() {
