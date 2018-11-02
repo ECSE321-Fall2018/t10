@@ -24,4 +24,11 @@
     <string name="numberseats_hint">Enter Number of Seats</string>
     <string name="startdate_hint">YYYY-MM-DD</string>
     <string name="title_activity_driver_profile">DriverProfile</string>
+    <string name="title_activity_maps">Map</string>
+
+    <!-- GoogleMaps components -->
+    <string name="title_activity_maps_drivers">Map</string>
+    <string name="search_hint_start">Find Starting Location</string>
+    <string name="confirmation">Confirm</string>
+    <string name="search_hint_end">Find Dropoff Location</string>
 </resources>
