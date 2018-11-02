@@ -34,7 +34,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RiderzPassengers" />
         </activity>
-        <activity android:name=".assets.templates.activity.AppCompatActivityBack"></activity>
+        <activity android:name=".assets.templates.activity.AppCompatActivityBack" />
         <activity
             android:name=".navigation.MainNavigation"
             android:label="@string/title_activity_main_navigation"
@@ -48,41 +48,43 @@
         <activity
             android:name=".settings.MainSetting"
             android:label="@string/title_activity_settings"
-            android:screenOrientation="portrait"></activity>
-        <activity android:name=".settings.ModifyContactInfo"></activity>
+            android:screenOrientation="portrait" />
+        <activity android:name=".settings.ModifyContactInfo" />
         <activity
             android:name=".settings.ModifyEmail"
             android:label="@string/title_activity_modify_email"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".settings.ResetPassword"
             android:label="@string/title_activity_reset_password"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".settings.ResetPasswordVerification"
             android:label="@string/title_activity_reset_password_verification"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".trip.EditTrip"
             android:label="@string/title_activity_edit_trip"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".trip.EditTripTemplate"
             android:label="@string/title_activity_edit_trip_template"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".trip.PastTrip"
             android:label="@string/title_activity_past_trip"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".About"
             android:label="@string/title_activity_about"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".reservation.Reservation"
             android:label="@string/title_activity_view_reservation"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".UserProfile"
+            android:label="@string/title_activity_user_profile"></activity>
     </application>
-
 
 </manifest>

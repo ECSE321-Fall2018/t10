@@ -74,4 +74,5 @@
 
     <!-- ViewReservation components -->
     <string name="title_activity_view_reservation">Remove Reservations</string>
+    <string name="title_activity_user_profile">UserProfile</string>
 </resources>

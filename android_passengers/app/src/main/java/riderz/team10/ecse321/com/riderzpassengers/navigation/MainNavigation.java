@@ -27,6 +27,7 @@ import cz.msebera.android.httpclient.Header;
 import riderz.team10.ecse321.com.riderzpassengers.About;
 import riderz.team10.ecse321.com.riderzpassengers.R;
 import riderz.team10.ecse321.com.riderzpassengers.RiderzPassengers;
+import riderz.team10.ecse321.com.riderzpassengers.UserProfile;
 import riderz.team10.ecse321.com.riderzpassengers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzpassengers.constants.TAG;
 import riderz.team10.ecse321.com.riderzpassengers.constants.URL;
@@ -157,10 +158,9 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
 
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(MainNavigation.this, .class);
-//                MainNavigation.this.startActivity(intent);
-                // TODO: map to activity for viewing user profile
-                Log.e(TAG.mainNavTag, "User Profile");
+                Intent intent = new Intent(MainNavigation.this, UserProfile.class);
+                intent.putExtra("username", username);
+                MainNavigation.this.startActivity(intent);
             }
         });
 
