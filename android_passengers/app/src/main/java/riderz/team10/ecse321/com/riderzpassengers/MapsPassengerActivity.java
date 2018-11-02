@@ -1,14 +1,19 @@
 package riderz.team10.ecse321.com.riderzpassengers;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -36,13 +41,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import cz.msebera.android.httpclient.Header;
 
-public class MapsPassengerActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsPassengerActivity extends FragmentActivity implements OnMapReadyCallback, TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
 
     private GoogleMap mMap;
     private Button confirmationButton;
+    private Button timePickerButton;
 
     private TextView searchTextStart;
     private TextView searchTextEnd;
@@ -50,6 +57,12 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
     private LatLng markerLocation;
     private Boolean isStarting;
     private String msg;
+
+    private String startingLongitude;
+    private String startingLatitude;
+    private String endingLongitude;
+    private String endingLatitude;
+    private String arrivalTime;
 
     protected String origin;
     protected String destination;
@@ -71,13 +84,19 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         ImageView searchIconStart = (ImageView) findViewById(R.id.search_image_start);
         ImageView searchIconEnd = (ImageView) findViewById(R.id.search_image_end);
         confirmationButton = (Button) findViewById(R.id.confirmation_button);
+        timePickerButton = (Button) findViewById(R.id.time_picker_button);
 
+        timePickerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDatePicker();
+            }
+        });
 
         confirmationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 asyncHttpRequest();
-                Toast.makeText(getApplicationContext(), "Latitude: " +  markerLocation.latitude + "\nLongitude: "  + markerLocation.longitude,Toast.LENGTH_LONG).show();
             }
         });
 
@@ -136,6 +155,10 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                             .title(place.getAddress().toString()));
                     searchTextStart.setText(place.getAddress());
                     origin = latitude + "," + longitude;
+
+                    startingLatitude = Double.toString(latitude);
+                    startingLongitude = Double.toString(longitude);
+
                 }
                 else {
 
@@ -148,6 +171,9 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                     searchTextEnd.setText(place.getAddress());
                     destination = latitude + "," + longitude;
 
+                    endingLatitude = Double.toString(latitude);
+                    endingLongitude = Double.toString(longitude);
+
                     if(origin != null){
                         String [] originArray = origin.split(",");
                         LatLng originPoint = new LatLng(new Double(originArray[0]), new Double(originArray[1]));
@@ -156,7 +182,8 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                     }
                 }
 
-                confirmationButton.setVisibility(View.VISIBLE);
+                timePickerButton.setVisibility(View.VISIBLE);
+
 
                 Log.i("debug", "Place: " + place.getName());
             }
@@ -294,5 +321,48 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                 });
             }
         }).run();
+    }
+
+    @Override
+    public void onTimeSet(TimePicker timePicker, int i, int i1) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR, i);
+        calendar.set(Calendar.MINUTE, i1);
+
+        arrivalTime = arrivalTime + " " + i + ":" + i1 + ":00.000";
+
+        startAdsListing();
+    }
+
+    private void startTimePicker(){
+        DialogFragment timePicker = new TimePickerFragment();
+        timePicker.show(getSupportFragmentManager(), "Please Pick An Arrival Time");
+    }
+
+    @Override
+    public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, i);
+        calendar.set(Calendar.MONTH, i1);
+        calendar.set(Calendar.DAY_OF_MONTH, i2);
+
+        arrivalTime = i + "-" + i1 + "-" + i2;
+
+        startTimePicker();
+    }
+
+    private void startDatePicker(){
+        DialogFragment datePicker = new DatePickerFragment();
+        datePicker.show(getSupportFragmentManager(), "Please Pick An Arrival Date");
+    }
+
+    private void startAdsListing() {
+        Intent intent = new Intent(MapsPassengerActivity.this, AdsListings.class);
+        intent.putExtra("startingLatitude", startingLatitude);
+        intent.putExtra("startingLongitude", startingLongitude);
+        intent.putExtra("endingLatitude", endingLatitude);
+        intent.putExtra("endingLongitude", endingLongitude);
+        intent.putExtra("arrivalTime", arrivalTime);
+        startActivity(intent);
     }
 }
