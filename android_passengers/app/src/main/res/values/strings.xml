@@ -8,4 +8,6 @@
     <string name="search_hint_start">Find Starting Location</string>
     <string name="confirmation">Confirm</string>
     <string name="search_hint_end">Find Dropoff Location</string>
+    <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>

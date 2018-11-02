@@ -121,4 +121,14 @@ public class TripController {
         return false;
     }
 
+    @RequestMapping(value = "getDriverName", method = RequestMethod.GET)
+    public String getDriverName( @RequestParam int tripID) {
+    	if (sql.connect()) {
+    		String name = sql.getDriverNameByTripID(tripID);
+    		sql.closeConnection();
+    		return name;
+    	}
+    	logger.error("Failed to establish communication with SQL database");
+    	return null;
+    }
 }
