@@ -96,7 +96,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         confirmationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                asyncHttpRequest();
+                asyncHttpMakeReservation();
             }
         });
 
@@ -149,8 +149,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                 LatLng point = new LatLng(latitude, longitude);
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 15));
 
-
-                if(isStarting){
+                if (isStarting) {
                     mMap.addMarker(new MarkerOptions().position(point)
                             .title(place.getAddress().toString()));
                     searchTextStart.setText(place.getAddress());
@@ -159,8 +158,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                     startingLatitude = Double.toString(latitude);
                     startingLongitude = Double.toString(longitude);
 
-                }
-                else {
+                } else {
 
                     // clear map
                     mMap.clear();
@@ -174,15 +172,20 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                     endingLatitude = Double.toString(latitude);
                     endingLongitude = Double.toString(longitude);
 
-                    if(origin != null){
-                        String [] originArray = origin.split(",");
+                    if (origin != null) {
+                        String[] originArray = origin.split(",");
                         LatLng originPoint = new LatLng(new Double(originArray[0]), new Double(originArray[1]));
                         mMap.addMarker(new MarkerOptions().position(originPoint)
                                 .title(searchTextStart.getText().toString()));
                     }
                 }
 
-                timePickerButton.setVisibility(View.VISIBLE);
+                if(origin != null && destination != null){
+                    boundZoom();
+                    timePickerButton.setVisibility(View.VISIBLE);
+                }
+
+
 
 
                 Log.i("debug", "Place: " + place.getName());
@@ -224,7 +227,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         mMap = googleMap;
     }
 
-    private void asyncHttpRequest() {
+    private void asyncHttpRequestRoute() {
         // Add parameters
         final RequestParams params = new RequestParams();
         params.add("origin", origin);
@@ -280,27 +283,79 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
 
                                 }
 
-                                // Fetch origin and destination
-                                String [] originArray = origin.split(",");
-                                LatLng originPoint = new LatLng(new Double(originArray[0]), new Double(originArray[1]));
+                                boundZoom();
 
-                                String [] destinationArray = destination.split(",");
-                                LatLng destinationPoint = new LatLng(new Double(destinationArray[0]), new Double(destinationArray[1]));
+                            } catch (JSONException e) {
+                                Log.e("debug", "Failed to parse JSON object");
+                            }
+                        }
+                        // Display error message
+                        //errorMsg.setText(msg);
+                        //errorMsg.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        // Most possible error is statusCode 500
+                        Log.e("debug", "Server error - Failed to contact server");
+                        //errorMsg.setText("Failed to contact server");
+                        //errorMsg.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
+        }).run();
+    }
+
+    private void asyncHttpMakeReservation() {
+        // Add parameters
 
 
-                                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                                builder.include(originPoint);
-                                builder.include(destinationPoint);
-                                LatLngBounds bounds = builder.build();
+        // Execute asynchronous http request on another thread other than main
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final String postDirections = "https://riderz-t10.herokuapp.com";
+                AsyncHttpClient client = new AsyncHttpClient();
+                client.setTimeout(2500);
+                client.get(postDirections, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        // Check that we obtained a valid response from the server
+                        if (responseBody.length == 0) {
+                            // Response is invalid
+                            Log.e("debug", "Failed to get directions");
+                            msg = "Failed to get directions";
+                        } else {
+                            // Response is valid
+                            msg = "";
+                            try {
+                                // Parse JSON object and set EditText where valid
+                                JSONObject object = new JSONObject(new String(responseBody));
+                                JSONArray steps = object.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONArray("steps");
+                                ArrayList<String> points = new ArrayList<>();
 
-                                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 50);
-                                mMap.animateCamera(cu, new GoogleMap.CancelableCallback(){
-                                    public void onCancel(){}
-                                    public void onFinish(){
-                                        CameraUpdate zout = CameraUpdateFactory.zoomBy(-1);
-                                        mMap.animateCamera(zout);
-                                    }
-                                });
+                                int length = steps.length();
+                                for(int i = 0; i < length; i++){
+                                    points.add(steps.getJSONObject(i).getJSONObject("polyline").getString("points"));
+                                }
+
+                                double lat = steps.getJSONObject(steps.length()/2).getJSONObject("start_location").getDouble("lat");
+                                double lng = steps.getJSONObject(steps.length()/2).getJSONObject("start_location").getDouble("lng");
+
+                                LatLng point = new LatLng(lat, lng);
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 14));
+
+                                for(int i = 0; i < length; i++){
+                                    PolylineOptions options = new PolylineOptions();
+                                    options.color(Color.BLUE);
+                                    options.width(10);
+                                    options.addAll(PolyUtil.decode(points.get(i)));
+
+                                    mMap.addPolyline(options);
+
+                                }
+
+                                boundZoom();
 
                             } catch (JSONException e) {
                                 Log.e("debug", "Failed to parse JSON object");
@@ -364,5 +419,30 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         intent.putExtra("endingLongitude", endingLongitude);
         intent.putExtra("arrivalTime", arrivalTime);
         startActivity(intent);
+    }
+
+    private void boundZoom(){
+        String[] originArray = origin.split(",");
+        LatLng originPoint = new LatLng(new Double(originArray[0]), new Double(originArray[1]));
+
+        String[] destinationArray = destination.split(",");
+        LatLng destinationPoint = new LatLng(new Double(destinationArray[0]), new Double(destinationArray[1]));
+
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(originPoint);
+        builder.include(destinationPoint);
+        LatLngBounds bounds = builder.build();
+
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 50);
+        mMap.animateCamera(cu, new GoogleMap.CancelableCallback() {
+            public void onCancel() {
+            }
+
+            public void onFinish() {
+                CameraUpdate zout = CameraUpdateFactory.zoomBy(-1);
+                mMap.animateCamera(zout);
+            }
+        });
     }
 }
