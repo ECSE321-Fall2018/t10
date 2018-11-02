@@ -11,4 +11,5 @@ public class TAG {
     public static final String changeEmailTag = "ModifyEmailActivity";
     public static final String changePhoneTag = "ModifyPhoneActivity";
     public static final String changeCarTag = "ModifyCarActivity";
+    public static final String viewReservationTag = "ViewResActivity";
 }

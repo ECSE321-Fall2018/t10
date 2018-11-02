@@ -1,15 +1,18 @@
 package riderz.team10.ecse321.com.riderzdrivers;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 import cz.msebera.android.httpclient.Header;
+import riderz.team10.ecse321.com.riderzdrivers.assets.template.activity.AppCompatActivityBack;
+import riderz.team10.ecse321.com.riderzdrivers.assets.verificator.RegexVerification;
 import riderz.team10.ecse321.com.riderzdrivers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
 import riderz.team10.ecse321.com.riderzdrivers.constants.URL;
@@ -17,7 +20,9 @@ import riderz.team10.ecse321.com.riderzdrivers.http.HttpRequestClient;
 
 
 
-public class SignUpDriver extends AppCompatActivity implements HttpRequestClient {
+public class SignUpDriver extends AppCompatActivityBack implements HttpRequestClient {
+    // Error message
+    protected TextView errorMsg;
 
     protected boolean success;
     protected String msg;
@@ -27,6 +32,9 @@ public class SignUpDriver extends AppCompatActivity implements HttpRequestClient
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        // Map error message display
+        errorMsg = findViewById(R.id.signUpError);
 
         mapButtons();
     }
@@ -41,13 +49,12 @@ public class SignUpDriver extends AppCompatActivity implements HttpRequestClient
             public void onClick(View v){
                 syncHttpRequest();
                 if(success){
-                    msg="";
-                    /*TODO*/
+                    msg = "";
+                    success = false;
+                    finish();
                 }
-                else{
-                    msg="";
-                    /*TODO*/
-                }
+                errorMsg.setText(msg);
+                errorMsg.setVisibility(View.VISIBLE);
             }
 
         });
@@ -55,36 +62,69 @@ public class SignUpDriver extends AppCompatActivity implements HttpRequestClient
     }
 
     public String getPlainText(int idName){
-
         EditText text = findViewById(idName);
         return text.getText().toString();
     }
 
     @Override
     public void syncHttpRequest(){
-
-
+        // RESTful APIs to target
         final String userSignUpUrl = URL.baseUrl + URL.userUrl + "addUser/";
         final String driverSignUpUrl = URL.baseUrl+URL.driverUrl + "new/";
         final String carSignUpUrl = URL.baseUrl+URL.carUrl;
 
-
         //User and Driver parameters
-        final String firstName = getPlainText(R.id.firstName);
-        final String lastName = getPlainText(R.id.lastName);
-        final String username = getPlainText(R.id.userName);
-        final String email = getPlainText(R.id.email);
-        final String password = getPlainText(R.id.password);
-        final String phone = getPlainText(R.id.phoneNumber);
+        final String firstName = getPlainText(R.id.signUpFirstName);
+        final String lastName = getPlainText(R.id.signUpLastName);
+        final String username = getPlainText(R.id.signUpUsername);
+        final String email = getPlainText(R.id.signUpEmail);
+        final String password = getPlainText(R.id.signUpPassword);
+        final String verifyPassword = getPlainText(R.id.signUpVerifyPassword);
+        final String phone = getPlainText(R.id.signUpPhoneNumber);
+
+        // Verify that passwords match
+        if (!password.equals(verifyPassword)) {
+            msg = "Passwords do not match";
+            success = false;
+            return;
+        }
+
+        // Verify that name is valid
+        if (!RegexVerification.isAlphabetical(firstName) ||
+            !RegexVerification.isAlphabetical(lastName)) {
+            msg = "Name is invalid";
+            success = false;
+            return;
+        }
+
+        // Verify that email is valid
+        if (!RegexVerification.verifyEmail(email)) {
+            msg = "Email is invalid";
+            success = false;
+            return;
+        }
+
+        // Verify that the phone number is valid
+        if (!RegexVerification.verifyPhone(phone)) {
+            msg = "Phone is invalid";
+            success = false;
+            return;
+        }
 
         //Car Parameters
-        final String carMake= getPlainText(R.id.carMake);
-        final String carModel= getPlainText(R.id.carModel);
-        final String carYear= getPlainText(R.id.carYear);
-        final String carSeats = getPlainText(R.id.carSeats);
-        final String fuelEfficiency= getPlainText(R.id.fuelEfficiency);
-        final String licensePlate = getPlainText(R.id.licensePlate);
+        final String carMake= getPlainText(R.id.signUpCarMake);
+        final String carModel= getPlainText(R.id.signUpCarModel);
+        final String carYear= getPlainText(R.id.signUpCarYear);
+        final String carSeats = getPlainText(R.id.signUpCarSeats);
+        final String fuelEfficiency= getPlainText(R.id.signUpFuelEffiency);
+        final String licensePlate = getPlainText(R.id.signUpLicensePlate);
 
+        // Verify that the make of the car is alphabets
+        if (!RegexVerification.isAlphabetical(carMake)) {
+            msg = "Make has to be alphabetical";
+            success = false;
+            return;
+        }
 
         //Driver signup requests create a user, driver and car in DB
         final RequestParams userParams = new RequestParams();
@@ -111,9 +151,6 @@ public class SignUpDriver extends AppCompatActivity implements HttpRequestClient
         carParams.add("fuelEfficiency",fuelEfficiency);
         carParams.add("licensePlate",licensePlate);
 
-
-
-
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -123,15 +160,26 @@ public class SignUpDriver extends AppCompatActivity implements HttpRequestClient
                 client.post(userSignUpUrl, userParams, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        Log.d("Debug","Successful creation of user in Driver Sign Up");
-                  
-                        /*TODO*/
+                        if (responseBody.length != 0) {
+                            // Created user
+                            Log.d(TAG.signUpTag, "Successful creation of user in Driver Sign Up");
+                            success = true;
+                            msg = "";
+                        } else {
+                            // Username is already taken
+                            success = false;
+                            msg = "Username is already taken";
+                            return;
+                        }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        Log.e("Debug","Sign Up driver process to create user failed");
-                        /*TODO*/
+                        // Failed to contact server
+                        Log.e(TAG.signUpTag,"Sign Up driver process to create user failed");
+                        success = false;
+                        msg = "Failed to contact server";
+                        return;
                     }
                 });
 
@@ -139,41 +187,57 @@ public class SignUpDriver extends AppCompatActivity implements HttpRequestClient
                 client.put(driverSignUpUrl, driverParams, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        Log.d("Debug","Successful creation of driver in Driver Sign Up");
-                        /*TODO*/
+                        if (responseBody.length != 0) {
+                            // Created driver
+                            Log.d(TAG.signUpTag, "Successful creation of driver in Driver Sign Up");
+                            success = true;
+                            msg = "";
+                        } else {
+                            // Failed to insert to SQL database
+                            success = false;
+                            msg = "Failed to sign up user";
+                            return;
+                        }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        // No response from server
                         Log.e("Debug","Sign Up driver process to create driver failed");
-                        /*TODO*/
+                        success = false;
+                        msg = "Failed to contact server";
+                        return;
                     }
                 });
-
-
 
                 client.post(carSignUpUrl, carParams, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        Log.d("Debug","Successful creation of car in Driver Sign Up");
-                        /*TODO*/
-
+                        if (responseBody.length != 0) {
+                            // Driver successfully created
+                            Log.d(TAG.signUpTag,"Successful creation of car in Driver Sign Up");
+                            success = true;
+                            msg = "";
+                        } else {
+                            success = false;
+                            msg = "Failed to sign up user";
+                            return;
+                        }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        Log.d("Debug","Sign Up driver process to create car failed");
-                        /*TODO*/
-
+                        Log.d(TAG.signUpTag,"Sign Up driver process to create car failed");
+                        success = false;
+                        msg = "Failed to contact server";
+                        return;
                     }
                 });
             }
         });
 
-
-
+        // Block further execution until current thread is finished
         t.start();
-
         try {
             t.join();
         } catch (InterruptedException e) {
