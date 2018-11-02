@@ -16,12 +16,14 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
@@ -136,11 +138,22 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                     origin = latitude + "," + longitude;
                 }
                 else {
+
+                    // clear map
+                    mMap.clear();
+
                     mMap.addMarker(new MarkerOptions().position(point)
                             .title(place.getAddress().toString())
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                     searchTextEnd.setText(place.getAddress());
                     destination = latitude + "," + longitude;
+
+                    if(origin != null){
+                        String [] originArray = origin.split(",");
+                        LatLng originPoint = new LatLng(new Double(originArray[0]), new Double(originArray[1]));
+                        mMap.addMarker(new MarkerOptions().position(originPoint)
+                                .title(searchTextStart.getText().toString()));
+                    }
                 }
 
                 confirmationButton.setVisibility(View.VISIBLE);
@@ -239,6 +252,28 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                                     mMap.addPolyline(options);
 
                                 }
+
+                                // Fetch origin and destination
+                                String [] originArray = origin.split(",");
+                                LatLng originPoint = new LatLng(new Double(originArray[0]), new Double(originArray[1]));
+
+                                String [] destinationArray = destination.split(",");
+                                LatLng destinationPoint = new LatLng(new Double(destinationArray[0]), new Double(destinationArray[1]));
+
+
+                                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                                builder.include(originPoint);
+                                builder.include(destinationPoint);
+                                LatLngBounds bounds = builder.build();
+
+                                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 50);
+                                mMap.animateCamera(cu, new GoogleMap.CancelableCallback(){
+                                    public void onCancel(){}
+                                    public void onFinish(){
+                                        CameraUpdate zout = CameraUpdateFactory.zoomBy(-1);
+                                        mMap.animateCamera(zout);
+                                    }
+                                });
 
                             } catch (JSONException e) {
                                 Log.e("debug", "Failed to parse JSON object");
