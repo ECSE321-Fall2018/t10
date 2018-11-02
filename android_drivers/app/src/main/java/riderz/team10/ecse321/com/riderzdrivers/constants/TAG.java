@@ -4,4 +4,5 @@ public class TAG {
     public static final String loginTag = "LoginActivity";
     public static final String verifyTag = "VerifyResetActivity";
     public static final String driverProfileTag = "DriverProfileActivity";
+    public static final String driverTripFormTag = "DriverTripFormActivity";
 }

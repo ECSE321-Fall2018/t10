@@ -11,7 +11,23 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class DriverTripForm extends AppCompatActivity {
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.SyncHttpClient;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
+import riderz.team10.ecse321.com.riderzdrivers.constants.HTTP;
+import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
+import riderz.team10.ecse321.com.riderzdrivers.constants.URL;
+import riderz.team10.ecse321.com.riderzdrivers.http.HttpRequestClient;
+
+public class DriverTripForm extends AppCompatActivity implements HttpRequestClient {
+
+    private JSONObject jsonTrip;
+    private String username;
 
     //to do link the main page to this page
     @Override
@@ -65,6 +81,8 @@ public class DriverTripForm extends AppCompatActivity {
                 final TextView numberSeats   = (TextView) findViewById(R.id.endlocation_form);
                 //add check if the fields are empty, return a warning
 
+                syncHttpRequest();
+
                 /*TO DO: link to Ryan's code
                 Intent intent = new Intent(DriverTripForm.this,
                     DriverTripForm.class);
@@ -77,5 +95,62 @@ public class DriverTripForm extends AppCompatActivity {
                 */
             }
         });
+    }
+
+    @Override
+    public void syncHttpRequest(){
+
+    }
+    public void syncHttpRequest(String startLongitude, String startLatitude, String startTime,
+                                String endLongitude, String endLatitude, String endTime) {
+
+        final RequestParams params = new RequestParams();
+        params.add("startLongitude", "mei");
+        params.add("startLatitude", "mei");
+        params.add("startTime", "mei");
+        params.add("endLongitude", "mei");
+        params.add("endLatitude", "mei");
+        params.add("endTime", "mei");
+        params.add("operator", "mei");
+
+
+        // Instantiate a new Runnable object which will handle http requests asynchronously
+        // Then await until thread is finished to make the request synchronous.
+        Thread t = new Thread(new Runnable() {
+            // URL to target
+            final String routeUrl = URL.baseUrl + "/insertItinerary/";
+
+            @Override
+            public void run() {
+                // Instantiate new synchronous http client, set timeout and perform get request
+                // Uses extended timeout
+                SyncHttpClient client = new SyncHttpClient();
+                client.setTimeout(HTTP.maxTimeoutExtended);
+                client.put(routeUrl, params, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        try {
+                            jsonTrip = new JSONObject(new String(responseBody));
+                        } catch (JSONException e) {
+                            Log.e(riderz.team10.ecse321.com.riderzdrivers.constants.TAG.driverTripFormTag, "Failed to parse JSON from HTTP response");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers,
+                                          byte[] responseBody, Throwable error) {
+                        Log.e(TAG.driverTripFormTag, "Server error - could not contact server");
+                    }
+                });
+            }
+        });
+        t.start();
+
+        // Await until thread t has finished its execution before proceeding
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            Log.e(TAG.driverTripFormTag, "Thread exception in login thread");
+        }
     }
 }
