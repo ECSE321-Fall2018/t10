@@ -14,12 +14,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.loopj.android.http.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,18 +39,21 @@ public class AdsListings extends AppCompatActivity {
 
     private int expandable_id= -1;
     private HashMap<String, Integer> hash = new HashMap<>();
+    private HashMap<Integer, String> hash_geolocations = new HashMap<>();
 
     //get data from Ryan
     final String baseUrl = "https://riderz-t10.herokuapp.com/";
     final String itinerary_baseURL = baseUrl + "getItineraryNearDestination";
     final String adsInfo_baseURL = baseUrl + "adInfo";
-    private String startingLongitude = "22.2222";
-    private String startingLatitude = "-33.33333";
-    private String endingLongitude = "12.232323";
-    private String endingLatitude = "-52.525252";
-    final String maximumDistance = "100";
-    private String arrivalTime = "2051-01-02 02:30:000";
+    private String startingLongitude;
+    private String startingLatitude;
+    private String endingLongitude;
+    private String endingLatitude;
+    final String maximumDistance = "1000000000";
+    private String arrivalTime;
     private String operator = "mei";
+
+
 
     //define different types of layout params
     LinearLayout.LayoutParams param_1 = new LinearLayout.LayoutParams(100,100,1.0f);
@@ -75,11 +80,13 @@ public class AdsListings extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
 
-//        startingLongitude = bundle.getString("startingLongitude");
-//        startingLatitude = bundle.getString("startingLatitude");
-//        endingLongitude = bundle.getString("endingLongitude");
-//        endingLongitude = bundle.getString("endingLongitude");
-//        arrivalTime = bundle.getString("arrivalTime");
+        startingLongitude = bundle.getString("startingLongitude");
+        startingLatitude = bundle.getString("startingLatitude");
+        endingLongitude = bundle.getString("endingLongitude");
+        endingLatitude = bundle.getString("endingLatitude");
+        arrivalTime = bundle.getString("arrivalTime");
+
+        Log.e("hello" , startingLatitude + ", " + startingLongitude + ", " + endingLatitude + ", " + endingLongitude + "," + arrivalTime );
 
         final LinearLayout listingsContainer = (LinearLayout) findViewById(R.id.listingsContainer);
 
@@ -134,6 +141,20 @@ public class AdsListings extends AppCompatActivity {
                 Double endLatitude = Double.parseDouble(adsListings_list.get(i).getString("endingLatitude"));
                 Double endLongitude = Double.parseDouble(adsListings_list.get(i).getString("endingLongitude"));
 
+                String coordinates = "";
+                coordinates += startLatitude + "," + startLongitude + "," + endLatitude + "," + endLongitude;
+//                Double [] geolocations = new Double[4];
+//                geolocations[0]= startLatitude;
+//                geolocations[1]=startLongitude;
+//                geolocations[2]=endLatitude;
+//                geolocations[3]=endLongitude;
+//                Log.e("LOGGGGIIINNG", geolocations[0].toString());
+//                Log.e("LOGGGGIIINNG", geolocations[1].toString());
+//                Log.e("LOGGGGIIINNG", geolocations[2].toString());
+//                Log.e("LOGGGGIIINNG", geolocations[3].toString());
+                hash_geolocations.put(tripID, coordinates);
+                Log.e("LOGGER", hash_geolocations.toString());
+
                 Address addressStart = reverseGeocoder.reverseLookup(this, startLatitude, startLongitude);
                 Address addressEnd = reverseGeocoder.reverseLookup(this, endLatitude, endLongitude);
 //TESTING METHODS
@@ -176,6 +197,7 @@ public class AdsListings extends AppCompatActivity {
                         findViewById(expandable_id).setVisibility(View.GONE);
                     }
                     expandable_id = inner_ads_info.getId();
+                    Log.e("LOGGER", "" + expandable_id);
                     inner_ads_info.setVisibility(View.VISIBLE);
 
                     TextView startingAddress = (TextView)((LinearLayout) listingsRow.getChildAt(1)).getChildAt(0);
@@ -209,11 +231,30 @@ public class AdsListings extends AppCompatActivity {
                 public void onClick(View v) {
                     String startingAddress = ((TextView)((LinearLayout) listingsRow.getChildAt(1)).getChildAt(0)).getText().toString();
                     String endingAddress = ((TextView)((LinearLayout) listingsRow.getChildAt(1)).getChildAt(1)).getText().toString();
-                    int tripID = listingsRow.getChildAt(1).getId();
+                    int tripID = expandable_id;
+                    String coordinates = "";
+                    Log.e("LOGGER_2", "" + tripID);
+                    if(hash_geolocations.containsKey(tripID)){
+                        Log.e("LOGGINGGGGGGG_MEI2", hash_geolocations.toString());
+                        coordinates = hash_geolocations.get(tripID);
+                    }
 
                     Intent intent = new Intent(AdsListings.this, MapsPassengerActivity.class);
-                    intent.putExtra("startingAddress", startingAddress);
-                    intent.putExtra("endingAddress", endingAddress);
+                    if(coordinates.length() >=4){
+                        String[] coords = coordinates.split(",");
+                        intent.putExtra("startingLatitude", coords[0]);
+                        intent.putExtra("startingLongitude", coords[1]);
+                        intent.putExtra("endingLatitude", coords[2]);
+                        intent.putExtra("endingLongitude", coords[3]);
+
+                        Log.e("LOGGINGGGGGGG_MEI", coords[0].toString());
+                        Log.e("LOGGINGGGGGGG", coords[1].toString());
+                        Log.e("LOGGINGGGGGGG", coords[2].toString());
+                        Log.e("LOGGINGGGGGGG", coords[3].toString());
+                    }
+
+//                    intent.putExtra("startingAddress", startingAddress);
+//                    intent.putExtra("endingAddress", endingAddress);
                     intent.putExtra("tripID", tripID);
                     intent.putExtra("isPreviewing", true);
                     startActivity(intent);

@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -55,6 +56,8 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
     private TextView searchTextEnd;
     private ImageView searchIconStart;
     private ImageView searchIconEnd;
+    private ConstraintLayout startSearch;
+    private ConstraintLayout endSearch;
 
     private LatLng markerLocation;
     private Boolean isStarting;
@@ -67,7 +70,9 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
     private String arrivalTime;
     private boolean isPreviewing;
     private int tripID;
-    private String operator = "hello";
+    private String operator = "meis ";
+    LatLng startPoint;
+    LatLng endPoint;
 
     protected String origin;
     protected String destination;
@@ -90,16 +95,46 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         searchIconEnd = (ImageView) findViewById(R.id.search_image_end);
         confirmationButton = (Button) findViewById(R.id.confirmation_button);
         timePickerButton = (Button) findViewById(R.id.time_picker_button);
+        startSearch = (ConstraintLayout) findViewById(R.id.search_start);
+        endSearch = (ConstraintLayout) findViewById(R.id.search_end);
 
         Bundle bundle = getIntent().getExtras();
         isPreviewing = bundle.getBoolean("isPreviewing");
+        String startLng = "";
+        String startLat = "";
+        String  endLng = "";
+        String endLat = "";
+
+        startLat = bundle.getString("startingLatitude");
+        startLng = bundle.getString("startingLongitude");
+        endLng = bundle.getString("endingLatitude");
+        endLat = bundle.getString("endingLongitude" );
 
         mapButtons();
 
         if(isPreviewing){
-            origin = bundle.getString("startingAddress");
-            destination = bundle.getString("endingAddress");
+
+
+            origin = startLat + "," + startLng;
+            destination = endLat + "," + endLng;
+
+            double startLatitude = Double.valueOf(startLat);
+            double startLongitude = Double.valueOf(startLng);
+
+            double endLatitude = Double.valueOf(endLat);
+            double endLongitude = Double.valueOf(endLng);
+
+            startPoint = new LatLng(startLatitude, startLongitude);
+            endPoint = new LatLng(endLatitude, endLongitude);
+
+            Log.e("hello", "origin: " + startPoint.toString() + "end" + endPoint.toString());
+
+
+
+
             tripID = bundle.getInt("tripID");
+
+            Toast.makeText(this, "origin: " + origin + "\ndestination: " + destination + "\ntripID: " + tripID, Toast.LENGTH_LONG).show();
             asyncHttpRequestRoute();
 
             setupPreview();
@@ -197,6 +232,12 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        if(isPreviewing){
+            mMap.addMarker(new MarkerOptions().position(startPoint));
+            mMap.addMarker(new MarkerOptions().position(endPoint).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        }
+
     }
 
     private void asyncHttpRequestRoute() {
@@ -216,7 +257,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
             public void run() {
                 final String getDirections = "https://maps.googleapis.com/maps/api/directions/json";
                 AsyncHttpClient client = new AsyncHttpClient();
-                client.setTimeout(2500);
+                client.setTimeout(7500);
                 client.get(getDirections, params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -289,7 +330,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                 final String postDirections = "https://riderz-t10.herokuapp.com/insertReservation/" + operator + "/" + tripID;
                 AsyncHttpClient client = new AsyncHttpClient();
                 client.setTimeout(2500);
-                client.get(postDirections, new AsyncHttpResponseHandler() {
+                client.post(postDirections, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         // Check that we obtained a valid response from the server
@@ -300,45 +341,30 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                         } else {
                             // Response is valid
                             msg = "";
-                            try {
-                                // Parse JSON object and set EditText where valid
-                                JSONObject object = new JSONObject(new String(responseBody));
-                                JSONArray steps = object.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONArray("steps");
-                                ArrayList<String> points = new ArrayList<>();
-
-                                int length = steps.length();
-                                for(int i = 0; i < length; i++){
-                                    points.add(steps.getJSONObject(i).getJSONObject("polyline").getString("points"));
-                                }
-
-                                double lat = steps.getJSONObject(steps.length()/2).getJSONObject("start_location").getDouble("lat");
-                                double lng = steps.getJSONObject(steps.length()/2).getJSONObject("start_location").getDouble("lng");
-
-                                LatLng point = new LatLng(lat, lng);
-                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(point, 14));
-
-                                for(int i = 0; i < length; i++){
-                                    PolylineOptions options = new PolylineOptions();
-                                    options.color(Color.BLUE);
-                                    options.width(10);
-                                    options.addAll(PolyUtil.decode(points.get(i)));
-
-                                    mMap.addPolyline(options);
-
-                                }
-
-                                boundZoom();
-
-                            } catch (JSONException e) {
-                                Log.e("debug", "Failed to parse JSON object");
-                            }
+                            Log.e("debug", new String(responseBody));
                         }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                         // Most possible error is statusCode 500
+                        Log.e("debug", new String(responseBody));
                         Log.e("debug", "Server error - Failed to contact server");
+                    }
+                });
+
+                final String postDecrementSeats = "https://riderz-t10.herokuapp.com/decrementSeatsLeft/" + tripID + "/" + operator;
+                client.setTimeout(2500);
+                client.put(postDecrementSeats, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        Log.e("debug", new String(responseBody));
+                        // TODO MAP TO MAIN ACTIVITY
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        Log.e("debug", new String(responseBody));
                     }
                 });
             }
@@ -351,7 +377,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         calendar.set(Calendar.HOUR, i);
         calendar.set(Calendar.MINUTE, i1);
 
-        arrivalTime = arrivalTime + " " + i + ":" + i1 + ":00.000";
+        arrivalTime = arrivalTime + " " + String.format("%02d:%02d:00.000", i, i1);
 
         startAdsListing();
     }
@@ -368,7 +394,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         calendar.set(Calendar.MONTH, i1);
         calendar.set(Calendar.DAY_OF_MONTH, i2);
 
-        arrivalTime = i + "-" + i1 + "-" + i2;
+        arrivalTime = String.format("%02d-%02d-%02d", i, i1 + 1, i2);
 
         startTimePicker();
     }
@@ -466,6 +492,8 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         searchTextEnd.setVisibility(View.INVISIBLE);
         searchIconStart.setVisibility(View.INVISIBLE);
         searchIconEnd.setVisibility(View.INVISIBLE);
+        startSearch.setVisibility(View.INVISIBLE);
+        endSearch.setVisibility(View.INVISIBLE);
 
         confirmationButton.setVisibility(View.VISIBLE);
     }
