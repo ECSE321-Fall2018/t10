@@ -55,6 +55,8 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
 
     protected String origin;
     protected String destination;
+    protected String originAddr;
+    protected String destinationAddr;
     protected double distance;
     protected String duration;
     protected double price;
@@ -143,6 +145,10 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
                     //add starting marker
                     mMap.addMarker(new MarkerOptions().position(point)
                             .title(place.getAddress().toString()));
+
+                    originAddr = place.getAddress().toString();
+                    Log.e("Origin Address: ", originAddr);
+
                     searchTextStart.setText(place.getAddress());
                     origin = latitude + "," + longitude;
 
@@ -163,6 +169,10 @@ public class MapsDriversActivity extends FragmentActivity implements OnMapReadyC
                     mMap.addMarker(new MarkerOptions().position(point)
                             .title(place.getAddress().toString())
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
+                    destinationAddr = place.getAddress().toString();
+                    Log.e("Destination Address: ", destinationAddr);
+
                     searchTextEnd.setText(place.getAddress());
                     destination = latitude + "," + longitude;
 
