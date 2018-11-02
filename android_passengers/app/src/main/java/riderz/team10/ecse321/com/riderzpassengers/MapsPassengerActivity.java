@@ -53,6 +53,8 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
 
     private TextView searchTextStart;
     private TextView searchTextEnd;
+    private ImageView searchIconStart;
+    private ImageView searchIconEnd;
 
     private LatLng markerLocation;
     private Boolean isStarting;
@@ -63,6 +65,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
     private String endingLongitude;
     private String endingLatitude;
     private String arrivalTime;
+    private boolean isPreviewing;
 
     protected String origin;
     protected String destination;
@@ -86,52 +89,26 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         confirmationButton = (Button) findViewById(R.id.confirmation_button);
         timePickerButton = (Button) findViewById(R.id.time_picker_button);
 
-        timePickerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startDatePicker();
-            }
-        });
+        Bundle bundle = getIntent().getExtras();
+        isPreviewing = bundle.getBoolean("isPreviewing");
 
-        confirmationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                asyncHttpMakeReservation();
-            }
-        });
+        mapButtons();
 
-        searchTextStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isStarting = true;
-                createAutoCompleteIntent();
-            }
-        });
+        if(isPreviewing){
+            startingLongitude = bundle.getString("startingLongitude");
+            startingLatitude = bundle.getString("startingLatitude");
+            endingLongitude = bundle.getString("endingLongitude");
+            endingLongitude = bundle.getString("endingLongitude");
+            arrivalTime = bundle.getString("arrivalTime");
+            asyncHttpRequestRoute();
 
-        searchIconStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isStarting = true;
-                createAutoCompleteIntent();
-            }
-        });
+            searchTextStart.setVisibility(View.GONE);
+            searchTextEnd.setVisibility(View.GONE);
+            searchIconStart.setVisibility(View.GONE);
+            searchIconEnd.setVisibility(View.GONE);
 
-        searchTextEnd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isStarting = false;
-                createAutoCompleteIntent();
-            }
-        });
-
-        searchIconEnd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isStarting = false;
-                createAutoCompleteIntent();
-            }
-        });
-
+            confirmationButton.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -444,5 +421,62 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                 mMap.animateCamera(zout);
             }
         });
+    }
+
+    private void mapButtons(){
+        timePickerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startDatePicker();
+            }
+        });
+
+        confirmationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                asyncHttpMakeReservation();
+            }
+        });
+
+        searchTextStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isStarting = true;
+                createAutoCompleteIntent();
+            }
+        });
+
+        searchIconStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isStarting = true;
+                createAutoCompleteIntent();
+            }
+        });
+
+        searchTextEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isStarting = false;
+                createAutoCompleteIntent();
+            }
+        });
+
+        searchIconEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isStarting = false;
+                createAutoCompleteIntent();
+            }
+        });
+    }
+
+    private void setupPreview(){
+        searchTextStart.setVisibility(View.GONE);
+        searchTextEnd.setVisibility(View.GONE);
+        searchIconStart.setVisibility(View.GONE);
+        searchIconEnd.setVisibility(View.GONE);
+
+        confirmationButton.setVisibility(View.VISIBLE);
     }
 }
