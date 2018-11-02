@@ -19,6 +19,7 @@ import com.loopj.android.http.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -92,7 +93,6 @@ public class AdsListings extends AppCompatActivity {
             final LinearLayout textviewBlock = new LinearLayout(this);
             textviewBlock.setOrientation(LinearLayout.VERTICAL);
 
-            //TESTING
             final LinearLayout textviewBlock_INNER = new LinearLayout(this);
             textviewBlock_INNER.setOrientation(LinearLayout.VERTICAL);
 
@@ -100,6 +100,7 @@ public class AdsListings extends AppCompatActivity {
             TextView textView1 = new TextView(this);
             TextView textView2 = new TextView(this);
             TextView textView3 = new TextView(this);
+            TextView textView4 = new TextView(this);
 
             //Icon
             ImageView driver_icon_view = new ImageView(this);
@@ -113,18 +114,29 @@ public class AdsListings extends AppCompatActivity {
             textView1.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
             textView2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
             textView3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            textView4.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 
             try{
                 ReverseGeocoding reverseGeocoder = new ReverseGeocoding();
-                Address addressStart = reverseGeocoder.reverseLookup(this,Double.parseDouble(adsListings_list.get(i).getString("startingLatitude")),Double.parseDouble(adsListings_list.get(i).getString("startingLongitude")));
-                Address addressEnd = reverseGeocoder.reverseLookup(this,Double.parseDouble(adsListings_list.get(i).getString("endingLatitude")),Double.parseDouble(adsListings_list.get(i).getString("endingLongitude")));
+                Double startLatitude = Double.parseDouble(adsListings_list.get(i).getString("startingLatitude"));
+                Double startLongitude = Double.parseDouble(adsListings_list.get(i).getString("startingLongitude"));
+                Double endLatitude = Double.parseDouble(adsListings_list.get(i).getString("endingLatitude"));
+                Double endLongitude = Double.parseDouble(adsListings_list.get(i).getString("endingLongitude"));
+
+                Address addressStart = reverseGeocoder.reverseLookup(this, startLatitude, startLongitude);
+                Address addressEnd = reverseGeocoder.reverseLookup(this, endLatitude, endLongitude);
 //TESTING METHODS
 //                Address addressStart = reverseGeocoder.reverseLookup(getApplicationContext(),45.4724431,-73.5928623);
 //                Address addressEnd = reverseGeocoder.reverseLookup(getApplicationContext(),45.5087437,-73.6908567);
 
+                Double distance = PriceCalculator.calculateDistance(startLatitude, startLongitude, endLatitude, endLongitude);
+                Double price = PriceCalculator.calculatePrice(distance);
+                DecimalFormat df = new DecimalFormat("#.00");
+
                 textView1.setText("Pick up: " + reverseGeocoder.safeAddressToString(addressStart));
                 textView2.setText("Drop-off: " + reverseGeocoder.safeAddressToString(addressEnd));
-                textView3.setText("Arrival time: " + adsListings_list.get(i).getString("endingTime"));
+                textView3.setText("Arrival time: " + SQLCompliance.convertToSQLTimestamp(adsListings_list.get(i).getString("endingTime")));
+                textView4.setText("Price: " + df.format(price) + " $");
             }catch(Exception e){
                 Log.e("JSON ERROR", "Failed to get JSON field");
             }
@@ -135,6 +147,7 @@ public class AdsListings extends AppCompatActivity {
             textviewBlock.addView(textView1);
             textviewBlock.addView(textView2);
             textviewBlock.addView(textView3);
+            textviewBlock.addView(textView4);
             textviewBlock.addView(textviewBlock_INNER);
 
             try {
@@ -147,7 +160,7 @@ public class AdsListings extends AppCompatActivity {
             listingsRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    View inner_ads_info = ((LinearLayout) listingsRow.getChildAt(1)).getChildAt(3);
+                    View inner_ads_info = ((LinearLayout) listingsRow.getChildAt(1)).getChildAt(4);
                     if(expandable_id > -1){
                         findViewById(expandable_id).setVisibility(View.GONE);
                     }
@@ -183,7 +196,10 @@ public class AdsListings extends AppCompatActivity {
             selectAd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    textviewBlock_INNER.setVisibility(View.VISIBLE);
+                    String startingAddress = ((TextView)((LinearLayout) listingsRow.getChildAt(1)).getChildAt(0)).getText().toString();
+                    String endingAddress = ((TextView)((LinearLayout) listingsRow.getChildAt(1)).getChildAt(1)).getText().toString();
+
+
                 }
             });
 
@@ -303,7 +319,6 @@ public class AdsListings extends AppCompatActivity {
                                 textView3.setText("Car info: " + jb.getString("make") + ", " + jb.getString("model") +
                                         ", " + jb.getString("year"));
                                 textView4.setText("License plate: " + jb.getString("licensePlate"));
-
 
                                 //hide it until clicked
                                 collapsableBox.setVisibility(View.GONE);
