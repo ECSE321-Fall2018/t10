@@ -101,6 +101,10 @@ public class AdsListings extends AppCompatActivity {
             TextView textView2 = new TextView(this);
             TextView textView3 = new TextView(this);
             TextView textView4 = new TextView(this);
+            textView1.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            textView2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            textView3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            textView4.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 
             //Icon
             ImageView driver_icon_view = new ImageView(this);
@@ -110,13 +114,10 @@ public class AdsListings extends AppCompatActivity {
             listingsRow.setLayoutParams(param_2);
             textviewBlock.setLayoutParams(param_3);
             textviewBlock_INNER.setLayoutParams(param_3);
-            textviewBlock_INNER.setId(i);
-            textView1.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            textView2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            textView3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            textView4.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-
             try{
+                int tripID = Integer.parseInt(adsListings_list.get(i).getString("tripID"));
+                textviewBlock_INNER.setId(tripID);
+
                 ReverseGeocoding reverseGeocoder = new ReverseGeocoding();
                 Double startLatitude = Double.parseDouble(adsListings_list.get(i).getString("startingLatitude"));
                 Double startLongitude = Double.parseDouble(adsListings_list.get(i).getString("startingLongitude"));
@@ -198,7 +199,7 @@ public class AdsListings extends AppCompatActivity {
                 public void onClick(View v) {
                     String startingAddress = ((TextView)((LinearLayout) listingsRow.getChildAt(1)).getChildAt(0)).getText().toString();
                     String endingAddress = ((TextView)((LinearLayout) listingsRow.getChildAt(1)).getChildAt(1)).getText().toString();
-
+                    int tripID = listingsRow.getChildAt(1).getId();
 
                 }
             });
