@@ -82,22 +82,23 @@ public class Reservation extends AppCompatActivityBack implements HttpRequestCli
     private void createTextViews(final LinearLayout layout) {
         try {
             final Context context = getApplicationContext();
-            for (int i = 0; i < json.length(); i++) {
-                final int index = i;
-                JSONObject object = json.getJSONObject(i);
-                // Keep tripID immutable
-                final int tripID = object.getInt("tripID");
+            if (json != null) {
+                for (int i = 0; i < json.length(); i++) {
+                    final int index = i;
+                    JSONObject object = json.getJSONObject(i);
+                    // Keep tripID immutable
+                    final int tripID = object.getInt("tripID");
 
-                fetchAndDisplayReservations(layout, context, index, tripID, true);
+                    fetchAndDisplayReservations(layout, context, index, tripID, true);
+                }
             }
-
             // No reservations available to be seen
             if (validReservationsTripID.size() == 0) {
                 TextView tv = findViewById(R.id.reservationNone);
                 tv.setText("You have no reservations to view!");
 
                 // Convert padding from dp to px and set padding
-                int padding_in_px = Display.dpToPX(getResources(),16);
+                int padding_in_px = Display.dpToPX(getResources(), 16);
                 tv.setPadding(padding_in_px, padding_in_px, padding_in_px, padding_in_px);
 
                 // Set font size to 16dp

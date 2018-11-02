@@ -73,6 +73,7 @@
         android:layout_height="@dimen/textbox_height"
         android:text="Current Rating: "
         android:textColor="@color/darkAccent"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/driverCarSeats" />

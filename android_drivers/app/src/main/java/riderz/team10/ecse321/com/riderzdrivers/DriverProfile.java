@@ -4,13 +4,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,8 +46,7 @@ public class DriverProfile extends AppCompatActivity implements HttpRequestClien
         syncHttpRequest();
         syncHttpRequestCar();
         try {
-            Toast.makeText(this,jsonCar.toString() ,Toast.LENGTH_LONG ).show();
-            driverName.setText("Users:\n" + jsonDriver.getString("operator"));
+            driverName.setText("Users:\n" + username);
             driverRating.setText("Rating:\n" + jsonDriver.getString("rating"));
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,7 +73,7 @@ public class DriverProfile extends AppCompatActivity implements HttpRequestClien
     public void syncHttpRequest() {
         Log.e(TAG.driverProfileTag, "Entered Sync");
         final RequestParams params = new RequestParams();
-        params.add("operator", "mei");
+        params.add("operator", username);
 
         // Instantiate a new Runnable object which will handle http requests asynchronously
         // Then await until thread is finished to make the request synchronous.
@@ -121,7 +118,7 @@ public class DriverProfile extends AppCompatActivity implements HttpRequestClien
 
     public void syncHttpRequestCar() {
         final RequestParams params = new RequestParams();
-        params.add("operator", "mei");
+        params.add("operator", username);
 
         // Instantiate a new Runnable object which will handle http requests asynchronously
         // Then await until thread is finished to make the request synchronous.

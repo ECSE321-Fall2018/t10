@@ -25,6 +25,7 @@ import java.util.Arrays;
 
 import cz.msebera.android.httpclient.Header;
 import riderz.team10.ecse321.com.riderzpassengers.About;
+import riderz.team10.ecse321.com.riderzpassengers.MapsPassengerActivity;
 import riderz.team10.ecse321.com.riderzpassengers.R;
 import riderz.team10.ecse321.com.riderzpassengers.RiderzPassengers;
 import riderz.team10.ecse321.com.riderzpassengers.UserProfile;
@@ -135,10 +136,10 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
 
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(MainNavigation.this, .class);
-//                MainNavigation.this.startActivity(intent);
-                // TODO: map to activity for creating a new trip
-                Log.e(TAG.mainNavTag, "New Trip");
+                Intent intent = new Intent(MainNavigation.this, MapsPassengerActivity.class);
+                intent.putExtra("isPreviewing", false);
+                intent.putExtra("username", username);
+                MainNavigation.this.startActivity(intent);
             }
         });
 

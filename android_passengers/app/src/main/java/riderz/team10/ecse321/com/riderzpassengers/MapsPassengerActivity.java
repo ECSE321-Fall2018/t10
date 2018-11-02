@@ -45,6 +45,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import cz.msebera.android.httpclient.Header;
+import riderz.team10.ecse321.com.riderzpassengers.constants.HTTP;
+import riderz.team10.ecse321.com.riderzpassengers.navigation.MainNavigation;
 
 public class MapsPassengerActivity extends FragmentActivity implements OnMapReadyCallback, TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
 
@@ -70,7 +72,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
     private String arrivalTime;
     private boolean isPreviewing;
     private int tripID;
-    private String operator = "mei";
+    private String operator;
     LatLng startPoint;
     LatLng endPoint;
 
@@ -88,6 +90,8 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        operator = getIntent().getStringExtra("username");
 
         searchTextStart = (TextView) findViewById(R.id.search_text_start);
         searchTextEnd = (TextView) findViewById(R.id.search_text_end);
@@ -331,7 +335,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
             public void run() {
                 final String postDirections = "https://riderz-t10.herokuapp.com/insertReservation/" + operator + "/" + tripID;
                 AsyncHttpClient client = new AsyncHttpClient();
-                client.setTimeout(2500);
+                client.setTimeout(HTTP.maxTimeout);
                 client.post(postDirections, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -356,12 +360,14 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                 });
 
                 final String postDecrementSeats = "https://riderz-t10.herokuapp.com/decrementSeatsLeft/" + tripID + "/" + operator;
-                client.setTimeout(2500);
+                client.setTimeout(HTTP.maxTimeout);
                 client.put(postDecrementSeats, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         Log.e("debug", new String(responseBody));
-                        // TODO MAP TO MAIN ACTIVITY
+                        Intent intent = new Intent(MapsPassengerActivity.this, MainNavigation.class);
+                        finish();
+                        startActivity(intent);
                     }
 
                     @Override
@@ -413,6 +419,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         intent.putExtra("endingLatitude", endingLatitude);
         intent.putExtra("endingLongitude", endingLongitude);
         intent.putExtra("arrivalTime", arrivalTime);
+        intent.putExtra("username", operator);
         startActivity(intent);
     }
 

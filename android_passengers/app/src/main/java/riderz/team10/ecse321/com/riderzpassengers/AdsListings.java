@@ -15,20 +15,21 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.loopj.android.http.*;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
+import riderz.team10.ecse321.com.riderzpassengers.assets.convertor.PriceCalculator;
+import riderz.team10.ecse321.com.riderzpassengers.assets.convertor.SQLCompliance;
+import riderz.team10.ecse321.com.riderzpassengers.assets.geolocation.ReverseGeocoding;
+import riderz.team10.ecse321.com.riderzpassengers.constants.HTTP;
 
 /**
  * This class deals with fetching Driver's Advertisement listings and showing them to an user who
@@ -61,7 +62,7 @@ public class AdsListings extends AppCompatActivity {
     private String endingLatitude;
     private String maximumDistance = "1000000000";
     private String arrivalTime;
-    private String operator = "mei";
+    private String operator;
 
 
 
@@ -84,6 +85,8 @@ public class AdsListings extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ads_listings);
+
+        operator = getIntent().getStringExtra("username");
 
         selectAd = (Button) findViewById(R.id.selectAd);
 
@@ -135,7 +138,7 @@ public class AdsListings extends AppCompatActivity {
                 // Instantiate new synchronous http client, set timeout to 5 seconds and
                 // perform GET request
                 SyncHttpClient client = new SyncHttpClient();
-                client.setTimeout(5500);
+                client.setTimeout(HTTP.maxTimeoutExtended);
                 client.get(itinerary_baseURL, params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -205,7 +208,7 @@ public class AdsListings extends AppCompatActivity {
                 // Instantiate new synchronous http client, set timeout to 5 seconds and
                 // perform GET request
                 AsyncHttpClient client = new AsyncHttpClient();
-                client.setTimeout(5500);
+                client.setTimeout(HTTP.maxTimeoutExtended);
                 client.get(adsInfo_baseURL, params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -435,6 +438,7 @@ public class AdsListings extends AppCompatActivity {
                     }
                     intent.putExtra("tripID", tripID);
                     intent.putExtra("isPreviewing", true);
+                    intent.putExtra("username", operator);
                     startActivity(intent);
                 }
             });

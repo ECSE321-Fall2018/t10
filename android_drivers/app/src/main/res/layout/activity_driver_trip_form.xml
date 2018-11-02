@@ -10,7 +10,7 @@
     <TextView
         android:id="@+id/starttime"
         android:layout_width="136dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:text="Enter start time here:"
         android:textColor="@color/darkAccent"
         android:visibility="visible"
@@ -22,7 +22,6 @@
         android:id="@+id/starttime_form"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="26dp"
         android:ems="10"
         android:hint="@string/starttime_hint"
         android:inputType="time"
@@ -45,12 +44,12 @@
     <Button
         android:id="@+id/new_trip_button"
         android:layout_width="142dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="end"
-        android:layout_marginBottom="206dp"
         android:text="@string/newtrip_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/numberseats_form" />
 
@@ -70,7 +69,6 @@
         android:id="@+id/startdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="46dp"
         android:text="Enter start date here:"
         android:textColor="@color/darkAccent"
         app:layout_constraintBottom_toTopOf="@+id/startdate_form"

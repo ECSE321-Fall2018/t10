@@ -23,6 +23,7 @@ import riderz.team10.ecse321.com.riderzdrivers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
 import riderz.team10.ecse321.com.riderzdrivers.constants.URL;
 import riderz.team10.ecse321.com.riderzdrivers.http.HttpRequestClient;
+import riderz.team10.ecse321.com.riderzdrivers.navigation.MainNavigation;
 
 public class DriverTripForm extends AppCompatActivity implements HttpRequestClient {
 
@@ -48,7 +49,7 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
 
         // TODO UNCOMMENT *******************************************************
         //username = getIntent().getStringExtra("username");
-        username = "mei";
+        username = getIntent().getStringExtra("username");
         startingAddress = getIntent().getStringExtra("startingAddress");
         startingLatitude = getIntent().getStringExtra("startingLatitude");
         startingLongitude = getIntent().getStringExtra("startingLongitude");
@@ -113,22 +114,6 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
 
                 syncHttpRequestCreateRoute(tripID, startingLongitude, startingLatitude, startMoment,
                         destinationLongitude, destinationLatitude, endTimeString, numberSeats.getText().toString());
-
-                // TODO UNCOMMENT ONCE MERGE**********************************************************
-//                Intent nextIntent = new Intent(DriverTripForm.this, MainNavigation.class);
-//                finish();
-//                startActivity(nextIntent);
-                // TODO UNCOMMENT ONCE MERGE**********************************************************
-                /*TO DO: link to Ryan's code
-                Intent intent = new Intent(DriverTripForm.this,
-                    DriverTripForm.class);
-                intent.putExtra("startLocation", startLoc.toString());
-                intent.putExtra("endLocation", endLoc.toString());
-                intent.putExtra("startTime", startTime.toString());
-                intent.putExtra("startDate", startDate.toString());
-                intent.putExtra("numberSeats", numberSeats.toString());
-                DriverTripForm.this.startActivity(intent);
-                */
             }
         });
     }
@@ -160,6 +145,8 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         if (new Boolean(new String(responseBody))) {
                             Log.e(TAG.driverTripFormTag, "Created trip");
+                            Intent intent = new Intent(DriverTripForm.this, MainNavigation.class);
+                            DriverTripForm.this.startActivity(intent);
                         } else {
                             Log.e(TAG.driverTripFormTag, "Failed to create trip");
                         }

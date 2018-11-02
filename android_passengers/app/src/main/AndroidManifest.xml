@@ -29,14 +29,12 @@
         <activity
             android:name=".RiderzPassengers"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
-        <activity android:name=".AdsListings" />
+        <activity
+            android:name=".AdsListings"
+            android:label="@string/title_activity_ads_listings"
+            android:screenOrientation="portrait"/>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -45,7 +43,6 @@
             android:name=".MapsPassengerActivity"
             android:label="@string/title_activity_maps_passenger"
             android:screenOrientation="portrait" />
-        <activity android:name=".MainMenuActivity"></activity>
 
         <activity
             android:name=".SignUpPassengers"
@@ -69,7 +66,10 @@
             android:name=".settings.MainSetting"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait" />
-        <activity android:name=".settings.ModifyContactInfo" />
+        <activity
+            android:name=".settings.ModifyContactInfo"
+            android:label="@string/title_activity_modify_contact"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".settings.ModifyEmail"
             android:label="@string/title_activity_modify_email"
@@ -104,7 +104,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".UserProfile"
-            android:label="@string/title_activity_user_profile"></activity>
+            android:label="@string/title_activity_user_profile"
+            android:screenOrientation="portrait"></activity>
 
     </application>
 
