@@ -1,9 +1,8 @@
-package riderz.team10.ecse321.com.riderzdrivers;
+package riderz.team10.ecse321.com.riderzdrivers.settings;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +13,8 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.SyncHttpClient;
 
 import cz.msebera.android.httpclient.Header;
+import riderz.team10.ecse321.com.riderzdrivers.R;
+import riderz.team10.ecse321.com.riderzdrivers.assets.template.activity.AppCompatActivityBack;
 import riderz.team10.ecse321.com.riderzdrivers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
 import riderz.team10.ecse321.com.riderzdrivers.constants.URL;
@@ -23,7 +24,7 @@ import riderz.team10.ecse321.com.riderzdrivers.http.HttpRequestClient;
  * Reset password verification activity. Verifies that user's email address and username match
  * whatever is provided within the database.
  */
-public class ResetPasswordVerification extends AppCompatActivity implements HttpRequestClient {
+public class ResetPasswordVerification extends AppCompatActivityBack implements HttpRequestClient {
     // verifyError is to be accessed within nested functions, required to give global access
     protected TextView errorMsg;
 
@@ -35,9 +36,6 @@ public class ResetPasswordVerification extends AppCompatActivity implements Http
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password_verification);
-
-        // Enable back button on action bar
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Hide error message for now
         errorMsg = findViewById(R.id.verifyError);
@@ -59,6 +57,13 @@ public class ResetPasswordVerification extends AppCompatActivity implements Http
                     // Clear error message
                     msg = "";
                     success = false;
+                    final EditText username = findViewById(R.id.resetUsername);
+                    // Launch reset password verification activity when on click event gets triggered
+                    Intent intent = new Intent(ResetPasswordVerification.this,
+                            ResetPassword.class);
+                    intent.putExtra("username", username.getText().toString());
+                    ResetPasswordVerification.this.startActivity(intent);
+                    finish();
                 }
                 // Display error message
                 errorMsg.setText(msg);
@@ -66,7 +71,6 @@ public class ResetPasswordVerification extends AppCompatActivity implements Http
             }
         });
     }
-
 
     @Override
     public void syncHttpRequest() {
@@ -86,8 +90,7 @@ public class ResetPasswordVerification extends AppCompatActivity implements Http
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                // Instantiate new synchronous http client, set timeout to 5 seconds and
-                // perform post request
+                // Instantiate new synchronous http client, set timeout and perform get request
                 SyncHttpClient client = new SyncHttpClient();
                 client.setTimeout(HTTP.maxTimeout);
                 client.get(resetUrl, params, new AsyncHttpResponseHandler() {
@@ -95,7 +98,6 @@ public class ResetPasswordVerification extends AppCompatActivity implements Http
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         // Null was returned
                         if (responseBody.length == 0) {
-                            Log.e(TAG.verifyTag, "User: " + usernameText + " does not exist");
                             success = false;
                             msg = "Combination does not exist";
                             return;
@@ -128,19 +130,6 @@ public class ResetPasswordVerification extends AppCompatActivity implements Http
         } catch (InterruptedException e) {
             Log.e(TAG.verifyTag, "Thread exception in reset thread");
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        // Allows navigation back to previous screen
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-
-        return false;
     }
 }
 

@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ecse321.team10.riderz.model.Driver;
+import com.ecse321.team10.riderz.model.AdInformation;
 import com.ecse321.team10.riderz.model.Car;
 import com.ecse321.team10.riderz.model.User;
 import com.ecse321.team10.riderz.model.Trip;
@@ -960,6 +961,32 @@ public class MySQLJDBC {
 			return null;
 		}
 	}
+	
+	/**
+	 * Returns the driver's name based on a tripID.
+	 * @param tripID - An integer uniquely identifying a trip
+	 * @return A driver's name
+	 */
+	public String getDriverNameByTripID(int tripID) {
+		String getDriverNameByTripID = "SELECT CONCAT(firstName, ' ', lastName) AS name FROM users " +
+									   "WHERE username IN (SELECT operator FROM trip WHERE tripID = ?);";
+		PreparedStatement ps = null;
+		String name = null;
+		try {
+			ps = c.prepareStatement(getDriverNameByTripID);
+			ps.setInt(1, tripID);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				name = rs.getString("name");
+			}
+			logger.info("Name has been returned for trip " + tripID);
+			ps.close();
+			return name;
+		} catch (Exception e) {
+		logger.error(e.getClass().getName() + ": " + e.getMessage());
+		return null;
+		}
+	}
 
 	//=======================
 	// Itinerary API
@@ -1084,33 +1111,76 @@ public class MySQLJDBC {
 			return null;
 		}
 	}
+	
+	/**
+	 * Fetches all itineraries offered by an user.
+	 * @param operator 		-	A String representing an username.
+	 * @return An ArrayList of Itinerary objects matching the search criteria. Null if an error occurred.
+	 */
+	public ArrayList<Itinerary> getItineraryByUsername(String operator) {
+		ArrayList<Itinerary> itinerary = new ArrayList<>();
+		String getItineraryByUsername = "SELECT * FROM itinerary WHERE itinerary.tripID IN " + 
+										"(SELECT trip.tripID FROM trip WHERE operator = ?);";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(getItineraryByUsername);
+			ps.setString(1, operator);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				itinerary.add(new Itinerary(rs.getInt("tripID"),
+						  rs.getDouble("startingLongitude"),
+						  rs.getDouble("startingLatitude"),
+						  rs.getTimestamp("startingTime"),
+						  rs.getDouble("endingLongitude"),
+						  rs.getDouble("endingLatitude"),
+						  rs.getTimestamp("endingTime"),
+						  rs.getInt("seatsLeft")));
+			}
+			rs.close();
+			logger.info(String.format("All itineraries have been returned from the database for user %s", operator));
+			return itinerary;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
 
 	/**
 	 * Fetches entries from the database fitting search criteria based on a spherical distance
 	 * algorithm. Recommended to have a low maximum search radius to obtain more accurate results.
+	 * @param startingLongitude	-	A double representing source longitude.
+	 * @param startingLatitude	-	A double representing starting latitude.
 	 * @param endingLongitude	-	A double representing destination longitude.
 	 * @param endingLatitude	-	A double representing destination latitude.
 	 * @param maximumDistance	-	A double representing maximum search radius in meters.
 	 * @param arrivalTime		-	A java.sql.Timestamp representing preferred arrival time
 	 * @return An ArrayList of Itinerary objects matching the search criteria. Null if an error occurred.
 	 */
-	public ArrayList<Itinerary> getItineraryNearDestination(double endingLongitude,
-					double endingLatitude, double maximumDistance, Timestamp arrivalTime) {
+	public ArrayList<Itinerary> getItineraryNearDestination(double startingLongitude,
+					double startingLatitude, double endingLongitude, double endingLatitude, double maximumDistance, 
+					Timestamp arrivalTime) {
 		ArrayList<Itinerary> itineraryList = new ArrayList<Itinerary>();
 		double radiusOfEarth = 6371000.0;
-		String getItineraryNearDestination = "SELECT * FROM itinerary WHERE SQRT(" +
-						   "POWER((2 * PI() * ? * (ABS(endingLongitude - ?) / 360.0)), 2) + " +
-						   "POWER((2 * PI() * ? * (ABS(endingLatitude - ?) / 360.0)), 2)) <= ? " +
-						   "AND endingTime > NOW() AND endingTime <= ?;";
+		String getItineraryNearDestination = "SELECT * FROM itinerary WHERE " + 
+				"SQRT(POWER((2 * PI() * ? * (ABS(startingLongitude - ?) / 360.0)), 2) + " + 
+				"POWER((2 * PI() *  ? * (ABS(startingLatitude - ?) / 360.0)), 2)) <= ? AND " + 
+				"SQRT(POWER((2 * PI() * ? * (ABS(endingLongitude - ?) / 360.0)), 2) + " + 
+				"POWER((2 * PI() * ? * (ABS(endingLatitude - ?) / 360.0)), 2)) <= ?" + 
+				"AND endingTime > NOW() AND endingTime <= ?;";
 		PreparedStatement ps = null;
 		try {
 			ps = c.prepareStatement(getItineraryNearDestination);
 			ps.setDouble(1, radiusOfEarth);
-			ps.setDouble(2, endingLongitude);
+			ps.setDouble(2, startingLongitude);
 			ps.setDouble(3, radiusOfEarth);
-			ps.setDouble(4, endingLatitude);
+			ps.setDouble(4, startingLatitude);
 			ps.setDouble(5, maximumDistance);
-			ps.setTimestamp(6, arrivalTime);
+			ps.setDouble(6, radiusOfEarth);
+			ps.setDouble(7, endingLongitude);
+			ps.setDouble(8, radiusOfEarth);
+			ps.setDouble(9, endingLatitude);
+			ps.setDouble(10, maximumDistance);
+			ps.setTimestamp(11, arrivalTime);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				itineraryList.add(new Itinerary(rs.getInt("tripID"),
@@ -1449,28 +1519,65 @@ public class MySQLJDBC {
 	 * @return True if an User is successfully authenticated. False otherwise.
 	 */
 	public boolean verifyAuthentication(String username) {
-		String verifyAuthentication = "SELECT * FROM session WHERE username = ? AND sessionTime <= ? + 3600;";
+//		String verifyAuthentication = "SELECT * FROM session WHERE username = ? AND sessionTime <= ? + 3600;";
+//		PreparedStatement ps = null;
+//		try {
+//			ps = c.prepareStatement(verifyAuthentication);
+//			ps.setString(1, username);
+//			ps.setLong(2, (System.currentTimeMillis() / 1000L));
+//			ResultSet rs = ps.executeQuery();
+//			int rows = 0;
+//			if (rs.last()) {
+//				rows = rs.getRow();
+//			}
+//			if (rows == 0) {
+//				logger.info(username + " failed to authentication themself");
+//				ps.close();
+//				return false;
+//			}
+//			logger.info(username + " successfully authenticated themself");
+//			ps.close();
+//			return true;
+//		} catch (Exception e) {
+//			logger.error(e.getClass().getName() + ": " + e.getMessage());
+//			return false;
+//		}
+		return true;
+	}
+
+	//=======================
+	// Misc API
+	//=======================
+	/**
+	 * Fetches information about an advertisement using a trip ID.
+	 * @param tripID 		-	An integer representing a trip
+	 * @return An AdInformation object if found. Null otherwise.
+	 */
+	public AdInformation getAdInformation(int tripID) {
+		String adInformation = "SELECT CONCAT(users.firstName, ' ', users.lastName) AS name, " +
+				"users.phone, car.make, car.model, car.year, car.licensePlate FROM users " +
+				"LEFT JOIN car ON car.operator = users.username " +
+				"WHERE users.username IN (SELECT trip.operator FROM trip WHERE trip.tripID = ?);";
 		PreparedStatement ps = null;
+		AdInformation info = null;
 		try {
-			ps = c.prepareStatement(verifyAuthentication);
-			ps.setString(1, username);
-			ps.setLong(2, (System.currentTimeMillis() / 1000L));
+			ps = c.prepareStatement(adInformation);
+			ps.setInt(1, tripID);
 			ResultSet rs = ps.executeQuery();
-			int rows = 0;
-			if (rs.last()) {
-				rows = rs.getRow();
+			while (rs.next()) {
+				info = new AdInformation(rs.getString("name"),
+										 rs.getString("phone"),
+										 rs.getString("make"),
+										 rs.getString("model"),
+										 rs.getInt("year"),
+										 rs.getString("licensePlate"));
 			}
-			if (rows == 0) {
-				logger.info(username + " failed to authentication themself");
-				ps.close();
-				return false;
-			}
-			logger.info(username + " successfully authenticated themself");
 			ps.close();
-			return true;
+			logger.info("Ad information has been fetched");
+			return info;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
-			return false;
+			return null;
 		}
 	}
 

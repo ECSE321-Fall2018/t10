@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".settings.ModifyCar">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="@dimen/outer_layout_height_large"
+        android:layout_marginStart="@dimen/outer_layout_margin_horizontal"
+        android:layout_marginEnd="@dimen/outer_layout_margin_horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/updateCarMake"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/textbox_smargin"
+            android:layout_marginBottom="@dimen/textbox_smargin"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:maxLength="@integer/maximum_make_length"
+            android:hint="@string/make_hint"
+            app:layout_constraintBottom_toTopOf="@+id/updateCarModel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/updateCarModel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/textbox_smargin"
+            android:layout_marginBottom="@dimen/textbox_smargin"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:maxLength="@integer/maximum_model_length"
+            android:hint="@string/model_hint"
+            app:layout_constraintBottom_toTopOf="@+id/updateCarYear"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/updateCarMake" />
+
+        <EditText
+            android:id="@+id/updateCarYear"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/textbox_smargin"
+            android:layout_marginBottom="@dimen/textbox_smargin"
+            android:ems="10"
+            android:inputType="number"
+            android:maxLength="@integer/maximum_year_length"
+            android:hint="@string/year_hint"
+            app:layout_constraintBottom_toTopOf="@+id/updateCarSeats"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/updateCarModel" />
+
+        <EditText
+            android:id="@+id/updateCarSeats"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/textbox_smargin"
+            android:layout_marginBottom="@dimen/textbox_smargin"
+            android:ems="10"
+            android:inputType="number"
+            android:hint="@string/seats_hint"
+            app:layout_constraintBottom_toTopOf="@+id/updateCarFuelEfficiency"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/updateCarYear" />
+
+        <EditText
+            android:id="@+id/updateCarFuelEfficiency"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/textbox_smargin"
+            android:layout_marginBottom="@dimen/textbox_smargin"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:hint="@string/fuel_efficiency_hint"
+            app:layout_constraintBottom_toTopOf="@+id/updateCarLicense"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/updateCarSeats" />
+
+        <EditText
+            android:id="@+id/updateCarLicense"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/textbox_smargin"
+            android:layout_marginBottom="@dimen/textbox_smargin"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:maxLength="@integer/maximum_license_plate_length"
+            android:hint="@string/license_plate_hint"
+            app:layout_constraintBottom_toTopOf="@+id/updateCarError"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/updateCarFuelEfficiency" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/constraintLayout3"
+            android:layout_width="@dimen/button_width_large"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/updateCarError">
+
+            <Button
+                android:id="@+id/updateCarButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:text="@string/change_car_button"
+                android:textColor="@color/buttonTextColor"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/updateCarError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/textbox_smargin"
+            android:layout_marginBottom="@dimen/textbox_smargin"
+            android:text="@string/default_error_text"
+            android:textColor="@color/errorColor"
+            app:layout_constraintBottom_toTopOf="@+id/constraintLayout3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/updateCarLicense" />
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>
