@@ -26,6 +26,9 @@ import riderz.team10.ecse321.com.riderzdrivers.http.HttpRequestClient;
 
 public class DriverTripForm extends AppCompatActivity implements HttpRequestClient {
 
+
+    private JSONObject jsonCreateRoute;
+    private JSONObject jsonRouteLast;
     private JSONObject jsonTrip;
     private String username;
 
@@ -74,14 +77,29 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
 
             @Override
             public void onClick(View v) {
-                final TextView startLoc = (TextView) findViewById(R.id.startlocation_form);
-                final TextView endLoc   = (TextView) findViewById(R.id.endlocation_form);
+//                final TextView startLoc = (TextView) findViewById(R.id.startlocation_form);
+//                final TextView endLoc   = (TextView) findViewById(R.id.endlocation_form);
                 final TextView startTime   = (TextView) findViewById(R.id.endlocation_form);
                 final TextView startDate   = (TextView) findViewById(R.id.endlocation_form);
                 final TextView numberSeats   = (TextView) findViewById(R.id.endlocation_form);
                 //add check if the fields are empty, return a warning
 
-                syncHttpRequest();
+
+
+                syncHttpRequestCreate();
+                syncHttpRequestLastTrip();
+                String tripID = null;
+                try {
+                    tripID = jsonRouteLast.getString("tripID");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                //i receive startLong, startLat, endLong, endLat, time difference(ms)
+                //the start time is taken from driver
+
+//                syncHttpRequestCreateRoute(tripID, startLongitude, startLatitude, startTime,
+//                        endLongitude, endLatitude, endTime);
 
                 /*TO DO: link to Ryan's code
                 Intent intent = new Intent(DriverTripForm.this,
@@ -101,7 +119,97 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
     public void syncHttpRequest(){
 
     }
-    public void syncHttpRequest(String tripID, String startLongitude, String startLatitude, String startTime,
+    //create the trip
+    public void syncHttpRequestCreate(){
+        final RequestParams params = new RequestParams();
+        params.add("operator", username);
+
+        // Instantiate a new Runnable object which will handle http requests asynchronously
+        // Then await until thread is finished to make the request synchronous.
+        Thread t = new Thread(new Runnable() {
+            // URL to target
+            final String tripUrl = URL.baseUrl + "trip/insertTrip";
+
+            @Override
+            public void run() {
+                // Instantiate new synchronous http client, set timeout and perform get request
+                // Uses extended timeout
+                SyncHttpClient client = new SyncHttpClient();
+                client.setTimeout(HTTP.maxTimeoutExtended);
+                client.put(tripUrl, params, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        try {
+                            jsonCreateRoute = new JSONObject(new String(responseBody));
+                        } catch (JSONException e) {
+                            Log.e(riderz.team10.ecse321.com.riderzdrivers.constants.TAG.driverTripFormTag, "Failed to parse JSON from HTTP response");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers,
+                                          byte[] responseBody, Throwable error) {
+                        Log.e(TAG.driverTripFormTag, "Server error - could not contact server");
+                    }
+                });
+            }
+        });
+        t.start();
+
+        // Await until thread t has finished its execution before proceeding
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            Log.e(TAG.driverTripFormTag, "Thread exception in login thread");
+        }
+    }
+
+    public void syncHttpRequestLastTrip(){
+        final RequestParams params = new RequestParams();
+        params.add("operator", username);
+
+        // Instantiate a new Runnable object which will handle http requests asynchronously
+        // Then await until thread is finished to make the request synchronous.
+        Thread t = new Thread(new Runnable() {
+            // URL to target
+            final String tripUrl = URL.baseUrl + "trip/last";
+
+            @Override
+            public void run() {
+                // Instantiate new synchronous http client, set timeout and perform get request
+                // Uses extended timeout
+                SyncHttpClient client = new SyncHttpClient();
+                client.setTimeout(HTTP.maxTimeoutExtended);
+                client.put(tripUrl, params, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        try {
+                            jsonRouteLast = new JSONObject(new String(responseBody));
+                        } catch (JSONException e) {
+                            Log.e(riderz.team10.ecse321.com.riderzdrivers.constants.TAG.driverTripFormTag, "Failed to parse JSON from HTTP response");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers,
+                                          byte[] responseBody, Throwable error) {
+                        Log.e(TAG.driverTripFormTag, "Server error - could not contact server");
+                    }
+                });
+            }
+        });
+        t.start();
+
+        // Await until thread t has finished its execution before proceeding
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            Log.e(TAG.driverTripFormTag, "Thread exception in login thread");
+        }
+
+    }
+
+    public void syncHttpRequestCreateRoute(String tripID, String startLongitude, String startLatitude, String startTime,
                                 String endLongitude, String endLatitude, String endTime) {
 
         final RequestParams params = new RequestParams();
