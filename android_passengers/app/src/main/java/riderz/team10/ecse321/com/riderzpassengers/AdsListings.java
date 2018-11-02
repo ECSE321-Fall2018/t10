@@ -1,5 +1,6 @@
 package riderz.team10.ecse321.com.riderzpassengers;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.location.Address;
 import android.support.constraint.ConstraintLayout;
@@ -19,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -26,17 +28,24 @@ public class AdsListings extends AppCompatActivity {
 
     private TextView editTxt;
     private Button selectAd;
-    private ArrayList<JSONObject> arrayList = new ArrayList<JSONObject>();
+    private ArrayList<JSONObject> adsListings_list = new ArrayList<JSONObject>();
+    private ArrayList<JSONObject> adsInfo_list = new ArrayList<JSONObject>();
+    private ArrayList<LinearLayout> adsInfo_boxes = new ArrayList<LinearLayout>();
     private String response;
 
+    private int expandable_id= -1;
+    private HashMap<String, Integer> hash = new HashMap<>();
+
     //get data from Ryan
-    final String itinerary_baseURL = "https://riderz-t10.herokuapp.com/getItineraryNearDestination";
+    final String baseUrl = "https://riderz-t10.herokuapp.com/";
+    final String itinerary_baseURL = baseUrl + "getItineraryNearDestination";
+    final String adsInfo_baseURL = baseUrl + "adInfo";
     final String startingLongitude = "22.2222";
     final String startingLatitude = "-33.33333";
     final String endingLongitude = "12.232323";
     final String endingLatitude = "-52.525252";
-    final String maximumDistance = "10000000000000000";
-    final String arrivalTime = "2051-01-01 02:30:00.000";
+    final String maximumDistance = "100";
+    final String arrivalTime = "2051-02-01 02:30:00.000";
     final String operator = "mei";
 
     //define different types of layout params
@@ -71,23 +80,26 @@ public class AdsListings extends AppCompatActivity {
         //HTTP GET request to get itineraries near destination
         getAdsListings_sync();
 
-        //loop for each element from database
-        for(int i=0; i<arrayList.size(); i++){
+        //loop for each element from database ///adsListings_list.size()
+        for(int i=0; i<adsListings_list.size(); i++){
+
             //Ads listings row
             final LinearLayout listingsRow = new LinearLayout(this);
             listingsRow.setOrientation(LinearLayout.HORIZONTAL);
             listingsRow.setBackgroundColor(Color.WHITE);
             listingsRow.setPadding(10, 10, 10, 10);
 
-            LinearLayout textviewBlock = new LinearLayout(this);
+            final LinearLayout textviewBlock = new LinearLayout(this);
             textviewBlock.setOrientation(LinearLayout.VERTICAL);
+
+            //TESTING
+            final LinearLayout textviewBlock_INNER = new LinearLayout(this);
+            textviewBlock_INNER.setOrientation(LinearLayout.VERTICAL);
 
             //Ads info box
             TextView textView1 = new TextView(this);
             TextView textView2 = new TextView(this);
             TextView textView3 = new TextView(this);
-            TextView textView4 = new TextView(this);
-            TextView textView5 = new TextView(this);
 
             //Icon
             ImageView driver_icon_view = new ImageView(this);
@@ -96,25 +108,23 @@ public class AdsListings extends AppCompatActivity {
 
             listingsRow.setLayoutParams(param_2);
             textviewBlock.setLayoutParams(param_3);
+            textviewBlock_INNER.setLayoutParams(param_3);
+            textviewBlock_INNER.setId(i);
             textView1.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
             textView2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
             textView3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            textView4.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            textView5.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 
             try{
                 ReverseGeocoding reverseGeocoder = new ReverseGeocoding();
-                Address addressStart = reverseGeocoder.reverseLookup(this,Double.parseDouble(arrayList.get(i).getString("startingLatitude")),Double.parseDouble(arrayList.get(i).getString("startingLongitude")));
-                Address addressEnd = reverseGeocoder.reverseLookup(this,Double.parseDouble(arrayList.get(i).getString("endingLatitude")),Double.parseDouble(arrayList.get(i).getString("endingLongitude")));
+                Address addressStart = reverseGeocoder.reverseLookup(this,Double.parseDouble(adsListings_list.get(i).getString("startingLatitude")),Double.parseDouble(adsListings_list.get(i).getString("startingLongitude")));
+                Address addressEnd = reverseGeocoder.reverseLookup(this,Double.parseDouble(adsListings_list.get(i).getString("endingLatitude")),Double.parseDouble(adsListings_list.get(i).getString("endingLongitude")));
 //TESTING METHODS
 //                Address addressStart = reverseGeocoder.reverseLookup(getApplicationContext(),45.4724431,-73.5928623);
 //                Address addressEnd = reverseGeocoder.reverseLookup(getApplicationContext(),45.5087437,-73.6908567);
 
-                textView1.setText(reverseGeocoder.safeAddressToString(addressStart));
-                textView2.setText(reverseGeocoder.safeAddressToString(addressEnd));
-                textView3.setText(arrayList.get(i).getString("endingTime"));
-                textView4.setText(arrayList.get(i).getString("startingLatitude"));
-                textView5.setText(arrayList.get(i).getString("startingLongitude"));
+                textView1.setText("Pick up: " + reverseGeocoder.safeAddressToString(addressStart));
+                textView2.setText("Drop-off: " + reverseGeocoder.safeAddressToString(addressEnd));
+                textView3.setText("Arrival time: " + adsListings_list.get(i).getString("endingTime"));
             }catch(Exception e){
                 Log.e("JSON ERROR", "Failed to get JSON field");
             }
@@ -125,14 +135,27 @@ public class AdsListings extends AppCompatActivity {
             textviewBlock.addView(textView1);
             textviewBlock.addView(textView2);
             textviewBlock.addView(textView3);
-            textviewBlock.addView(textView4);
-            textviewBlock.addView(textView5);
+            textviewBlock.addView(textviewBlock_INNER);
+
+            try {
+                getAdsInfo_async(adsListings_list.get(i).getString("tripID"), textviewBlock_INNER);
+            }catch(Exception e){
+                Log.e("ADS_INFO", "Failed to GET Ads info from server.");
+            }
 
             //clicking on the rows
             listingsRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    editTxt.setText(( (TextView)((LinearLayout) listingsRow.getChildAt(1)).getChildAt(0)).getText());
+                    View inner_ads_info = ((LinearLayout) listingsRow.getChildAt(1)).getChildAt(3);
+                    if(expandable_id > -1){
+                        findViewById(expandable_id).setVisibility(View.GONE);
+                    }
+                    expandable_id = inner_ads_info.getId();
+                    inner_ads_info.setVisibility(View.VISIBLE);
+
+                    TextView startingAddress = (TextView)((LinearLayout) listingsRow.getChildAt(1)).getChildAt(0);
+                    editTxt.setText(startingAddress.getText());
                     selectAd.setText("Request driver");
                     selectAd.setBackgroundColor(Color.parseColor("#FF5E84"));
                     for(int i=0; i< listingsContainer.getChildCount(); i++){
@@ -146,6 +169,9 @@ public class AdsListings extends AppCompatActivity {
             background.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(expandable_id > -1){
+                        findViewById(expandable_id).setVisibility(View.GONE);
+                    }
                     selectAd.setText("Pick a driver");
                     selectAd.setBackgroundColor(Color.parseColor("#d6d7d7"));
                     for(int i=0; i< listingsContainer.getChildCount(); i++){
@@ -153,12 +179,20 @@ public class AdsListings extends AppCompatActivity {
                     }
                 }
             });
+
+            selectAd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    textviewBlock_INNER.setVisibility(View.VISIBLE);
+                }
+            });
+
         }
     }
 
     public void getAdsListings_sync() {
-        if(arrayList != null && arrayList.size()>0){
-            arrayList.clear();
+        if(adsListings_list != null && adsListings_list.size()>0){
+            adsListings_list.clear();
         }
         final RequestParams params = new RequestParams();
         params.add("startingLongitude", startingLongitude);
@@ -176,7 +210,7 @@ public class AdsListings extends AppCompatActivity {
                 // Instantiate new synchronous http client, set timeout to 5 seconds and
                 // perform GET request
                 SyncHttpClient client = new SyncHttpClient();
-                client.setTimeout(1500);
+                client.setTimeout(5500);
                 client.get(itinerary_baseURL, params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -191,7 +225,7 @@ public class AdsListings extends AppCompatActivity {
                                 if(jr.length()>0) {
                                     for(int i=0; i<jr.length(); i++){
                                         jb = (JSONObject)jr.getJSONObject(i);
-                                        arrayList.add(jb);
+                                        adsListings_list.add(jb);
                                     }
                                 }
                             }catch (Exception e) {
@@ -220,6 +254,90 @@ public class AdsListings extends AppCompatActivity {
         } catch (InterruptedException e) {
             Log.e("Ads_Listings", "Thread exception in login thread");
         }
+    }
+
+    public void getAdsInfo_async(final String tripID, final LinearLayout collapsableBox) {
+        if(adsInfo_list != null && adsInfo_list.size()>0){
+            adsInfo_list.clear();
+        }
+        final Context context = getApplicationContext();
+        final RequestParams params = new RequestParams();
+        //initialize retry flags
+        hash.put(tripID,0);
+        params.add("tripID", tripID);
+
+        // Instantiate a new Runnable object which will handle http requests asynchronously
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // Instantiate new synchronous http client, set timeout to 5 seconds and
+                // perform GET request
+                AsyncHttpClient client = new AsyncHttpClient();
+                client.setTimeout(5500);
+                client.get(adsInfo_baseURL, params, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        String responseString = new String(responseBody);
+                        if(!responseString.isEmpty()){
+                            Log.d("Ads_Info", "Ads Info not empty");
+                            Log.d("Ads_Info", responseString);
+                            response = "SUCCESS";
+                            try {
+                                JSONObject jb = new JSONObject(responseString);
+                                adsInfo_list.add(jb);
+
+                                //create contents
+                                TextView textView1 = new TextView(context);
+                                TextView textView2 = new TextView(context);
+                                TextView textView3 = new TextView(context);
+                                TextView textView4 = new TextView(context);
+
+                                //attach contents to collapsable box
+                                collapsableBox.addView(textView1);
+                                collapsableBox.addView(textView2);
+                                collapsableBox.addView(textView3);
+                                collapsableBox.addView(textView4);
+
+                                textView1.setText("Driver's name: " + jb.getString("name"));
+                                textView2.setText("Tel: " + jb.getString("phone"));
+                                textView3.setText("Car info: " + jb.getString("make") + ", " + jb.getString("model") +
+                                        ", " + jb.getString("year"));
+                                textView4.setText("License plate: " + jb.getString("licensePlate"));
+
+
+                                //hide it until clicked
+                                collapsableBox.setVisibility(View.GONE);
+
+                            }catch (Exception e) {
+                                Log.e("Ads_Info", "Failed to retrieve Ads Info");
+                                Log.e("Ads_Info", e.toString());
+
+                                response = "ERROR";
+                            }
+                        }else{
+                            Log.e("Ads_Info", "Failed to retrieve Ads Info");
+                            response = "ERROR";
+                        }
+                    }
+
+                    public void onFailure(int statusCode, Header[] headers,
+                                          byte[] responseBody, Throwable error) {
+                        Log.e("Ads_Info", "Server error - could not contact server");
+                        if(hash.containsKey(tripID)){
+                            int retry_counts = hash.get(tripID);
+                            if(retry_counts < 3){
+                                retry_counts++;
+                                Log.e("Ads_Info", "Server error - retrying " + retry_counts + " times in thread with trip ID: " + tripID);
+                                hash.put(tripID, retry_counts);
+                                getAdsInfo_async(tripID, collapsableBox);
+                            }else {
+                                Log.e("Ads_Info", "Server error - Numbers of retries exceeded. Could not contact server");
+                            }
+                        }
+                    }
+                });
+            }
+        }).run();
     }
 
 }
