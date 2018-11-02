@@ -71,19 +71,19 @@
 
 
     <!-- SignUpDriver components -->
-    <string name="email">Email</string>
-    <string name="phonenumber">PhoneNumber</string>
+    <string name="email">Email address</string>
+    <string name="phonenumber">Phone Number</string>
     <string name="username">Username</string>
     <string name="lastname">Last Name</string>
-    <string name="firstname">FirstName</string>
+    <string name="firstname">First Name</string>
     <string name="sign_up">Sign Up</string>
     <string name="verify_password">Verify Password</string>
     <string name="password">Password</string>
     <string name="phone_number">Phone Number</string>
-    <string name="car_manufacturer">Car Manufacturer</string>
+    <string name="car_manufacturer">Car Make</string>
     <string name="car_model">Car Model</string>
     <string name="car_model_year">Car Model Year</string>
     <string name="seats_available">Seats Available</string>
-    <string name="gaz_per_kilometer_l_km">Gaz per Kilometer (l/km)</string>
+    <string name="gaz_per_kilometer_l_km">Fuel efficiency (L/100km)</string>
     <string name="license_plate">License Plate #</string>
 </resources>
