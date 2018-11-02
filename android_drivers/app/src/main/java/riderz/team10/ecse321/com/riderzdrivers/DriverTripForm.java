@@ -101,17 +101,18 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
     public void syncHttpRequest(){
 
     }
-    public void syncHttpRequest(String startLongitude, String startLatitude, String startTime,
+    public void syncHttpRequest(String tripID, String startLongitude, String startLatitude, String startTime,
                                 String endLongitude, String endLatitude, String endTime) {
 
         final RequestParams params = new RequestParams();
-        params.add("startLongitude", "mei");
-        params.add("startLatitude", "mei");
-        params.add("startTime", "mei");
-        params.add("endLongitude", "mei");
-        params.add("endLatitude", "mei");
-        params.add("endTime", "mei");
-        params.add("operator", "mei");
+        params.add("tripID", tripID);
+        params.add("startLongitude", startLongitude);
+        params.add("startLatitude", startLatitude);
+        params.add("startTime", startTime);
+        params.add("endLongitude", endLongitude);
+        params.add("endLatitude", endLatitude);
+        params.add("endTime", endTime);
+        params.add("operator", username);
 
 
         // Instantiate a new Runnable object which will handle http requests asynchronously
