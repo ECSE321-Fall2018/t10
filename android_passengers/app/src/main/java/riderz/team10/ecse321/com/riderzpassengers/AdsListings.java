@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -33,6 +34,7 @@ public class AdsListings extends AppCompatActivity {
     private String response;
 
     private int expandable_id= -1;
+    private HashMap<String, Integer> hash = new HashMap<>();
 
     //get data from Ryan
     final String baseUrl = "https://riderz-t10.herokuapp.com/";
@@ -254,12 +256,14 @@ public class AdsListings extends AppCompatActivity {
         }
     }
 
-    public void getAdsInfo_async(String tripID, final LinearLayout collapsableBox) {
+    public void getAdsInfo_async(final String tripID, final LinearLayout collapsableBox) {
         if(adsInfo_list != null && adsInfo_list.size()>0){
             adsInfo_list.clear();
         }
         final Context context = getApplicationContext();
         final RequestParams params = new RequestParams();
+        //initialize retry flags
+        hash.put(tripID,0);
         params.add("tripID", tripID);
 
         // Instantiate a new Runnable object which will handle http requests asynchronously
@@ -316,10 +320,20 @@ public class AdsListings extends AppCompatActivity {
                         }
                     }
 
-                    @Override
                     public void onFailure(int statusCode, Header[] headers,
                                           byte[] responseBody, Throwable error) {
                         Log.e("Ads_Info", "Server error - could not contact server");
+                        if(hash.containsKey(tripID)){
+                            int retry_counts = hash.get(tripID);
+                            if(retry_counts < 3){
+                                retry_counts++;
+                                Log.e("Ads_Info", "Server error - retrying " + retry_counts + " times in thread with trip ID: " + tripID);
+                                hash.put(tripID, retry_counts);
+                                getAdsInfo_async(tripID, collapsableBox);
+                            }else {
+                                Log.e("Ads_Info", "Server error - Numbers of retries exceeded. Could not contact server");
+                            }
+                        }
                     }
                 });
             }
