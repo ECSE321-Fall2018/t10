@@ -70,7 +70,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
     private String arrivalTime;
     private boolean isPreviewing;
     private int tripID;
-    private String operator = "meis ";
+    private String operator = "mei";
     LatLng startPoint;
     LatLng endPoint;
 
@@ -107,12 +107,13 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
 
         startLat = bundle.getString("startingLatitude");
         startLng = bundle.getString("startingLongitude");
-        endLng = bundle.getString("endingLatitude");
-        endLat = bundle.getString("endingLongitude" );
+        endLat = bundle.getString("endingLatitude");
+        endLng = bundle.getString("endingLongitude" );
 
         mapButtons();
 
         if(isPreviewing){
+            Log.e("hello", "startLat: " + startLat + "startLng: " + startLng + "endLat " + endLat +  "endLng" + endLng);
 
 
             origin = startLat + "," + startLng;
@@ -236,6 +237,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         if(isPreviewing){
             mMap.addMarker(new MarkerOptions().position(startPoint));
             mMap.addMarker(new MarkerOptions().position(endPoint).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+            boundZoom();
         }
 
     }
