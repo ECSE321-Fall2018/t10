@@ -1,6 +1,7 @@
 package riderz.team10.ecse321.com.riderzpassengers;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.support.constraint.ConstraintLayout;
@@ -41,13 +42,13 @@ public class AdsListings extends AppCompatActivity {
     final String baseUrl = "https://riderz-t10.herokuapp.com/";
     final String itinerary_baseURL = baseUrl + "getItineraryNearDestination";
     final String adsInfo_baseURL = baseUrl + "adInfo";
-    final String startingLongitude = "22.2222";
-    final String startingLatitude = "-33.33333";
-    final String endingLongitude = "12.232323";
-    final String endingLatitude = "-52.525252";
+    private String startingLongitude;
+    private String startingLatitude;
+    private String endingLongitude;
+    private String endingLatitude;
     final String maximumDistance = "100";
-    final String arrivalTime = "2051-02-01 02:30:00.000";
-    final String operator = "mei";
+    private String arrivalTime;
+    private String operator = "mei";
 
     //define different types of layout params
     LinearLayout.LayoutParams param_1 = new LinearLayout.LayoutParams(100,100,1.0f);
@@ -71,6 +72,15 @@ public class AdsListings extends AppCompatActivity {
 
         editTxt = (TextView) findViewById(R.id.editText);
         selectAd = (Button) findViewById(R.id.selectAd);
+
+        Bundle bundle = getIntent().getExtras();
+
+        startingLongitude = bundle.getString("startingLongitude");
+        startingLatitude = bundle.getString("startingLatitude");
+        endingLongitude = bundle.getString("endingLongitude");
+        endingLongitude = bundle.getString("endingLongitude");
+        arrivalTime = bundle.getString("arrivalTime");
+
         final LinearLayout listingsContainer = (LinearLayout) findViewById(R.id.listingsContainer);
 
         param_1.setMargins(10, 10, 10,10);
@@ -83,6 +93,7 @@ public class AdsListings extends AppCompatActivity {
 
         //loop for each element from database ///adsListings_list.size()
         for(int i=0; i<adsListings_list.size(); i++){
+
 
             //Ads listings row
             final LinearLayout listingsRow = new LinearLayout(this);
@@ -198,6 +209,12 @@ public class AdsListings extends AppCompatActivity {
                 public void onClick(View v) {
                     String startingAddress = ((TextView)((LinearLayout) listingsRow.getChildAt(1)).getChildAt(0)).getText().toString();
                     String endingAddress = ((TextView)((LinearLayout) listingsRow.getChildAt(1)).getChildAt(1)).getText().toString();
+
+                    Intent intent = new Intent(AdsListings.this, MapsPassengerActivity.class);
+                    intent.putExtra("startingAddress", startingAddress);
+                    intent.putExtra("endingAddress", endingAddress);
+                    intent.putExtra("isPreviewing", true);
+                    startActivity(intent);
 
 
                 }

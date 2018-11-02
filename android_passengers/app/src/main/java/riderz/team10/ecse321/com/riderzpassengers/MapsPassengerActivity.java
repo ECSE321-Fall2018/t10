@@ -66,6 +66,8 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
     private String endingLatitude;
     private String arrivalTime;
     private boolean isPreviewing;
+    private int tripID;
+    private String operator = "hello";
 
     protected String origin;
     protected String destination;
@@ -84,8 +86,8 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
 
         searchTextStart = (TextView) findViewById(R.id.search_text_start);
         searchTextEnd = (TextView) findViewById(R.id.search_text_end);
-        ImageView searchIconStart = (ImageView) findViewById(R.id.search_image_start);
-        ImageView searchIconEnd = (ImageView) findViewById(R.id.search_image_end);
+        searchIconStart = (ImageView) findViewById(R.id.search_image_start);
+        searchIconEnd = (ImageView) findViewById(R.id.search_image_end);
         confirmationButton = (Button) findViewById(R.id.confirmation_button);
         timePickerButton = (Button) findViewById(R.id.time_picker_button);
 
@@ -95,19 +97,12 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         mapButtons();
 
         if(isPreviewing){
-            startingLongitude = bundle.getString("startingLongitude");
-            startingLatitude = bundle.getString("startingLatitude");
-            endingLongitude = bundle.getString("endingLongitude");
-            endingLongitude = bundle.getString("endingLongitude");
-            arrivalTime = bundle.getString("arrivalTime");
+            origin = bundle.getString("startingAddress");
+            destination = bundle.getString("endingAddress");
+            tripID = bundle.getInt("tripID");
             asyncHttpRequestRoute();
 
-            searchTextStart.setVisibility(View.GONE);
-            searchTextEnd.setVisibility(View.GONE);
-            searchIconStart.setVisibility(View.GONE);
-            searchIconEnd.setVisibility(View.GONE);
-
-            confirmationButton.setVisibility(View.VISIBLE);
+            setupPreview();
         }
     }
 
@@ -291,7 +286,7 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final String postDirections = "https://riderz-t10.herokuapp.com";
+                final String postDirections = "https://riderz-t10.herokuapp.com/insertReservation/" + operator + "/" + tripID;
                 AsyncHttpClient client = new AsyncHttpClient();
                 client.setTimeout(2500);
                 client.get(postDirections, new AsyncHttpResponseHandler() {
@@ -338,17 +333,12 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
                                 Log.e("debug", "Failed to parse JSON object");
                             }
                         }
-                        // Display error message
-                        //errorMsg.setText(msg);
-                        //errorMsg.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                         // Most possible error is statusCode 500
                         Log.e("debug", "Server error - Failed to contact server");
-                        //errorMsg.setText("Failed to contact server");
-                        //errorMsg.setVisibility(View.VISIBLE);
                     }
                 });
             }
@@ -472,10 +462,10 @@ public class MapsPassengerActivity extends FragmentActivity implements OnMapRead
     }
 
     private void setupPreview(){
-        searchTextStart.setVisibility(View.GONE);
-        searchTextEnd.setVisibility(View.GONE);
-        searchIconStart.setVisibility(View.GONE);
-        searchIconEnd.setVisibility(View.GONE);
+        searchTextStart.setVisibility(View.INVISIBLE);
+        searchTextEnd.setVisibility(View.INVISIBLE);
+        searchIconStart.setVisibility(View.INVISIBLE);
+        searchIconEnd.setVisibility(View.INVISIBLE);
 
         confirmationButton.setVisibility(View.VISIBLE);
     }

@@ -18,7 +18,7 @@ public class MainMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
 
-        String[] activities = {"Map", "Activity 2", "Activity 3", "Activity 4"};
+        String[] activities = {"View Ads", "View Reservation", "View Profile", "Setting", "About"};
         ListAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, activities);
 
         final ListView activitiesListView = (ListView) findViewById(R.id.main_menu);
@@ -29,6 +29,7 @@ public class MainMenuActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (i == 0){
                     Intent intent = new Intent(MainMenuActivity.this, MapsPassengerActivity.class);
+                    intent.putExtra("isPreviewing", false);
                     startActivity(intent);
                 }
             }
