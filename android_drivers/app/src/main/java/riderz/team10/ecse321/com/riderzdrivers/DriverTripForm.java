@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -49,6 +50,7 @@ public class DriverTripForm extends AppCompatActivity {
 
     public void mapButtons() {
 
+        Log.e("TAGGGGG", "ABC");
         Button newTrip = findViewById(R.id.new_trip_button);
 
         // Add event listener for register button

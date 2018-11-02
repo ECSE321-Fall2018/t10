@@ -9,158 +9,73 @@
 
     <TextView
         android:id="@+id/driverName"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="52dp"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/textbox_height"
         android:text="Driver's Name: "
         android:textColor="@color/darkAccent"
-        app:layout_constraintBottom_toTopOf="@+id/driverCarMakeView"
-        app:layout_constraintEnd_toEndOf="@+id/driverCarYear"
-        app:layout_constraintStart_toStartOf="@+id/driverCarYear"
+        app:layout_constraintBottom_toTopOf="@+id/driverCarMake"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/driverNameView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="28dp"
-        android:text="@+id/driverNameView"
-        app:layout_constraintBottom_toTopOf="@+id/driverCarModel"
-        app:layout_constraintEnd_toEndOf="@+id/driverCarModelView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/driverCarMake" />
-
-    <TextView
         android:id="@+id/driverCarMake"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/textbox_height"
         android:text="Car Make: "
         android:textColor="@color/darkAccent"
-        app:layout_constraintBottom_toTopOf="@+id/driverNameView"
-        app:layout_constraintEnd_toEndOf="@+id/driverCarModel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/driverCarMakeView" />
-
-    <TextView
-        android:id="@+id/driverCarMakeView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="32dp"
-        android:text="@+id/driverCarMakeView"
-        app:layout_constraintBottom_toTopOf="@+id/driverCarMake"
-        app:layout_constraintEnd_toEndOf="@+id/driverNameView"
+        app:layout_constraintBottom_toTopOf="@+id/driverCarModel"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/driverName" />
 
     <TextView
         android:id="@+id/driverCarModel"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="1dp"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/textbox_height"
         android:text="Car Model: "
         android:textColor="@color/darkAccent"
-        app:layout_constraintBottom_toTopOf="@+id/driverCarModelView"
-        app:layout_constraintEnd_toEndOf="@+id/driverCarYear"
+        app:layout_constraintBottom_toTopOf="@+id/driverCarYear"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/driverNameView" />
+        app:layout_constraintTop_toBottomOf="@+id/driverCarMake" />
 
     <TextView
-        android:id="@+id/driverCarModelView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="28dp"
-        android:text="@+id/driverCarModelView"
-        app:layout_constraintBottom_toTopOf="@+id/driverCarYear"
-        app:layout_constraintEnd_toEndOf="@+id/driverCarYearView"
+        android:id="@+id/driverCarYear"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/textbox_height"
+        android:text="Car Year: "
+        android:textColor="@color/darkAccent"
+        app:layout_constraintBottom_toTopOf="@+id/driverCarLicensePlate"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/driverCarModel" />
 
     <TextView
-        android:id="@+id/driverCarYear"
-        android:layout_width="92dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="1dp"
-        android:text="Car Year: "
+        android:id="@+id/driverCarLicensePlate"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/textbox_height"
+        android:text="Car License Plate: "
         android:textColor="@color/darkAccent"
-        app:layout_constraintBottom_toTopOf="@+id/driverCarYearView"
-        app:layout_constraintStart_toStartOf="@+id/driverCarYearView"
-        app:layout_constraintTop_toBottomOf="@+id/driverCarModelView" />
-
-    <TextView
-        android:id="@+id/driverCarYearView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="19dp"
-        android:text="@+id/driverCarYearView"
-        app:layout_constraintBottom_toTopOf="@+id/driverCarLicensePlate"
-        app:layout_constraintEnd_toEndOf="@+id/driverCarLicensePlateView"
+        app:layout_constraintBottom_toTopOf="@+id/driverCarSeats"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/driverCarYear" />
 
     <TextView
-        android:id="@+id/driverCarLicensePlate"
-        android:layout_width="134dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="1dp"
-        android:text="Car License Plate: "
+        android:id="@+id/driverCarSeats"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/textbox_height"
+        android:text="Number of available seats: "
         android:textColor="@color/darkAccent"
-        app:layout_constraintBottom_toTopOf="@+id/driverCarLicensePlateView"
-        app:layout_constraintStart_toStartOf="@+id/driverCarLicensePlateView"
-        app:layout_constraintTop_toBottomOf="@+id/driverCarYearView" />
-
-    <TextView
-        android:id="@+id/driverCarLicensePlateView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="24dp"
-        android:text="@+id/driverCarLicensePlateView"
-        app:layout_constraintBottom_toTopOf="@+id/driverCarSeats"
-        app:layout_constraintEnd_toEndOf="@+id/driverCarSeatsView"
+        app:layout_constraintBottom_toTopOf="@+id/driverRating"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/driverCarLicensePlate" />
 
     <TextView
-        android:id="@+id/driverCarSeats"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="Number of available seats: "
-        android:textColor="@color/darkAccent"
-        app:layout_constraintBottom_toTopOf="@+id/driverCarSeatsView"
-        app:layout_constraintEnd_toEndOf="@+id/driverRating"
-        app:layout_constraintStart_toStartOf="@+id/driverRating"
-        app:layout_constraintTop_toBottomOf="@+id/driverCarLicensePlateView" />
-
-    <TextView
-        android:id="@+id/driverCarSeatsView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="22dp"
-        android:text="@+id/driverCarSeatsView"
-        app:layout_constraintBottom_toTopOf="@+id/driverRating"
-        app:layout_constraintEnd_toEndOf="@+id/driverRatingView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/driverCarSeats" />
-
-    <TextView
         android:id="@+id/driverRating"
-        android:layout_width="189dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="1dp"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/textbox_height"
         android:text="Current Rating: "
         android:textColor="@color/darkAccent"
-        app:layout_constraintBottom_toTopOf="@+id/driverRatingView"
-        app:layout_constraintStart_toStartOf="@+id/driverRatingView"
-        app:layout_constraintTop_toBottomOf="@+id/driverCarSeatsView" />
-
-    <TextView
-        android:id="@+id/driverRatingView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="26dp"
-        android:text="@+id/driverRatingView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/driverRating" />
+        app:layout_constraintTop_toBottomOf="@+id/driverCarSeats" />
 
 
 </android.support.constraint.ConstraintLayout>

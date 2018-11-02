@@ -61,17 +61,10 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                syncHttpRequest();
-                if (success) {
-                    // TODO: Link to main ListView
-                    // TODO: Add login credentials to cache
-                    // Clear error message
-                    msg = "";
-                    success = false;
-                }
-                // Display error message
-                errorMsg.setText(msg);
-                errorMsg.setVisibility(View.VISIBLE);
+                Intent intent = new Intent(RiderzDrivers.this,
+                        DriverProfile.class);
+                intent.putExtra("username", "username");
+                RiderzDrivers.this.startActivity(intent);
             }
         });
 
