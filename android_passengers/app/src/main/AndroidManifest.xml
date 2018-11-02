@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="riderz.team10.ecse321.com.riderzpassengers">
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the 'MyLocation' functionality.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -27,6 +35,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".AdsListings" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".MapsPassengerActivity"
+            android:label="@string/title_activity_maps_passenger"
+            android:screenOrientation="portrait" />
+        <activity android:name=".MainMenuActivity"></activity>
+
         <activity
             android:name=".SignUpPassengers"
             android:parentActivityName=".RiderzPassengers">
@@ -85,6 +105,7 @@
         <activity
             android:name=".UserProfile"
             android:label="@string/title_activity_user_profile"></activity>
+
     </application>
 
 </manifest>

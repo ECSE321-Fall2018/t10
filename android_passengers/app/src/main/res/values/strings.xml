@@ -12,6 +12,13 @@
     <!-- RiderzPassengers components -->
     <string name="login_button">LOGIN</string>
     <string name="register_button">REGISTER</string>
+    <string name="title_activity_maps_passenger">Map</string>
+    <string name="search_hint_start">Find Starting Location</string>
+    <string name="confirmation">Confirm</string>
+    <string name="search_hint_end">Find Dropoff Location</string>
+    <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="pick_arrival_time">Select Arrival Time</string>
     <string name="forgot_button">FORGOT PASSWORD</string>
 
     <!-- ResetPasswordVerification components -->
@@ -75,4 +82,5 @@
     <!-- ViewReservation components -->
     <string name="title_activity_view_reservation">Remove Reservations</string>
     <string name="title_activity_user_profile">UserProfile</string>
+
 </resources>

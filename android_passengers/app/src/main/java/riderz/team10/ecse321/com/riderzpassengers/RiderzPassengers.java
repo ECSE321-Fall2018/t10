@@ -1,5 +1,10 @@
 package riderz.team10.ecse321.com.riderzpassengers;
-
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import com.loopj.android.http.*;
 import cz.msebera.android.httpclient.Header;
 import riderz.team10.ecse321.com.riderzpassengers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzpassengers.constants.TAG;
@@ -8,8 +13,7 @@ import riderz.team10.ecse321.com.riderzpassengers.http.HttpRequestClient;
 import riderz.team10.ecse321.com.riderzpassengers.navigation.MainNavigation;
 import riderz.team10.ecse321.com.riderzpassengers.settings.ResetPasswordVerification;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -41,6 +45,7 @@ public class RiderzPassengers extends AppCompatActivity implements HttpRequestCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_riderz_passengers);
+
 
         // Map TextView and EditText components
         errorMsg = findViewById(R.id.loginError);
