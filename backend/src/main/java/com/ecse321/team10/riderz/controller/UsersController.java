@@ -156,7 +156,7 @@ public class UsersController {
 	 */
 	@GetMapping("getEmail")
 	public String getEmail( @RequestParam String username ){
-		if (sql.connect() && sql.verifyAuthentication(username)) {
+		if (sql.connect()) {
 			String email = sql.getEmail(username);
 			sql.closeConnection();
 			return email;
@@ -192,10 +192,9 @@ public class UsersController {
 	//Successfully changes password but can implement email verification later
 	@PutMapping("setPassword")
 	public boolean setPassword(@RequestParam String username,
-							   @RequestParam String password,
 							   @RequestParam String newPassword) {
-		if (sql.connect() && sql.verifyAuthentication(username)) {
-			boolean changedPass= sql.setPassword(username,newPassword);
+		if (sql.connect()) {
+			boolean changedPass = sql.setPassword(username, newPassword);
 			sql.closeConnection();
 			return changedPass;
 		}

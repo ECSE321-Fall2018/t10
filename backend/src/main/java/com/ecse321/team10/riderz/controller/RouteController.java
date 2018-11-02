@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecse321.team10.riderz.dto.ItineraryDto;
@@ -199,12 +200,14 @@ public class RouteController {
 	 * @param arrivalTime       -   A String representing preferred arrival time
 	 * @return A List of Itinerary representing the itineraries found base on the criteria. Return Null if none was found.
 	 */
-	@GetMapping("/getItineraryNearDestination/{endingLongitude}/{endingLatitude}/{maximumDistance}/{arrivalTime}/{operator}")
-	public List<ItineraryDto> getItineraryNearDestination(	@PathVariable("endingLongitude") double endingLongitude,
-															@PathVariable("endingLatitude") double endingLatitude,
-															@PathVariable("maximumDistance") double maximumDistance,
-															@PathVariable("arrivalTime") String arrivalTime,
-															@PathVariable("operator") String operator) {
+	@GetMapping("/getItineraryNearDestination")
+	public List<ItineraryDto> getItineraryNearDestination(	@RequestParam double startingLongitude,
+															@RequestParam double startingLatitude,
+															@RequestParam double endingLongitude,
+															@RequestParam double endingLatitude,
+															@RequestParam double maximumDistance,
+															@RequestParam String arrivalTime,
+															@RequestParam String operator) {
 		
 		Timestamp arrivalTimeStamp = sql.convertStringToTimestamp(arrivalTime);
 		
@@ -214,8 +217,24 @@ public class RouteController {
 			return null;
 		}
 		List<ItineraryDto> itineraryList = new ArrayList<ItineraryDto>();
-		for(Itinerary itinerary : sql.getItineraryNearDestination(endingLongitude, endingLatitude, maximumDistance, arrivalTimeStamp))
+		for(Itinerary itinerary : sql.getItineraryNearDestination(startingLongitude, startingLatitude, endingLongitude, endingLatitude, maximumDistance, arrivalTimeStamp))
 			itineraryList.add(intineraryConvertToDto(itinerary));
+		sql.closeConnection();
+		return itineraryList;
+	}
+	
+	/**
+	 * Obtains all itinerary fitting search criteria.
+	 * @param operator 			- A String representing an user. 
+	 * @return A List of Itinerary representing the itineraries found based on the search criteria.
+	 */
+	@GetMapping("/getItineraryByUsername")
+	public List<ItineraryDto> getItineraryByUsername(@RequestParam String operator) {
+		sql.connect();
+		List<ItineraryDto> itineraryList = new ArrayList<ItineraryDto>();
+		for(Itinerary itinerary : sql.getItineraryByUsername(operator)) {
+			itineraryList.add(intineraryConvertToDto(itinerary));
+		}
 		sql.closeConnection();
 		return itineraryList;
 	}
@@ -303,7 +322,7 @@ public class RouteController {
 	 */
 	@GetMapping("/getLocationNear/{longitude}/{latitude}/{maximumDistance}/{operator}")
 	public List<LocationDto> getLocationNear(@PathVariable("longitude") double longitude,
-											 @PathVariable("latitude") double latittude,
+											 @PathVariable("latitude") double latitude,
 											 @PathVariable("maximumDistance") double maximumDistance,
 											 @PathVariable("operator") String operator){
 		sql.connect();
@@ -312,7 +331,7 @@ public class RouteController {
 			return null;
 		}
 		List<LocationDto> locationList = new ArrayList<LocationDto>();
-		for(Location location : sql.getLocationNear(longitude, latittude, maximumDistance))
+		for(Location location : sql.getLocationNear(longitude, latitude, maximumDistance))
 			locationList.add(locationConvertToDto(location));
 		sql.closeConnection();
 		return locationList;

@@ -109,7 +109,7 @@ public class TestUserController {
 
     @Test
     public void testSetPassword() throws Exception {
-        this.mockMvc.perform(put("/users/setPassword?username=test-ty&password=testing&newPassword=testing2"))
+        this.mockMvc.perform(put("/users/setPassword?username=test-ty&newPassword=testing2"))
                             .andExpect(status().isOk());
     }
 

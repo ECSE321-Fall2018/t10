@@ -1,9 +1,12 @@
 package riderz.team10.ecse321.com.riderzdrivers;
 
 import cz.msebera.android.httpclient.Header;
+import riderz.team10.ecse321.com.riderzdrivers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
 import riderz.team10.ecse321.com.riderzdrivers.constants.URL;
 import riderz.team10.ecse321.com.riderzdrivers.http.HttpRequestClient;
+import riderz.team10.ecse321.com.riderzdrivers.navigation.MainNavigation;
+import riderz.team10.ecse321.com.riderzdrivers.settings.ResetPasswordVerification;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -13,8 +16,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.loopj.android.http.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * Main activity. Performs login functionalities.
@@ -22,6 +30,8 @@ import com.loopj.android.http.*;
 public class RiderzDrivers extends AppCompatActivity implements HttpRequestClient {
     // loginError is to be accessed within nested functions, required to give global access
     protected TextView errorMsg;
+    protected EditText username;
+    protected EditText password;
 
     // Used for transmit information from synchronous HTTP requests to the login REST API
     protected boolean success;
@@ -32,8 +42,12 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_riderz_drivers);
 
-        // Hide error message for now
+        // Map TextView and EditText components
         errorMsg = findViewById(R.id.loginError);
+        username = findViewById(R.id.loginUsername);
+        password = findViewById(R.id.loginPassword);
+
+        // Hide error message for now
         errorMsg.setVisibility(View.INVISIBLE);
 
         // Obtain mapping to each of the buttons
@@ -42,9 +56,9 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
 
     @Override
     public void mapButtons() {
-        Button resetButton = findViewById(R.id.reset);
-        Button loginButton = findViewById(R.id.login);
-        Button registerButton = findViewById(R.id.register);
+        Button resetButton = findViewById(R.id.forgotPasswordButton);
+        Button loginButton = findViewById(R.id.loginButton);
+        Button registerButton = findViewById(R.id.loginRegisterButton);
 
         // Add event listener for reset button
         resetButton.setOnClickListener(new View.OnClickListener() {
@@ -68,6 +82,30 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
                     // Clear error message
                     msg = "";
                     success = false;
+                    File file = new File(getApplicationContext().getFilesDir(), "login.txt");
+                    try {
+                        // Create a new file and write login credentials
+                        if (!file.exists()) {
+                            file.createNewFile();
+                        }
+                        // Clears the file
+                        PrintWriter writer = new PrintWriter(file);
+                        writer.close();
+
+                        // Reinstantiate a PrintWriter object and write credentials into the file
+                        writer = new PrintWriter(file);
+                        writer.println(username.getText().toString());
+                        writer.println(password.getText().toString());
+                        writer.close();
+                    } catch (IOException e) {
+                        Log.e(TAG.loginTag, "Failed to create/modify file");
+                    }
+
+                    // Kill off this activity and start new activity
+                    // Take advantage of Android's asynchronous processing on finish();
+                    Intent intent = new Intent(RiderzDrivers.this, MainNavigation.class);
+                    finish();
+                    startActivity(intent);
                 }
                 // Display error message
                 errorMsg.setText(msg);
@@ -90,8 +128,6 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
         final String loginUrl = URL.baseUrl + "login";
 
         // Obtains values from EditText elements
-        final EditText username = findViewById(R.id.loginUsername);
-        final EditText password = findViewById(R.id.loginPassword);
         final String usernameText = username.getText().toString();
         final String passwordText = password.getText().toString();
 
@@ -102,13 +138,13 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
         params.add("password", passwordText);
 
         // Instantiate a new Runnable object which will handle http requests asynchronously
+        // Then await until thread is finished to make the request synchronous.
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                // Instantiate new synchronous http client, set timeout to 5 seconds and
-                // perform post request
+                // Instantiate new synchronous http client, set timeout and perform post request
                 SyncHttpClient client = new SyncHttpClient();
-                client.setTimeout(1500);
+                client.setTimeout(HTTP.maxTimeout);
                 client.post(loginUrl, params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -130,7 +166,7 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
                     public void onFailure(int statusCode, Header[] headers,
                         byte[] responseBody, Throwable error) {
                             success = false;
-                            msg = "Could not contact server";
+                            msg = "Could not contact server\n Please try again in a minute";
                             Log.e(TAG.loginTag, "Server error - could not contact server");
                         }
                     });
@@ -144,5 +180,11 @@ public class RiderzDrivers extends AppCompatActivity implements HttpRequestClien
         } catch (InterruptedException e) {
             Log.e(TAG.loginTag, "Thread exception in login thread");
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Do nothing back button is disabled for this screen
+        Toast.makeText(getApplicationContext(), "Back button is disabled", Toast.LENGTH_SHORT).show();
     }
 }

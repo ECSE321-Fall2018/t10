@@ -170,10 +170,13 @@ public class TestMySQLJDBC {
 			assertEquals(true, sql.insertTrip("heqiantestTrip"));
 		}
 		Trip testTrip = sql.getLastTripByUsername("heqiantestTrip");
+		
+		Trip trip = sql.getLastTripByUsername("heqiantestTrip");
+		assertEquals(sql.getDriverNameByTripID(trip.getTripID()), "He Qian Wang");
+		
 		assertEquals(true, sql.deleteTrip(testTrip.getTripID(), testTrip.getOperator()));
 		assertEquals(true, sql.deleteCar("heqiantestTrip"));
 		assertEquals(true, sql.deleteUser("heqiantestTrip"));
-
 	}
 
 	//==================
@@ -253,7 +256,7 @@ public class TestMySQLJDBC {
 		assertEquals(true, sql.deleteTrip(tripID, "user1"));
 		assertEquals(true, sql.deleteUser("user1"));
 	}
-
+	
 	@Test
 	public void testGetItineraryByTripID() {
 		User testUser = new User("user2", "password2", "user2@gmail.com", "5141234567", "user2FirstName", "user2LastName");
@@ -282,6 +285,39 @@ public class TestMySQLJDBC {
 		assertEquals(true, sql.deleteUser("user2"));
 	}
 
+	@Test
+	public void testGetItineraryByUsername() {
+		User testUser = new User("user21", "password21", "user21@gmail.com", "5141234567", "user21FirstName", "username21LastName");
+		assertEquals(true, sql.insertUser(testUser));
+		
+		assertEquals(true, sql.insertTrip(testUser.getUsername()));
+		int tripID = sql.getLastTripByUsername(testUser.getUsername()).getTripID();
+		Timestamp startingTime = sql.convertStringToTimestamp("2019-02-20 20:00:00.000");
+		Timestamp endingTime = sql.convertStringToTimestamp("2019-02-21 02:00:00.000");
+		Itinerary itinerary = new Itinerary(tripID, 12.555, -14.352, startingTime,
+				13.242, -14.875, endingTime, 5);
+		assertEquals(true, sql.insertItinerary(itinerary));
+		
+		assertEquals(true, sql.insertTrip(testUser.getUsername()));
+		tripID = sql.getLastTripByUsername(testUser.getUsername()).getTripID();
+		startingTime = sql.convertStringToTimestamp("2019-02-20 20:00:00.000");
+		endingTime = sql.convertStringToTimestamp("2019-02-21 02:00:00.000");
+		itinerary = new Itinerary(tripID, 12.555, -14.352, startingTime,
+				13.242, -14.875, endingTime, 5);
+		assertEquals(true, sql.insertItinerary(itinerary));
+		
+		assertEquals(true, sql.insertTrip(testUser.getUsername()));
+		tripID = sql.getLastTripByUsername(testUser.getUsername()).getTripID();
+		startingTime = sql.convertStringToTimestamp("2019-02-20 20:00:00.000");
+		endingTime = sql.convertStringToTimestamp("2019-02-21 02:00:00.000");
+		itinerary = new Itinerary(tripID, 12.555, -14.352, startingTime,
+				13.242, -14.875, endingTime, 5);
+		assertEquals(true, sql.insertItinerary(itinerary));
+
+		ArrayList<Itinerary> itineraries = sql.getItineraryByUsername(testUser.getUsername());
+		assertEquals(3, itineraries.size());
+	}
+	
 	@Test
 	public void testSeatsIncrementDecrement() {
 		User testUser = new User("user3", "password3", "user3@gmail.com", "5141234567", "user3FirstName", "user3LastName");
@@ -327,15 +363,14 @@ public class TestMySQLJDBC {
 
 		assertEquals(true, sql.insertItinerary(itinerary));
 
-		ArrayList<Itinerary> a = sql.getItineraryNearDestination(13.243, -14.8752, 10000, arrivalTime);
-		System.out.println(a.toString());
+		ArrayList<Itinerary> a = sql.getItineraryNearDestination(12.555, -14.352, 13.243, -14.8752, 10000, arrivalTime);
 		assertEquals(true, a.size() != 0);
 
-		a = sql.getItineraryNearDestination(13.200, -14.8752, 50, arrivalTime);
+		a = sql.getItineraryNearDestination(12.555, -14.352, 13.200, -14.8752, 50, arrivalTime);
 		assertEquals(true, a.size() == 0);
 
 		arrivalTime = sql.convertStringToTimestamp("2018-03-20 20:00:00.000");
-		a = sql.getItineraryNearDestination(13.243, -14.8752, 5000, arrivalTime);
+		a = sql.getItineraryNearDestination(12.555, -14.352, 13.243, -14.8752, 5000, arrivalTime);
 		assertEquals(true, a.size() == 0);
 
 		assertEquals(true, sql.deleteItinerary(tripID));
@@ -438,7 +473,7 @@ public class TestMySQLJDBC {
 		assertEquals(true, sql.deleteUser(testUser1.getUsername()));
 		assertEquals(true, sql.deleteUser(testUser2.getUsername()));
 	}
-
+	
 	//=======================
 	//  Authentication Tests
 	//=======================
