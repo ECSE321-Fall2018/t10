@@ -42,12 +42,12 @@ public class AdsListings extends AppCompatActivity {
     final String baseUrl = "https://riderz-t10.herokuapp.com/";
     final String itinerary_baseURL = baseUrl + "getItineraryNearDestination";
     final String adsInfo_baseURL = baseUrl + "adInfo";
-    private String startingLongitude;
-    private String startingLatitude;
-    private String endingLongitude;
-    private String endingLatitude;
+    private String startingLongitude = "22.2222";
+    private String startingLatitude = "-33.33333";
+    private String endingLongitude = "12.232323";
+    private String endingLatitude = "-52.525252";
     final String maximumDistance = "100";
-    private String arrivalTime;
+    private String arrivalTime = "2051-01-02 02:30:000";
     private String operator = "mei";
 
     //define different types of layout params
@@ -75,11 +75,11 @@ public class AdsListings extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
 
-        startingLongitude = bundle.getString("startingLongitude");
-        startingLatitude = bundle.getString("startingLatitude");
-        endingLongitude = bundle.getString("endingLongitude");
-        endingLongitude = bundle.getString("endingLongitude");
-        arrivalTime = bundle.getString("arrivalTime");
+//        startingLongitude = bundle.getString("startingLongitude");
+//        startingLatitude = bundle.getString("startingLatitude");
+//        endingLongitude = bundle.getString("endingLongitude");
+//        endingLongitude = bundle.getString("endingLongitude");
+//        arrivalTime = bundle.getString("arrivalTime");
 
         final LinearLayout listingsContainer = (LinearLayout) findViewById(R.id.listingsContainer);
 
@@ -93,7 +93,6 @@ public class AdsListings extends AppCompatActivity {
 
         //loop for each element from database ///adsListings_list.size()
         for(int i=0; i<adsListings_list.size(); i++){
-
 
             //Ads listings row
             final LinearLayout listingsRow = new LinearLayout(this);
@@ -112,6 +111,10 @@ public class AdsListings extends AppCompatActivity {
             TextView textView2 = new TextView(this);
             TextView textView3 = new TextView(this);
             TextView textView4 = new TextView(this);
+            textView1.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            textView2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            textView3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            textView4.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 
             //Icon
             ImageView driver_icon_view = new ImageView(this);
@@ -121,13 +124,10 @@ public class AdsListings extends AppCompatActivity {
             listingsRow.setLayoutParams(param_2);
             textviewBlock.setLayoutParams(param_3);
             textviewBlock_INNER.setLayoutParams(param_3);
-            textviewBlock_INNER.setId(i);
-            textView1.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            textView2.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            textView3.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-            textView4.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-
             try{
+                int tripID = Integer.parseInt(adsListings_list.get(i).getString("tripID"));
+                textviewBlock_INNER.setId(tripID);
+
                 ReverseGeocoding reverseGeocoder = new ReverseGeocoding();
                 Double startLatitude = Double.parseDouble(adsListings_list.get(i).getString("startingLatitude"));
                 Double startLongitude = Double.parseDouble(adsListings_list.get(i).getString("startingLongitude"));
@@ -209,10 +209,12 @@ public class AdsListings extends AppCompatActivity {
                 public void onClick(View v) {
                     String startingAddress = ((TextView)((LinearLayout) listingsRow.getChildAt(1)).getChildAt(0)).getText().toString();
                     String endingAddress = ((TextView)((LinearLayout) listingsRow.getChildAt(1)).getChildAt(1)).getText().toString();
+                    int tripID = listingsRow.getChildAt(1).getId();
 
                     Intent intent = new Intent(AdsListings.this, MapsPassengerActivity.class);
                     intent.putExtra("startingAddress", startingAddress);
                     intent.putExtra("endingAddress", endingAddress);
+                    intent.putExtra("tripID", tripID);
                     intent.putExtra("isPreviewing", true);
                     startActivity(intent);
 
