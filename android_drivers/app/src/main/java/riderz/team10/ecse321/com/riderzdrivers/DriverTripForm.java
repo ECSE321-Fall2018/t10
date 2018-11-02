@@ -1,14 +1,11 @@
 package riderz.team10.ecse321.com.riderzdrivers;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -39,6 +36,7 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_trip_form);
+        username = "mei";
         mapButtons();
     }
 
@@ -74,32 +72,30 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
         Log.e("TAGGGGG", "ABC");
         Button newTrip = findViewById(R.id.new_trip_button);
 
-        Bundle bundle = this.getIntent().getExtras();
-        final String startLongitude = bundle.getString("startLongitude");
-        final String startLatitude = bundle.getString("startLatitude");
-        final String endLongitude = bundle.getString("endLongitude");
-        final String endLatitude = bundle.getString("endLatitude");
-        final String timeDifference = bundle.getString("timeDifference");
+//        Bundle bundle = this.getIntent().getExtras();
+//        final String startLongitude = bundle.getString("startLongitude");
+//        final String startLatitude = bundle.getString("startLatitude");
+//        final String endLongitude = bundle.getString("endLongitude");
+//        final String endLatitude = bundle.getString("endLatitude");
+//        final String timeDifference = bundle.getString("timeDifference");
 
         // Add event listener for register button
         newTrip.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
-//                final TextView startLoc = (TextView) findViewById(R.id.startlocation_form);
-//                final TextView endLoc   = (TextView) findViewById(R.id.endlocation_form);
-                final TextView startTime   = (TextView) findViewById(R.id.endlocation_form);
-                final TextView startDate   = (TextView) findViewById(R.id.endlocation_form);
-                final TextView numberSeats   = (TextView) findViewById(R.id.endlocation_form);
+                final EditText startTime   = (EditText) findViewById(R.id.starttime_form);
+                final EditText startDate   = (EditText) findViewById(R.id.startdate_form);
+                final EditText numberSeats   = (EditText) findViewById(R.id.numberseats_form);
                 //add check if the fields are empty, return a warning
 
-                String startMoment = startDate + " " + startTime;
+//                String startMoment = "2017-08-10 05:25:00";
+                String startMoment = startDate.getText().toString() + " " + startTime.getText().toString();
 
-//                long end = (Timestamp.valueOf("2017-08-10 05:25:00")).getTime() + (new Long(timeDifference)).longValue();
+//                long end = (Timestamp.valueOf("2017-08-10 05:25:00")).getTime() + (new Long(12321412)).longValue();
 
+                long end = (Timestamp.valueOf(startMoment)).getTime() + (new Long(12321412)).longValue();
 
-                long end = (Timestamp.valueOf(startMoment)).getTime() + (new Long(timeDifference)).longValue();
 
                 Timestamp ts =  new Timestamp(end);
 //                ts.setTime(end);
@@ -110,8 +106,10 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
                 syncHttpRequestCreate();
                 syncHttpRequestLastTrip();
                 String tripID = null;
+                Log.e(TAG.driverTripFormTag, jsonRouteLast.toString());
                 try {
                     tripID = jsonRouteLast.getString("tripID");
+                    Log.e(TAG.driverTripFormTag, "" + tripID);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -119,8 +117,8 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
                 //i receive startLong, startLat, endLong, endLat, time difference(ms)
                 //the start time is taken from driver
 
-                syncHttpRequestCreateRoute(tripID, startLongitude, startLatitude, startMoment,
-                        endLongitude, endLatitude, endTimeString, numberSeats.toString());
+                syncHttpRequestCreateRoute(tripID, "33.33333", "43.222222", startMoment,
+                        "35.333333", "32.2312312312", endTimeString, numberSeats.getText().toString());
 
                 /*TO DO: link to Ryan's code
                 Intent intent = new Intent(DriverTripForm.this,
@@ -161,17 +159,17 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
                 client.put(tripUrl, params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                        try {
-                            jsonCreateRoute = new JSONObject(new String(responseBody));
-                        } catch (JSONException e) {
-                            Log.e(riderz.team10.ecse321.com.riderzdrivers.constants.TAG.driverTripFormTag, "Failed to parse JSON from HTTP response");
+                        if (new Boolean(new String(responseBody))) {
+                            Log.e(TAG.driverTripFormTag, "Created trip");
+                        } else {
+                            Log.e(TAG.driverTripFormTag, "Failed to create trip");
                         }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers,
                                           byte[] responseBody, Throwable error) {
-                        Log.e(TAG.driverTripFormTag, "Server error - could not contact server");
+                        Log.e(TAG.driverTripFormTag, "Server error - could not contact server Create");
                     }
                 });
             }
@@ -202,20 +200,21 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
                 // Uses extended timeout
                 SyncHttpClient client = new SyncHttpClient();
                 client.setTimeout(HTTP.maxTimeoutExtended);
-                client.put(tripUrl, params, new AsyncHttpResponseHandler() {
+                client.get(tripUrl, params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         try {
                             jsonRouteLast = new JSONObject(new String(responseBody));
                         } catch (JSONException e) {
-                            Log.e(riderz.team10.ecse321.com.riderzdrivers.constants.TAG.driverTripFormTag, "Failed to parse JSON from HTTP response");
+                            Log.e(TAG.driverTripFormTag, "Failed to parse JSON from HTTP response Last");
                         }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers,
                                           byte[] responseBody, Throwable error) {
-                        Log.e(TAG.driverTripFormTag, "Server error - could not contact server");
+                        Log.e(TAG.driverTripFormTag, new String(responseBody));
+                        Log.e(TAG.driverTripFormTag, "Server error - could not contact server Last");
                     }
                 });
             }
@@ -231,47 +230,40 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
 
     }
 
-    public void syncHttpRequestCreateRoute(String tripID, String startLongitude, String startLatitude, String startTime,
-                                String endLongitude, String endLatitude, String endTime, String seatsLeft) {
-
-        final RequestParams params = new RequestParams();
-        params.add("tripID", tripID);
-        params.add("startLongitude", startLongitude);
-        params.add("startLatitude", startLatitude);
-        params.add("startTime", startTime);
-        params.add("endLongitude", endLongitude);
-        params.add("endLatitude", endLatitude);
-        params.add("endTime", endTime);
-        params.add("seatsLeft", seatsLeft);
-        params.add("operator", username);
-
+    public void syncHttpRequestCreateRoute(final String tripID, final String startLongitude, final String startLatitude, final String startTime,
+                                           final String endLongitude, final String endLatitude, final String endTime, final String seatsLeft) {
 
         // Instantiate a new Runnable object which will handle http requests asynchronously
         // Then await until thread is finished to make the request synchronous.
         Thread t = new Thread(new Runnable() {
             // URL to target
-            final String routeUrl = URL.baseUrl + "/insertItinerary/";
+            String routeUrl = URL.baseUrl + "insertItinerary/" + tripID + "/" + startLongitude + "/"
+                    + startLatitude + "/" + startTime + ".000/" + endLongitude + "/" + endLatitude + "/"
+                    + endTime + "/" + seatsLeft + "/" + username;
 
             @Override
             public void run() {
+                routeUrl = routeUrl.replaceAll("\\s", "%20");
+                Log.e(TAG.driverTripFormTag, routeUrl);
                 // Instantiate new synchronous http client, set timeout and perform get request
                 // Uses extended timeout
                 SyncHttpClient client = new SyncHttpClient();
                 client.setTimeout(HTTP.maxTimeoutExtended);
-                client.put(routeUrl, params, new AsyncHttpResponseHandler() {
+                client.post(routeUrl, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         try {
                             jsonTrip = new JSONObject(new String(responseBody));
+                            Log.e(TAG.driverTripFormTag, new String(responseBody));
                         } catch (JSONException e) {
-                            Log.e(riderz.team10.ecse321.com.riderzdrivers.constants.TAG.driverTripFormTag, "Failed to parse JSON from HTTP response");
+                            Log.e(TAG.driverTripFormTag, "Failed to parse JSON from HTTP response Route");
                         }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers,
                                           byte[] responseBody, Throwable error) {
-                        Log.e(TAG.driverTripFormTag, "Server error - could not contact server");
+                        Log.e(TAG.driverTripFormTag, "Server error - could not contact server Route");
                     }
                 });
             }
