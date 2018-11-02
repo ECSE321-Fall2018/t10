@@ -31,6 +31,7 @@ import riderz.team10.ecse321.com.riderzpassengers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzpassengers.constants.TAG;
 import riderz.team10.ecse321.com.riderzpassengers.constants.URL;
 import riderz.team10.ecse321.com.riderzpassengers.http.HttpRequestClient;
+import riderz.team10.ecse321.com.riderzpassengers.reservation.Reservation;
 import riderz.team10.ecse321.com.riderzpassengers.settings.MainSetting;
 import riderz.team10.ecse321.com.riderzpassengers.trip.EditTrip;
 import riderz.team10.ecse321.com.riderzpassengers.trip.PastTrip;
@@ -90,7 +91,7 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
      * Populate linear layout with programmatically generated TextViews
      */
     private void populateLinearLayout() {
-        String[] textArr = {"View Ads", "View Reservations",
+        String[] textArr = {"View Ads", "Remove Reservations",
                 "View Your Profile", "Settings", "About", "Log Out"};
         LinearLayout layout = findViewById(R.id.mainNavLayout);
         createTextViews(layout, textArr);
@@ -145,9 +146,9 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
 
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(MainNavigation.this, EditTrip.class);
-//                intent.putExtra("username", username);
-//                MainNavigation.this.startActivity(intent);
+                Intent intent = new Intent(MainNavigation.this, Reservation.class);
+                intent.putExtra("username", username);
+                MainNavigation.this.startActivity(intent);
             }
         });
 
