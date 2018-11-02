@@ -160,7 +160,7 @@ public class AdsListings extends AppCompatActivity {
             listingsRow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    View inner_ads_info = ((LinearLayout) listingsRow.getChildAt(1)).getChildAt(3);
+                    View inner_ads_info = ((LinearLayout) listingsRow.getChildAt(1)).getChildAt(4);
                     if(expandable_id > -1){
                         findViewById(expandable_id).setVisibility(View.GONE);
                     }
