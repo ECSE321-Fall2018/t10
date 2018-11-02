@@ -22,6 +22,6 @@
     <string name="addTrip">Add New Trip</string>
     <string name="starttime_hint">hh:mm:ss</string>
     <string name="numberseats_hint">Enter Number of Seats</string>
-    <string name="startdate_hint">DD/MM/YYYY</string>
+    <string name="startdate_hint">YYYY-MM-DD</string>
     <string name="title_activity_driver_profile">DriverProfile</string>
 </resources>

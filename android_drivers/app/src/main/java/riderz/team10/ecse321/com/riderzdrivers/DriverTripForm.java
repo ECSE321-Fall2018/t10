@@ -18,6 +18,8 @@ import com.loopj.android.http.SyncHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
+
 import cz.msebera.android.httpclient.Header;
 import riderz.team10.ecse321.com.riderzdrivers.constants.HTTP;
 import riderz.team10.ecse321.com.riderzdrivers.constants.TAG;
@@ -92,7 +94,18 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
                 final TextView numberSeats   = (TextView) findViewById(R.id.endlocation_form);
                 //add check if the fields are empty, return a warning
 
+                String startMoment = startDate + " " + startTime;
 
+//                long end = (Timestamp.valueOf("2017-08-10 05:25:00")).getTime() + (new Long(timeDifference)).longValue();
+
+
+                long end = (Timestamp.valueOf(startMoment)).getTime() + (new Long(timeDifference)).longValue();
+
+                Timestamp ts =  new Timestamp(end);
+//                ts.setTime(end);
+                String endTimeString = ts.toString();
+//                int index = endTimeString.indexOf(".");
+//                endTimeString = endTimeString.substring(0, index);
 
                 syncHttpRequestCreate();
                 syncHttpRequestLastTrip();
@@ -106,8 +119,8 @@ public class DriverTripForm extends AppCompatActivity implements HttpRequestClie
                 //i receive startLong, startLat, endLong, endLat, time difference(ms)
                 //the start time is taken from driver
 
-                syncHttpRequestCreateRoute(tripID, startLongitude, startLatitude, startTime,
-                        endLongitude, endLatitude, endTime, numberSeats.toString());
+                syncHttpRequestCreateRoute(tripID, startLongitude, startLatitude, startMoment,
+                        endLongitude, endLatitude, endTimeString, numberSeats.toString());
 
                 /*TO DO: link to Ryan's code
                 Intent intent = new Intent(DriverTripForm.this,
