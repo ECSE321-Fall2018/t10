@@ -90,7 +90,7 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
      * Populate linear layout with programmatically generated TextViews
      */
     private void populateLinearLayout() {
-        String[] textArr = {"Create New Trip", "Edit Existing Trip", "View Past Trips",
+        String[] textArr = {"View Ads", "View Reservations",
                 "View Your Profile", "Settings", "About", "Log Out"};
         LinearLayout layout = findViewById(R.id.mainNavLayout);
         createTextViews(layout, textArr);
@@ -128,7 +128,7 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
 
     @Override
     public void mapButtons() {
-        // Mapped to create new trip
+        // Mapped to view ads
         (findViewById(generatedId.get(0))).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -140,30 +140,19 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
             }
         });
 
-        // Mapped to modifying existing trips
+        // Mapped to view reservations
         (findViewById(generatedId.get(1))).setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainNavigation.this, EditTrip.class);
-                intent.putExtra("username", username);
-                MainNavigation.this.startActivity(intent);
-            }
-        });
-
-        // Mapped to viewing past trips Activity
-        (findViewById(generatedId.get(2))).setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainNavigation.this, PastTrip.class);
-                intent.putExtra("username", username);
-                MainNavigation.this.startActivity(intent);
+//                Intent intent = new Intent(MainNavigation.this, EditTrip.class);
+//                intent.putExtra("username", username);
+//                MainNavigation.this.startActivity(intent);
             }
         });
 
         // Mapped to viewing user profile
-        (findViewById(generatedId.get(3))).setOnClickListener(new View.OnClickListener(){
+        (findViewById(generatedId.get(2))).setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
@@ -175,7 +164,7 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
         });
 
         // Mapped to viewing Settings Activity
-        (findViewById(generatedId.get(4))).setOnClickListener(new View.OnClickListener(){
+        (findViewById(generatedId.get(3))).setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
@@ -186,7 +175,7 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
         });
 
         // Mapped to viewing About Activity
-        (findViewById(generatedId.get(5))).setOnClickListener(new View.OnClickListener(){
+        (findViewById(generatedId.get(4))).setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
@@ -196,7 +185,7 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
         });
 
         // Mapped to log out
-        (findViewById(generatedId.get(6))).setOnClickListener(new View.OnClickListener(){
+        (findViewById(generatedId.get(5))).setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
