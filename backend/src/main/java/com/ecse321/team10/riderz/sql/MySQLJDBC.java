@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.ecse321.team10.riderz.model.Driver;
 import com.ecse321.team10.riderz.model.AdInformation;
+import com.ecse321.team10.riderz.model.Authentication;
 import com.ecse321.team10.riderz.model.Car;
 import com.ecse321.team10.riderz.model.User;
 import com.ecse321.team10.riderz.model.Trip;
@@ -30,7 +31,7 @@ import com.ecse321.team10.riderz.model.Reservation;
  * <p>Persistance layer constructed using JDBC. Provides direct access to the database.</p>
  * <p><b>Warning</b> - Potentially delete methods are potentially destructive... Use with caution. -
  * <b>Warning</b></p>
- * @version 1.00
+ * @version 1.01
  */
 public class MySQLJDBC {
 	private static final Logger logger = LogManager.getLogger(MySQLJDBC.class);
@@ -1545,6 +1546,31 @@ public class MySQLJDBC {
 		return true;
 	}
 
+	/**
+	 * Obtains last active time for users.
+	 * @return ArrayList of Authentication objects or null if error.
+	 */
+	public ArrayList<Authentication> getSession() {
+		String getSession = "SELECT * FROM session;";
+		PreparedStatement ps = null;
+		ArrayList<Authentication> sessionList = new ArrayList<Authentication>();
+		try {
+			ps = c.prepareStatement(getSession);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				long lastSession = rs.getLong("sessionTime");
+				boolean active = (System.currentTimeMillis() / 1000 - lastSession) < (30 * 24 * 3600);
+				sessionList.add(new Authentication(rs.getString("username"), lastSession, active));
+			}
+			rs.close();
+			logger.info(String.format("All sessions have been returned from the database."));
+			return sessionList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}	
+	}
+	
 	//=======================
 	// Misc API
 	//=======================
