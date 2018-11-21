@@ -27,6 +27,7 @@ import cz.msebera.android.httpclient.Header;
 import riderz.team10.ecse321.com.riderzpassengers.About;
 import riderz.team10.ecse321.com.riderzpassengers.MapsPassengerActivity;
 import riderz.team10.ecse321.com.riderzpassengers.R;
+import riderz.team10.ecse321.com.riderzpassengers.RatingsActivity;
 import riderz.team10.ecse321.com.riderzpassengers.RiderzPassengers;
 import riderz.team10.ecse321.com.riderzpassengers.UserProfile;
 import riderz.team10.ecse321.com.riderzpassengers.constants.HTTP;
@@ -93,7 +94,7 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
      * Populate linear layout with programmatically generated TextViews
      */
     private void populateLinearLayout() {
-        String[] textArr = {"View Ads", "Remove Reservations",
+        String[] textArr = {"View Ads", "Remove Reservations", "Past Trips",
                 "View Your Profile", "Settings", "About", "Log Out"};
         LinearLayout layout = findViewById(R.id.mainNavLayout);
         createTextViews(layout, textArr);
@@ -159,6 +160,17 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
 
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(MainNavigation.this, RatingsActivity.class);
+                intent.putExtra("username", username);
+                MainNavigation.this.startActivity(intent);
+            }
+        });
+
+        // Mapped to viewing user profile
+        (findViewById(generatedId.get(3))).setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
                 Intent intent = new Intent(MainNavigation.this, UserProfile.class);
                 intent.putExtra("username", username);
                 MainNavigation.this.startActivity(intent);
@@ -166,7 +178,7 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
         });
 
         // Mapped to viewing Settings Activity
-        (findViewById(generatedId.get(3))).setOnClickListener(new View.OnClickListener(){
+        (findViewById(generatedId.get(4))).setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
@@ -177,7 +189,7 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
         });
 
         // Mapped to viewing About Activity
-        (findViewById(generatedId.get(4))).setOnClickListener(new View.OnClickListener(){
+        (findViewById(generatedId.get(5))).setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
@@ -187,7 +199,7 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
         });
 
         // Mapped to log out
-        (findViewById(generatedId.get(5))).setOnClickListener(new View.OnClickListener(){
+        (findViewById(generatedId.get(6))).setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
