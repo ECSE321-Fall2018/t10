@@ -21,13 +21,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import cz.msebera.android.httpclient.Header;
 import riderz.team10.ecse321.com.riderzpassengers.About;
 import riderz.team10.ecse321.com.riderzpassengers.MapsPassengerActivity;
 import riderz.team10.ecse321.com.riderzpassengers.R;
-import riderz.team10.ecse321.com.riderzpassengers.RatingsActivity;
+import riderz.team10.ecse321.com.riderzpassengers.PreviousRidesActivity;
 import riderz.team10.ecse321.com.riderzpassengers.RiderzPassengers;
 import riderz.team10.ecse321.com.riderzpassengers.UserProfile;
 import riderz.team10.ecse321.com.riderzpassengers.constants.HTTP;
@@ -36,8 +35,6 @@ import riderz.team10.ecse321.com.riderzpassengers.constants.URL;
 import riderz.team10.ecse321.com.riderzpassengers.http.HttpRequestClient;
 import riderz.team10.ecse321.com.riderzpassengers.reservation.Reservation;
 import riderz.team10.ecse321.com.riderzpassengers.settings.MainSetting;
-import riderz.team10.ecse321.com.riderzpassengers.trip.EditTrip;
-import riderz.team10.ecse321.com.riderzpassengers.trip.PastTrip;
 
 public class MainNavigation extends AppCompatActivity implements HttpRequestClient {
     // Used to track if back button was pressed twice
@@ -160,7 +157,7 @@ public class MainNavigation extends AppCompatActivity implements HttpRequestClie
 
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainNavigation.this, RatingsActivity.class);
+                Intent intent = new Intent(MainNavigation.this, PreviousRidesActivity.class);
                 intent.putExtra("username", username);
                 MainNavigation.this.startActivity(intent);
             }
