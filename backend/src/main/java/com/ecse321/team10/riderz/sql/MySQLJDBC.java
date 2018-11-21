@@ -37,9 +37,9 @@ import com.ecse321.team10.riderz.model.Reservation;
 public class MySQLJDBC {
 	private static final Logger logger = LogManager.getLogger(MySQLJDBC.class);
 
-	private static final String connection = "jdbc:mysql://35.237.200.65:3306/dev";
-	private static final String username = "dev";
-	private static final String password = "ecse321LoGiNdEv";
+	private static final String connection = "jdbc:mysql://35.237.200.65:3306/production";
+	private static final String username = "admin";
+	private static final String password = "ecse321LoGiNaDmIn";
 
 	private static Connection c;
 
@@ -1253,8 +1253,8 @@ public class MySQLJDBC {
 
 	/**
 	 * Returns the number of trips for all drivers in descending order.
-	 * @param startTime 	- A Timestamp containing the starting filter
-	 * @param endTime		- A Timestamp containing the ending filter
+	 * @param startTime 	- A Timestamp containing the starting datetime
+	 * @param endTime		- A Timestamp containing the ending datetime
 	 * @return An ArrayList of performance for drivers. Null if error occurs.
 	 */
 	public ArrayList<DriverPerformance> getDriverPerformance(Timestamp startTime,
@@ -1275,7 +1275,7 @@ public class MySQLJDBC {
 											  rs.getInt("occurence")));
 			}
 			rs.close();
-			logger.info(String.format("All driver performance have been returned"));
+			logger.info("All driver performance have been returned");
 			return dps;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
@@ -1283,6 +1283,37 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Returns the number of trips for all drivers in descending order.
+	 * @param startTime 	- A Timestamp containing the starting datetime
+	 * @param endTime		- A Timestamp containing the ending datetime
+	 * @return An ArrayList of performance for drivers. Null if error occurs.
+	 */
+	public ArrayList<DriverPerformance> getUserPerformance(Timestamp startTime,
+														   Timestamp endTime) {
+		ArrayList<DriverPerformance> ups = new ArrayList<>();
+		String getUserPerformance = "SELECT operator, COUNT(*) AS occurence FROM reservation " +
+									  "LEFT JOIN itinerary ON reservation.tripID = itinerary.tripID " +
+									  "WHERE startingTime >= ? AND endingTime <= ? " +
+									  "GROUP BY operator ORDER by occurence DESC;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(getUserPerformance);
+			ps.setTimestamp(1, startTime);
+			ps.setTimestamp(2, endTime);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				ups.add(new DriverPerformance(rs.getString("operator"),
+											  rs.getInt("occurence")));
+			}
+			rs.close();
+			logger.info("All user performance have been returned");
+			return ups;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
 	//=======================
 	// LOCATION API
 	//=======================

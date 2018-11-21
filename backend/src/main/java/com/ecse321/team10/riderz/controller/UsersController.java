@@ -210,6 +210,12 @@ public class UsersController {
 		return false;
 	}
 
+    /**
+     * Obtains the number of trips offered by drivers in descending order.
+     * @param startingTime	-	A String representing a MySQL timestamp
+     * @param endingTime	-	A String representing a MySQL timestamp
+     * @return A list of drivers and the number of trips they are offering.
+     */
     @RequestMapping(value = "getDriverPerformance", method = RequestMethod.GET)
     public List<DriverPerformanceDto> getDriverPerformance( @RequestParam String startingTime,
     														@RequestParam String endingTime) {
@@ -223,6 +229,30 @@ public class UsersController {
     		sql.closeConnection();
     		logger.info("Successfully obtained driver performance");
     		return dps;
+    	}
+    	logger.error("Failed to establish communication with SQL database");
+    	return null;
+    }
+
+    /**
+     * Obtains the number of trips reserved by passengers in descending order.
+     * @param startingTime	-	A String representing a MySQL timestamp
+     * @param endingTime	-	A String representing a MySQL timestamp
+     * @return A list of users and the number of trips they have reserved.
+     */
+    @RequestMapping(value = "getUserPerformance", method = RequestMethod.GET)
+    public List<DriverPerformanceDto> getUserPerformance( @RequestParam String startingTime,
+    													  @RequestParam String endingTime) {
+    	if (sql.connect()) {
+    		List<DriverPerformanceDto> ups = new ArrayList<>();
+    		Timestamp startTime = sql.convertStringToTimestamp(startingTime + ".000");
+    		Timestamp endTime = sql.convertStringToTimestamp(endingTime + ".000");
+    		for (DriverPerformance dp : sql.getUserPerformance(startTime, endTime)) {
+    			ups.add(convertToDto(dp));
+    		}
+    		sql.closeConnection();
+    		logger.info("Successfully obtained driver performance");
+    		return ups;
     	}
     	logger.error("Failed to establish communication with SQL database");
     	return null;
