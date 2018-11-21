@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ecse321.team10.riderz.model.Driver;
+import com.ecse321.team10.riderz.model.DriverPerformance;
 import com.ecse321.team10.riderz.model.AdInformation;
 import com.ecse321.team10.riderz.model.Authentication;
 import com.ecse321.team10.riderz.model.Car;
@@ -1247,6 +1248,38 @@ public class MySQLJDBC {
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
 			return false;
+		}
+	}
+
+	/**
+	 * Returns the number of trips for all drivers in descending order.
+	 * @param startTime 	- A Timestamp containing the starting filter
+	 * @param endTime		- A Timestamp containing the ending filter
+	 * @return An ArrayList of performance for drivers. Null if error occurs.
+	 */
+	public ArrayList<DriverPerformance> getDriverPerformance(Timestamp startTime,
+															 Timestamp endTime) {
+		ArrayList<DriverPerformance> dps = new ArrayList<>();
+		String getDriverPerformance = "SELECT operator, COUNT(*) AS occurence FROM trip " +
+									  "RIGHT JOIN itinerary ON itinerary.tripID = trip.tripID " +
+									  "WHERE startingTime >= ? AND endingTime <= ? " +
+									  "GROUP BY operator ORDER by occurence DESC;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(getDriverPerformance);
+			ps.setTimestamp(1, startTime);
+			ps.setTimestamp(2, endTime);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				dps.add(new DriverPerformance(rs.getString("operator"),
+											  rs.getInt("occurence")));
+			}
+			rs.close();
+			logger.info(String.format("All driver performance have been returned"));
+			return dps;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
 		}
 	}
 
