@@ -33,7 +33,7 @@ public class PreviousRidesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_previous_rides);
 
-        ListView ratingsList = (ListView) findViewById(R.id.ratings_list);
+        ListView ratingsList = (ListView) findViewById(R.id.previous_rides_list);
         operator = getIntent().getStringExtra("username");
 
         driverNames = new ArrayList<>();
@@ -54,7 +54,7 @@ public class PreviousRidesActivity extends AppCompatActivity {
             public void run() {
                 final String getTrips = "https://riderz-t10.herokuapp.com/trip/username";
                 AsyncHttpClient client = new AsyncHttpClient();
-                client.setTimeout(10000);
+                client.setTimeout(7500);
                 client.get(getTrips, params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -73,7 +73,7 @@ public class PreviousRidesActivity extends AppCompatActivity {
                                 lengthOfNames = trips.length();
                                 for(int i = 0; i < lengthOfNames; i++){
                                     Log.e("hello1", String.valueOf(trips.getJSONObject(i).getInt("tripID")));
-                                    asyncHttpRequestDriverName(String.valueOf(trips.getJSONObject(i).getInt("tripID")));
+                                    asyncHttpRequestDriverUsername(String.valueOf(trips.getJSONObject(i).getInt("tripID")));
                                 }
 
                             } catch (JSONException e) {
@@ -97,7 +97,7 @@ public class PreviousRidesActivity extends AppCompatActivity {
         }).run();
     }
 
-    private void asyncHttpRequestDriverName(final String tripID) {
+    private void asyncHttpRequestDriverUsername(final String tripID) {
         // Add parameters
         final RequestParams params = new RequestParams();
         params.add("tripID", tripID);
@@ -108,10 +108,10 @@ public class PreviousRidesActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final String getTrips = "https://riderz-t10.herokuapp.com/trip/getDriverName";
+                final String getUsernames = "https://riderz-t10.herokuapp.com/trip/getDriverUsername";
                 AsyncHttpClient client = new AsyncHttpClient();
                 client.setTimeout(7500);
-                client.get(getTrips, params, new AsyncHttpResponseHandler() {
+                client.get(getUsernames, params, new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         // Check that we obtained a valid response from the server
@@ -119,7 +119,7 @@ public class PreviousRidesActivity extends AppCompatActivity {
                             // Response is invalid
                             Log.e("debug", "Failed to get driver name " + tripID);
                             msg = "Failed to get driver name";
-                            asyncHttpRequestDriverName(tripID);
+                            asyncHttpRequestDriverUsername(tripID);
                         } else {
                             // Response is valid
                             msg = "";
@@ -144,9 +144,10 @@ public class PreviousRidesActivity extends AppCompatActivity {
                                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                        Intent intent = new Intent(PreviousRidesActivity.this, UserProfile.class);
-                                        intent.putExtra("driver", driverNames.get(i));
-                                        PreviousRidesActivity.this.startActivity(intent);
+                                        Intent intent = new Intent(PreviousRidesActivity.this, RatingActivity.class);
+                                        intent.putExtra("operator", driverNames.get(i));
+                                        finish();
+                                        startActivity(intent);
                                     }
                                 });
                             }
