@@ -965,6 +965,31 @@ public class MySQLJDBC {
 	}
 	
 	/**
+	 * Returns the driver's username based on a tripID.
+	 * @param tripID - An integer uniquely identifying a trip
+	 * @return A driver's username
+	 */
+	public String getDriverUsernameByTripID(int tripID) {
+		String getDriverUsernameByTripID = "SELECT operator FROM trip WHERE tripID = ?;";
+		PreparedStatement ps = null;
+		String name = null;
+		try {
+			ps = c.prepareStatement(getDriverUsernameByTripID);
+			ps.setInt(1, tripID);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				name = rs.getString("operator");
+			}
+			logger.info("Username has been returned for trip " + tripID);
+			ps.close();
+			return name;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+	
+	/**
 	 * Returns the driver's name based on a tripID.
 	 * @param tripID - An integer uniquely identifying a trip
 	 * @return A driver's name
@@ -1196,6 +1221,36 @@ public class MySQLJDBC {
 			}
 			ps.close();
 			logger.info("Closest itineraries near destination have been returned from the database.");
+			return itineraryList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	/**
+	 * Fetches all active routes from the database.
+	 * @return An ArrayList of Itinerary objects matching the search criteria. Null if an error occurred.
+	 */
+	public ArrayList<Itinerary> getAllActiveItineraries() {
+		ArrayList<Itinerary> itineraryList = new ArrayList<Itinerary>();
+		String getAllItineraries = "SELECT * FROM itinerary WHERE endingTime > NOW() AND startingTime > NOW();";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(getAllItineraries);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				itineraryList.add(new Itinerary(rs.getInt("tripID"),
+											rs.getDouble("startingLongitude"),
+										    rs.getDouble("startingLatitude"),
+											rs.getTimestamp("startingTime"),
+											rs.getDouble("endingLongitude"),
+											rs.getDouble("endingLatitude"),
+											rs.getTimestamp("endingTime"),
+											rs.getInt("seatsLeft")));
+			}
+			ps.close();
+			logger.info("All active itineraries have been returned from the database.");
 			return itineraryList;
 		} catch (Exception e) {
 			logger.error(e.getClass().getName() + ": " + e.getMessage());
