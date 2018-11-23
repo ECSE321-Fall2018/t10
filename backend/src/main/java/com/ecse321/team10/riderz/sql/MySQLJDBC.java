@@ -18,7 +18,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.ecse321.team10.riderz.model.Driver;
+import com.ecse321.team10.riderz.model.DriverPerformance;
 import com.ecse321.team10.riderz.model.AdInformation;
+import com.ecse321.team10.riderz.model.Authentication;
 import com.ecse321.team10.riderz.model.Car;
 import com.ecse321.team10.riderz.model.User;
 import com.ecse321.team10.riderz.model.Trip;
@@ -30,14 +32,14 @@ import com.ecse321.team10.riderz.model.Reservation;
  * <p>Persistance layer constructed using JDBC. Provides direct access to the database.</p>
  * <p><b>Warning</b> - Potentially delete methods are potentially destructive... Use with caution. -
  * <b>Warning</b></p>
- * @version 1.00
+ * @version 1.01
  */
 public class MySQLJDBC {
 	private static final Logger logger = LogManager.getLogger(MySQLJDBC.class);
 
-	private static final String connection = "jdbc:mysql://35.237.200.65:3306/dev";
-	private static final String username = "dev";
-	private static final String password = "ecse321LoGiNdEv";
+	private static final String connection = "jdbc:mysql://35.237.200.65:3306/production";
+	private static final String username = "admin";
+	private static final String password = "ecse321LoGiNaDmIn";
 
 	private static Connection c;
 
@@ -963,6 +965,31 @@ public class MySQLJDBC {
 	}
 	
 	/**
+	 * Returns the driver's username based on a tripID.
+	 * @param tripID - An integer uniquely identifying a trip
+	 * @return A driver's username
+	 */
+	public String getDriverUsernameByTripID(int tripID) {
+		String getDriverUsernameByTripID = "SELECT operator FROM trip WHERE tripID = ?;";
+		PreparedStatement ps = null;
+		String name = null;
+		try {
+			ps = c.prepareStatement(getDriverUsernameByTripID);
+			ps.setInt(1, tripID);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				name = rs.getString("operator");
+			}
+			logger.info("Username has been returned for trip " + tripID);
+			ps.close();
+			return name;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+	
+	/**
 	 * Returns the driver's name based on a tripID.
 	 * @param tripID - An integer uniquely identifying a trip
 	 * @return A driver's name
@@ -1202,6 +1229,36 @@ public class MySQLJDBC {
 	}
 
 	/**
+	 * Fetches all active routes from the database.
+	 * @return An ArrayList of Itinerary objects matching the search criteria. Null if an error occurred.
+	 */
+	public ArrayList<Itinerary> getAllActiveItineraries() {
+		ArrayList<Itinerary> itineraryList = new ArrayList<Itinerary>();
+		String getAllItineraries = "SELECT * FROM itinerary WHERE endingTime > NOW() AND startingTime > NOW();";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(getAllItineraries);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				itineraryList.add(new Itinerary(rs.getInt("tripID"),
+											rs.getDouble("startingLongitude"),
+										    rs.getDouble("startingLatitude"),
+											rs.getTimestamp("startingTime"),
+											rs.getDouble("endingLongitude"),
+											rs.getDouble("endingLatitude"),
+											rs.getTimestamp("endingTime"),
+											rs.getInt("seatsLeft")));
+			}
+			ps.close();
+			logger.info("All active itineraries have been returned from the database.");
+			return itineraryList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	/**
 	 * Increments by 1 the number of seats available in the car.
 	 * @param tripID	-	An integer uniquely identifying an itinerary.
 	 * @return True if an entry was updated. False otherwise.
@@ -1249,6 +1306,69 @@ public class MySQLJDBC {
 		}
 	}
 
+	/**
+	 * Returns the number of trips for all drivers in descending order.
+	 * @param startTime 	- A Timestamp containing the starting datetime
+	 * @param endTime		- A Timestamp containing the ending datetime
+	 * @return An ArrayList of performance for drivers. Null if error occurs.
+	 */
+	public ArrayList<DriverPerformance> getDriverPerformance(Timestamp startTime,
+															 Timestamp endTime) {
+		ArrayList<DriverPerformance> dps = new ArrayList<>();
+		String getDriverPerformance = "SELECT operator, COUNT(*) AS occurence FROM trip " +
+									  "RIGHT JOIN itinerary ON itinerary.tripID = trip.tripID " +
+									  "WHERE startingTime >= ? AND endingTime <= ? " +
+									  "GROUP BY operator ORDER by occurence DESC;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(getDriverPerformance);
+			ps.setTimestamp(1, startTime);
+			ps.setTimestamp(2, endTime);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				dps.add(new DriverPerformance(rs.getString("operator"),
+											  rs.getInt("occurence")));
+			}
+			rs.close();
+			logger.info("All driver performance have been returned");
+			return dps;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
+
+	/**
+	 * Returns the number of trips for all drivers in descending order.
+	 * @param startTime 	- A Timestamp containing the starting datetime
+	 * @param endTime		- A Timestamp containing the ending datetime
+	 * @return An ArrayList of performance for drivers. Null if error occurs.
+	 */
+	public ArrayList<DriverPerformance> getUserPerformance(Timestamp startTime,
+														   Timestamp endTime) {
+		ArrayList<DriverPerformance> ups = new ArrayList<>();
+		String getUserPerformance = "SELECT operator, COUNT(*) AS occurence FROM reservation " +
+									  "LEFT JOIN itinerary ON reservation.tripID = itinerary.tripID " +
+									  "WHERE startingTime >= ? AND endingTime <= ? " +
+									  "GROUP BY operator ORDER by occurence DESC;";
+		PreparedStatement ps = null;
+		try {
+			ps = c.prepareStatement(getUserPerformance);
+			ps.setTimestamp(1, startTime);
+			ps.setTimestamp(2, endTime);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				ups.add(new DriverPerformance(rs.getString("operator"),
+											  rs.getInt("occurence")));
+			}
+			rs.close();
+			logger.info("All user performance have been returned");
+			return ups;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}
+	}
 	//=======================
 	// LOCATION API
 	//=======================
@@ -1545,6 +1665,31 @@ public class MySQLJDBC {
 		return true;
 	}
 
+	/**
+	 * Obtains last active time for users.
+	 * @return ArrayList of Authentication objects or null if error.
+	 */
+	public ArrayList<Authentication> getSession() {
+		String getSession = "SELECT * FROM session;";
+		PreparedStatement ps = null;
+		ArrayList<Authentication> sessionList = new ArrayList<Authentication>();
+		try {
+			ps = c.prepareStatement(getSession);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				long lastSession = rs.getLong("sessionTime");
+				boolean active = (System.currentTimeMillis() / 1000 - lastSession) < (30 * 24 * 3600);
+				sessionList.add(new Authentication(rs.getString("username"), lastSession, active));
+			}
+			rs.close();
+			logger.info(String.format("All sessions have been returned from the database."));
+			return sessionList;
+		} catch (Exception e) {
+			logger.error(e.getClass().getName() + ": " + e.getMessage());
+			return null;
+		}	
+	}
+	
 	//=======================
 	// Misc API
 	//=======================

@@ -246,6 +246,23 @@ public class RouteController {
 		sql.closeConnection();
 		return itineraryList;
 	}
+
+	/**
+	 * Obtains all active itineraries from the database.
+	 * @return A List of Itinerary representing the itineraries in the database.
+	 */
+	@GetMapping("/getAllActiveItineraries")
+	public List<ItineraryDto> getAllActiveItineraries() {
+		if (sql.connect()) {
+			List<ItineraryDto> itineraryList = new ArrayList<ItineraryDto>();
+			for(Itinerary itinerary: sql.getAllActiveItineraries()) {
+				itineraryList.add(intineraryConvertToDto(itinerary));
+			}
+			sql.closeConnection();
+			return itineraryList;
+		}
+		return null;
+	}
 	
 	/**
 	 * Increment by 1 the number of seats left in the itinerary given by the tripID
