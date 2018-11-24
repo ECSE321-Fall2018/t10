@@ -131,4 +131,15 @@ public class TripController {
     	logger.error("Failed to establish communication with SQL database");
     	return null;
     }
+    
+    @RequestMapping(value = "getDriverUsername", method = RequestMethod.GET)
+    public String getDriverUsername( @RequestParam int tripID) {
+    	if (sql.connect()) {
+    		String username = sql.getDriverUsernameByTripID(tripID);
+    		sql.closeConnection();
+    		return username;
+    	}
+    	logger.error("Failed to establish communication with SQL database");
+    	return null;
+    }
 }

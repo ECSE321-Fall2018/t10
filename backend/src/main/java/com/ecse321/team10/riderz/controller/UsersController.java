@@ -1,5 +1,6 @@
 package com.ecse321.team10.riderz.controller;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,10 +14,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ecse321.team10.riderz.dto.DriverPerformanceDto;
 import com.ecse321.team10.riderz.dto.UserDto;
+import com.ecse321.team10.riderz.model.DriverPerformance;
 import com.ecse321.team10.riderz.model.User;
 import com.ecse321.team10.riderz.sql.MySQLJDBC;
 
@@ -34,6 +38,10 @@ public class UsersController {
 		return modelMapper.map(user, UserDto.class);
 	}
 	
+	private DriverPerformanceDto convertToDto(DriverPerformance dp) {
+		return modelMapper.map(dp,  DriverPerformanceDto.class);
+	}
+
 	private static final Logger logger = LogManager.getLogger(UsersController.class);
 
 	/**
@@ -202,6 +210,51 @@ public class UsersController {
 		return false;
 	}
 
+    /**
+     * Obtains the number of trips offered by drivers in descending order.
+     * @param startingTime	-	A String representing a MySQL timestamp
+     * @param endingTime	-	A String representing a MySQL timestamp
+     * @return A list of drivers and the number of trips they are offering.
+     */
+    @RequestMapping(value = "getDriverPerformance", method = RequestMethod.GET)
+    public List<DriverPerformanceDto> getDriverPerformance( @RequestParam String startingTime,
+    														@RequestParam String endingTime) {
+    	if (sql.connect()) {
+    		List<DriverPerformanceDto> dps = new ArrayList<>();
+    		Timestamp startTime = sql.convertStringToTimestamp(startingTime + ".000");
+    		Timestamp endTime = sql.convertStringToTimestamp(endingTime + ".000");
+    		for (DriverPerformance dp : sql.getDriverPerformance(startTime, endTime)) {
+    			dps.add(convertToDto(dp));
+    		}
+    		sql.closeConnection();
+    		logger.info("Successfully obtained driver performance");
+    		return dps;
+    	}
+    	logger.error("Failed to establish communication with SQL database");
+    	return null;
+    }
 
-
+    /**
+     * Obtains the number of trips reserved by passengers in descending order.
+     * @param startingTime	-	A String representing a MySQL timestamp
+     * @param endingTime	-	A String representing a MySQL timestamp
+     * @return A list of users and the number of trips they have reserved.
+     */
+    @RequestMapping(value = "getUserPerformance", method = RequestMethod.GET)
+    public List<DriverPerformanceDto> getUserPerformance( @RequestParam String startingTime,
+    													  @RequestParam String endingTime) {
+    	if (sql.connect()) {
+    		List<DriverPerformanceDto> ups = new ArrayList<>();
+    		Timestamp startTime = sql.convertStringToTimestamp(startingTime + ".000");
+    		Timestamp endTime = sql.convertStringToTimestamp(endingTime + ".000");
+    		for (DriverPerformance dp : sql.getUserPerformance(startTime, endTime)) {
+    			ups.add(convertToDto(dp));
+    		}
+    		sql.closeConnection();
+    		logger.info("Successfully obtained driver performance");
+    		return ups;
+    	}
+    	logger.error("Failed to establish communication with SQL database");
+    	return null;
+    }
 }
