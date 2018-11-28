@@ -25,7 +25,7 @@ Hosting:                    Tomcat8
 - Completed
 
 ## Android
-- COmpleted
+- Completed
 
 ## Backlog
 - Refer to the issues and projects tab for the backlog.
